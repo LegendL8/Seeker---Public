@@ -1,0 +1,40 @@
+# Deploy (manual until production). Uses OIDC to assume an IAM role and fetches
+# deploy-time config from AWS Secrets Manager.
+# When ready for prod: add "push: branches: [main]" under on: so deploy runs on push to main.
+#
+# Required repo secrets/vars:
+#   AWS_ROLE_ARN    - IAM role ARN with OIDC trust for this repo (e.g. arn:aws:iam::ACCOUNT:role/GitHubActionsDeploy)
+#   AWS_REGION      - AWS region (e.g. us-east-1)
+#   DEPLOY_SECRET_NAME - Name of Secrets Manager secret containing deploy config (optional; if JSON, keys are exported as env for deploy script)
+name: Deploy
+
+on:
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION || secrets.AWS_REGION }}
+
+      - name: Fetch deploy config from Secrets Manager
+        env:
+          SECRET_NAME: ${{ vars.DEPLOY_SECRET_NAME || secrets.DEPLOY_SECRET_NAME }}
+        run: |
+          if [ -z "$SECRET_NAME" ]; then echo "DEPLOY_SECRET_NAME not set, skipping"; exit 0; fi
+          secret=$(aws secretsmanager get-secret-value --secret-id "$SECRET_NAME" --query SecretString --output text)
+          echo "$secret" | jq -r 'to_entries | .[] | "\(.key)=\(.value | @sh)"' >> "$GITHUB_ENV"
+
+      - name: Deploy
+        run: ./scripts/deploy.sh
