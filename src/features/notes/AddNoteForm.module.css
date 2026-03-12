@@ -1,0 +1,54 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-primary, #171717);
+}
+
+.input,
+.select,
+.textarea {
+  padding: 8px 12px;
+  font-size: 0.875rem;
+  border: 1px solid var(--border, #d4d4d4);
+  background: var(--card-bg);
+  color: var(--foreground, #171717);
+}
+
+.textarea {
+  min-height: 80px;
+  resize: vertical;
+  font-family: inherit;
+}
+
+.submitBtn {
+  padding: 8px 16px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: var(--btn-primary);
+  color: var(--text-primary);
+  align-self: flex-start;
+}
+
+.submitBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.error {
+  font-size: 0.875rem;
+  color: var(--error, #b91c1c);
+}

@@ -1,0 +1,35 @@
+.page {
+  display: flex;
+  min-height: 100vh;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-inter), system-ui, sans-serif;
+  background-color: var(--background);
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 48px 24px;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.intro {
+  font-size: 1.125rem;
+  color: var(--text-secondary);
+}
+
+.link {
+  display: inline-block;
+  margin-left: 8px;
+  color: var(--text-primary);
+  text-decoration: underline;
+}

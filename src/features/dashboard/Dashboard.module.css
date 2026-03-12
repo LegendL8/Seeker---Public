@@ -1,0 +1,309 @@
+.wrapper {
+  min-height: 100vh;
+  padding: 32px;
+  background: var(--background);
+  color: var(--foreground);
+}
+
+.header {
+  margin-bottom: 24px;
+}
+
+.title {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+/* Top row: 4 metric cards */
+.topMetrics {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 768px) {
+  .topMetrics {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.metricCard {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px 20px;
+}
+
+.metricCardLabel {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin: 0 0 6px 0;
+}
+
+.metricCardValue {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.metricCardValue_accentBlue {
+  color: var(--accent-blue);
+}
+
+.metricCardValue_accentPurple {
+  color: var(--accent-purple);
+}
+
+/* Main content row: two columns */
+.mainRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+@media (max-width: 768px) {
+  .mainRow {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Left: notification card */
+.notificationCard {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.notificationCardHeader {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.notificationCardHeaderLabel {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.companyRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.companyAvatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.companyInfo {
+  min-width: 0;
+}
+
+.companyName {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.companySub {
+  font-size: 11px;
+  color: var(--text-dim);
+  margin: 0;
+}
+
+.notificationMessage {
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0 0 14px 0;
+  color: var(--text-soft);
+}
+
+.contactChip {
+  border: 1px solid var(--accent-purple);
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+}
+
+.contactChipName {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.contactChipEmail {
+  color: var(--accent-purple);
+  font-size: 12px;
+}
+
+.contactChipDismiss {
+  color: #555;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: inherit;
+}
+
+.notificationBottom {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.notificationSectionLabel {
+  font-size: 11px;
+  color: var(--text-dim);
+  margin: 0 0 6px 0;
+}
+
+.interviewItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.interviewItem input {
+  accent-color: var(--accent-purple);
+}
+
+.interviewItem span {
+  font-size: 13px;
+  color: var(--text-cell);
+}
+
+.offerValue {
+  font-size: 13px;
+  color: var(--accent-blue);
+  margin: 0 0 10px 0;
+}
+
+.acceptButton {
+  background: var(--btn-primary);
+  color: var(--text-primary);
+  border: none;
+  border-radius: 6px;
+  padding: 8px 14px;
+  font-size: 13px;
+  cursor: pointer;
+  font-weight: 600;
+  width: 100%;
+}
+
+.acceptButton:hover {
+  opacity: 0.9;
+}
+
+.acceptButton_accepted {
+  background: var(--btn-primary-active);
+}
+
+/* Right: stats grid */
+.statsCard {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+}
+
+.statsCell {
+  padding: 12px 8px;
+  border-bottom: 1px solid var(--divider);
+  border-right: 1px solid var(--divider);
+}
+
+.statsCell:nth-child(2n) {
+  border-right: none;
+}
+
+.statsCell:nth-last-child(-n + 2) {
+  border-bottom: none;
+}
+
+.statsCellLabel {
+  font-size: 11px;
+  color: var(--text-dim);
+  margin: 0 0 4px 0;
+}
+
+.statsCellValue {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--foreground);
+  margin: 0;
+}
+
+/* Loading / error / empty */
+.status,
+.error {
+  margin: 0;
+  color: var(--text-muted);
+}
+
+.error {
+  color: #e57373;
+}
+
+.emptyState {
+  margin-top: 24px;
+  padding: 24px;
+  text-align: center;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.emptyTitle {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 8px 0;
+}
+
+.emptyText {
+  font-size: 0.9375rem;
+  color: var(--text-muted);
+  margin: 0 0 16px 0;
+}
+
+.emptyLink {
+  color: var(--accent-blue);
+  text-decoration: none;
+}
+
+.emptyLink:hover {
+  text-decoration: underline;
+}
+
+/* Placeholder when no notification to show */
+.notificationPlaceholder {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin: 0;
+  padding: 24px 0;
+}

@@ -1,0 +1,121 @@
+.wrapper {
+  width: 100%;
+  max-width: 560px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-primary, #171717);
+  margin: 0;
+}
+
+.backLink {
+  color: var(--text-primary, #171717);
+  text-decoration: underline;
+  font-size: 0.875rem;
+}
+
+.backLink:hover {
+  opacity: 0.8;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.row {
+  display: flex;
+  gap: 16px;
+}
+
+.row .field {
+  flex: 1;
+}
+
+.label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-primary, #171717);
+}
+
+.required {
+  color: var(--error, #b91c1c);
+}
+
+.input,
+.select {
+  padding: 10px 12px;
+  font-size: 1rem;
+  border: 1px solid var(--border, #d4d4d4);
+  background: var(--card-bg);
+  color: var(--foreground, #171717);
+}
+
+.input:focus,
+.select:focus {
+  outline: 2px solid var(--focus, #2563eb);
+  outline-offset: 2px;
+}
+
+.input::placeholder {
+  color: var(--text-secondary, #737373);
+}
+
+.error {
+  font-size: 0.8125rem;
+  color: var(--error, #b91c1c);
+}
+
+.submitError {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--error, #b91c1c);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.submitBtn {
+  padding: 10px 20px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: var(--btn-primary);
+  color: var(--text-primary);
+}
+
+.submitBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.cancelLink {
+  font-size: 0.875rem;
+  color: var(--text-secondary, #666);
+  text-decoration: underline;
+}
+
+.cancelLink:hover {
+  color: var(--text-primary, #171717);
+}
