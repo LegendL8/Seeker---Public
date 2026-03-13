@@ -7,7 +7,7 @@ export function useUpdateNote(id: string) {
 
   return useMutation({
     mutationFn: (body: UpdateNoteInput) => updateNote(id, body),
-    onSuccess: (_data) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['notes'] });
       queryClient.invalidateQueries({ queryKey: ['notes', id] });
     },

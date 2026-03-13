@@ -41,7 +41,7 @@ describe('getMetrics', () => {
   it('queries db and caches when cache miss', async () => {
     const db = jest.requireActual('./db').db;
     let selectCallCount = 0;
-    const selectSpy = jest.spyOn(db, 'select').mockImplementation((arg?: unknown) => {
+    const selectSpy = jest.spyOn(db, 'select').mockImplementation(() => {
       selectCallCount++;
       if (selectCallCount === 1) {
         return {
@@ -125,7 +125,7 @@ describe('getMetrics', () => {
   it('ignores unknown status in groupBy rows', async () => {
     const db = jest.requireActual('./db').db;
     let selectCallCount = 0;
-    const selectSpy = jest.spyOn(db, 'select').mockImplementation((arg?: unknown) => {
+    const selectSpy = jest.spyOn(db, 'select').mockImplementation(() => {
       selectCallCount++;
       if (selectCallCount === 1) {
         return {

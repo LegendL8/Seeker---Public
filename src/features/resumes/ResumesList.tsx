@@ -34,7 +34,8 @@ function ResumeItem({ resume }: { resume: Resume }) {
   useEffect(() => {
     if (previewing && withUrl?.signedUrl) {
       window.open(withUrl.signedUrl, '_blank', 'noopener,noreferrer');
-      queueMicrotask(() => setPreviewing(false));
+      const t = setTimeout(() => setPreviewing(false), 0);
+      return () => clearTimeout(t);
     }
   }, [previewing, withUrl?.signedUrl]);
 

@@ -2,7 +2,6 @@ import { count, eq } from 'drizzle-orm';
 
 import { db } from '../db';
 import { applications, interviews } from '../db/schema';
-import { APPLICATION_STATUSES } from '../applications/types';
 import { getCachedMetrics, setCachedMetrics } from './cache';
 import type { ApplicationsByStatus, DashboardMetrics } from './types';
 

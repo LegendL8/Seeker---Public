@@ -1,5 +1,5 @@
 /** @type {import('jest').Config} */
-export default {
+const config = {
   testEnvironment: 'node',
   testMatch: ['**/*.test.ts', '**/*.test.tsx'],
   setupFiles: ['<rootDir>/jest.setup.ts'],
@@ -12,3 +12,5 @@ export default {
     '^@/(.*)$': '<rootDir>/src/$1',
   },
 };
+
+export default config;
