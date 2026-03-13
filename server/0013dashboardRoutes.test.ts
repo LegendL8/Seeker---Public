@@ -16,13 +16,11 @@ jest.mock("./auth/middleware", () => ({
   ) => {
     if (req.user) next();
     else
-      res
-        .status(401)
-        .json({
-          error: "UNAUTHORIZED",
-          message: "Not authenticated",
-          statusCode: 401,
-        });
+      res.status(401).json({
+        error: "UNAUTHORIZED",
+        message: "Not authenticated",
+        statusCode: 401,
+      });
   },
 }));
 
