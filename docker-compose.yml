@@ -4,34 +4,52 @@ services:
     command: ["npm", "run", "dev", "--", "-H", "0.0.0.0"]
     ports:
       - "3000:3000"
+    env_file: .env
     environment:
       - NODE_ENV=development
+      - PORT=3000
+      - EXPRESS_API_URL=http://server:3001
     depends_on:
-      - postgres
-      - redis
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      server:
+        condition: service_started
 
   server:
     build: .
     command: npm run dev:server
     ports:
       - "3001:3001"
+    env_file: .env
     environment:
       - NODE_ENV=development
       - PORT=3001
+      - DATABASE_URL=postgresql://seeker:seekerdev@postgres:5432/seeker
+      - REDIS_URL=redis://redis:6379
     depends_on:
-      - postgres
-      - redis
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
 
   postgres:
     image: postgres:16-alpine
     ports:
-      - "5433:5432"
+      - "5432:5432"
     environment:
-      POSTGRES_USER: ets
-      POSTGRES_PASSWORD: etsdev
-      POSTGRES_DB: ets
+      POSTGRES_USER: seeker
+      POSTGRES_PASSWORD: seekerdev
+      POSTGRES_DB: seeker
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U seeker -d seeker"]
+      interval: 2s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
 
   redis:
     image: redis:7-alpine
@@ -39,6 +57,11 @@ services:
       - "6379:6379"
     volumes:
       - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 2s
+      timeout: 3s
+      retries: 5
 
 volumes:
   postgres_data:

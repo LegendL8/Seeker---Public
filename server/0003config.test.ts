@@ -10,7 +10,7 @@ describe('envSchema', () => {
   it('parses minimal env with REDIS_URL and defaults for DATABASE_URL and PORT', () => {
     const result = envSchema.parse(minimalEnv);
     expect(result.REDIS_URL).toBe('redis://localhost:6379');
-    expect(result.DATABASE_URL).toBe('postgresql://ets:etsdev@localhost:5433/ets');
+    expect(result.DATABASE_URL).toBe('postgresql://seeker:seekerdev@localhost:5432/seeker');
     expect(result.PORT).toBe(3001);
     expect(result.AUTH0_ISSUER_BASE_URL).toBeUndefined();
     expect(result.AUTH0_AUDIENCE).toBeUndefined();

@@ -1,0 +1,25 @@
+# Prevent local .env from being copied into the image.
+# In Docker Compose, DATABASE_URL and REDIS_URL are set per service;
+# a baked-in .env would risk wrong credentials (e.g. ets vs seeker).
+.env
+.env.*
+!.env.example
+
+# Dependencies and build artifacts
+node_modules
+.next
+*.log
+npm-debug.log*
+
+# Git and IDE
+.git
+.gitignore
+.cursor
+*.md
+!README.md
+
+# Tests and tooling (optional; keep if you run tests in image)
+# __tests__
+# *.test.ts
+# .eslintrc*
+# .prettierrc*

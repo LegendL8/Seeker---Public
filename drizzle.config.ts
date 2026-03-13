@@ -5,6 +5,6 @@ export default defineConfig({
   schema: "./server/db/schema.ts",
   out: "./server/db/migrations",
   dbCredentials: {
-    url: process.env.DATABASE_URL ?? "postgresql://ets:etsdev@localhost:5433/ets",
+    url: process.env.DATABASE_URL ?? "postgresql://seeker:seekerdev@localhost:5432/seeker",
   },
 });

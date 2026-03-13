@@ -5,7 +5,7 @@ export const envSchema = z.object({
     .string()
     .min(1)
     .optional()
-    .default('postgresql://ets:etsdev@localhost:5433/ets'),
+    .default('postgresql://seeker:seekerdev@localhost:5432/seeker'),
   PORT: z.coerce.number().optional().default(3001),
   REDIS_URL: z.string().min(1, { message: 'REDIS_URL is required' }),
   AUTH0_ISSUER_BASE_URL: z.string().url().optional(),
