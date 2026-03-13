@@ -4,7 +4,9 @@
 
 Deliver a functional product as fast as possible. Every milestone builds toward launch.
 
-**Sequence:** The **Performance improvements** section (after Milestone 4) is done before moving on to Post-Milestone 4, Milestone 5, or other new features. May be executed in parallel with UI work; see PERFORMANCE_ANNOTATIONS.md for overlap and ownership. Items marked **ARCHITECTURE** require updating ARCHITECTURE.md before or when implementing — check that section before you start them.
+**Architecture and operations:** In addition to the performance work, the roadmap includes closing gaps identified in DOCUMENTATION/arch_assessment.md: security controls in code, auditability, and repeatable deployment. That work is tracked in the **Security, auditability, and operations** section below.
+
+**Sequence:** (1) **Performance improvements** (after Milestone 4). (2) **Security, auditability, and operations** (security headers, CORS, request-id, audit log, backup/restore, CI/CD). Both are done before moving on to Post-Milestone 4, Milestone 5, or other new features. Performance may be executed in parallel with UI work; see PERFORMANCE_ANNOTATIONS.md for overlap and ownership. Items marked **ARCHITECTURE** require updating ARCHITECTURE.md before or when implementing — check that section before you start them.
 
 ---
 
@@ -173,6 +175,21 @@ _Milestone 4 complete 2026-03-10_
 - [ ] Notes create: parallelize ownership check with insert (server: run 0 or 1 ownership check in Promise.all before insert; O unchanged, code structure)
 - [ ] Applications list: cursor-based pagination — **ARCHITECTURE** (server: accept `cursor` + `limit`, return `nextCursor`; select O(k) per page. ARCHITECTURE.md currently: “Pagination: offset-based — ?page=1&limit=20”. Adding cursor changes that decision; update ARCHITECTURE.md to allow cursor and/or document both; update API if both styles coexist.)
 - [ ] Dashboard: optional cache TTL increase (server: e.g. 60s to 120s in dashboard/cache.ts; implementation detail, no ARCHITECTURE change)
+
+---
+
+## Security, auditability, and operations
+
+**Goal:** Implement the security, audit, and deployment controls that ARCHITECTURE.md documents and that arch_assessment.md identifies as gaps. Driven by architectural and operational needs: headers and CORS as specified, traceability for requests and sensitive actions, recoverability via backups, and repeatable deployments via CI/CD. No change to product intent.
+
+- [ ] Security headers implemented in code (HSTS, X-Frame-Options, X-Content-Type-Options, Referrer-Policy; then CSP and Permissions-Policy per ARCHITECTURE) — in Express or at the edge
+- [ ] Explicit CORS middleware on Express (strict, own domain per ARCHITECTURE; required if API is ever called from another origin)
+- [ ] Request-id (or correlation-id) in pino-http; logged on every request and error for traceability
+- [ ] Audit log: table or equivalent for sensitive mutations (e.g. delete user, delete application, change application status); who did what, when — at least for compliance-sensitive actions
+- [ ] Backup/restore: document and implement strategy for DB and config (replace ARCHITECTURE [IMPL] with concrete steps)
+- [ ] CI/CD: implement pipeline (e.g. GitHub Actions per ARCHITECTURE [IMPL]); automated, repeatable deployments
+
+When the above are done, update arch_assessment.md to reflect current state and any remaining gaps.
 
 ---
 

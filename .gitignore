@@ -44,7 +44,8 @@ next-env.d.ts
 .specstory/
 
 # project rules (local only; do not commit)
+.cursorrules
 
 # personl docs
 /DOCUMENTATION/PERFORMANCE_ANNOTATIONS.md
-.cursorrules
+/DOCUMENTATION/arch_assessment.md
