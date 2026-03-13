@@ -4,6 +4,8 @@
 
 Deliver a functional product as fast as possible. Every milestone builds toward launch.
 
+**Sequence:** The **Performance improvements** section (after Milestone 4) is done before moving on to Post-Milestone 4, Milestone 5, or other new features. May be executed in parallel with UI work; see PERFORMANCE_ANNOTATIONS.md for overlap and ownership. Items marked **ARCHITECTURE** require updating ARCHITECTURE.md before or when implementing — check that section before you start them.
+
 ---
 
 ## Milestone 0 — Project Foundation
@@ -140,6 +142,37 @@ Deliver a functional product as fast as possible. Every milestone builds toward 
 - [x] Empty state when no data exists
 
 _Milestone 4 complete 2026-03-10_
+
+---
+
+## Performance improvements (do before next milestones)
+
+**Goal:** Implement the full performance plan so the only unbounded path is capped and key flows are faster. Done before moving on to Post-Milestone 4, Milestone 5, or new features. May run in parallel with UI work; assign ownership for overlapping areas (resume list, application detail) — see PERFORMANCE_ANNOTATIONS.md.
+
+**Reference:** DOCUMENTATION/PERFORMANCE_ANNOTATIONS.md (Big-O, optimal modifications, pros/cons, results, planning considerations).
+
+**ARCHITECTURE.md impact:** Any item marked **ARCHITECTURE** below changes or adds a locked-in decision in ARCHITECTURE.md. Before implementing that item, update ARCHITECTURE.md (and optionally API.md) so the doc matches the new behavior; then implement.
+
+---
+
+**High priority**
+
+- [ ] Resumes list: add offset pagination (server: `?page=1&limit=20`, max limit 100, return `{ items, page, limit, total }`; frontend: useResumesList with page/limit, ResumesList UI)
+- [ ] Application detail: parallel prefetch (frontend only: pass route `id` into both useApplication(id) and useInterviewsForApplication(id) so both requests run in parallel; no API change)
+- [ ] Application detail (optional alternative): combined endpoint e.g. `GET /api/v1/applications/:id?include=interviews` returning `{ application, interviews }`; frontend single fetch (update DOCUMENTATION/API.md; no ARCHITECTURE change)
+
+**Medium priority**
+
+- [ ] Notes: no-op PATCH returns first-fetched row (server: in updateNote, when no changes, return the row from the initial getNoteById instead of calling getNoteById again)
+- [ ] Interviews: no-op PATCH returns first-fetched row (server: in updateInterview, when no changes, return the row from the initial getInterviewById instead of calling getInterviewById again)
+- [ ] Resumes: setActive in two writes (server: replace read + bulk update + single update with one or two writes; e.g. conditional update so “clear others” is O(1))
+- [ ] Auth: optional in-process user cache — **ARCHITECTURE** (server: short-TTL in-memory cache keyed by JWT sub in requireAuth; reduces DB user lookup per request. ARCHITECTURE.md currently: “Backend verifies JWT signature only — no session storage.” Decide whether to document “optional in-process user cache by sub, TTL e.g. 60s” as an allowed optimization; update ARCHITECTURE.md before or when implementing.)
+
+**Low priority**
+
+- [ ] Notes create: parallelize ownership check with insert (server: run 0 or 1 ownership check in Promise.all before insert; O unchanged, code structure)
+- [ ] Applications list: cursor-based pagination — **ARCHITECTURE** (server: accept `cursor` + `limit`, return `nextCursor`; select O(k) per page. ARCHITECTURE.md currently: “Pagination: offset-based — ?page=1&limit=20”. Adding cursor changes that decision; update ARCHITECTURE.md to allow cursor and/or document both; update API if both styles coexist.)
+- [ ] Dashboard: optional cache TTL increase (server: e.g. 60s to 120s in dashboard/cache.ts; implementation detail, no ARCHITECTURE change)
 
 ---
 
