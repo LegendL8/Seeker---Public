@@ -1,17 +1,17 @@
-import { getApiBaseUrl } from '@/lib/api';
-import type { Application, ListApplicationsResponse } from './types';
+import { getApiBaseUrl } from "@/lib/api";
+import type { Application, ListApplicationsResponse } from "./types";
 
 export async function fetchApplicationsList(
   page: number,
-  limit: number
+  limit: number,
 ): Promise<ListApplicationsResponse> {
   const base = getApiBaseUrl();
   const url = `${base}/v1/applications?page=${encodeURIComponent(page)}&limit=${encodeURIComponent(limit)}`;
-  const res = await fetch(url, { credentials: 'include' });
+  const res = await fetch(url, { credentials: "include" });
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));
     const message =
-      typeof body?.message === 'string' ? body.message : res.statusText;
+      typeof body?.message === "string" ? body.message : res.statusText;
     throw new Error(message);
   }
   return res.json() as Promise<ListApplicationsResponse>;
@@ -31,19 +31,19 @@ export interface CreateApplicationInput {
 }
 
 export async function createApplication(
-  body: CreateApplicationInput
+  body: CreateApplicationInput,
 ): Promise<Application> {
   const base = getApiBaseUrl();
   const res = await fetch(`${base}/v1/applications`, {
-    method: 'POST',
-    credentials: 'include',
-    headers: { 'Content-Type': 'application/json' },
+    method: "POST",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
   });
   if (!res.ok) {
     const data = await res.json().catch(() => ({}));
     const message =
-      typeof data?.message === 'string' ? data.message : res.statusText;
+      typeof data?.message === "string" ? data.message : res.statusText;
     throw new Error(message);
   }
   return res.json() as Promise<Application>;
@@ -52,12 +52,12 @@ export async function createApplication(
 export async function fetchApplicationById(id: string): Promise<Application> {
   const base = getApiBaseUrl();
   const res = await fetch(`${base}/v1/applications/${encodeURIComponent(id)}`, {
-    credentials: 'include',
+    credentials: "include",
   });
   if (!res.ok) {
     const data = await res.json().catch(() => ({}));
     const message =
-      typeof data?.message === 'string' ? data.message : res.statusText;
+      typeof data?.message === "string" ? data.message : res.statusText;
     throw new Error(message);
   }
   return res.json() as Promise<Application>;
@@ -78,19 +78,19 @@ export interface UpdateApplicationInput {
 
 export async function updateApplication(
   id: string,
-  body: UpdateApplicationInput
+  body: UpdateApplicationInput,
 ): Promise<Application> {
   const base = getApiBaseUrl();
   const res = await fetch(`${base}/v1/applications/${encodeURIComponent(id)}`, {
-    method: 'PATCH',
-    credentials: 'include',
-    headers: { 'Content-Type': 'application/json' },
+    method: "PATCH",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
   });
   if (!res.ok) {
     const data = await res.json().catch(() => ({}));
     const message =
-      typeof data?.message === 'string' ? data.message : res.statusText;
+      typeof data?.message === "string" ? data.message : res.statusText;
     throw new Error(message);
   }
   return res.json() as Promise<Application>;
@@ -99,13 +99,13 @@ export async function updateApplication(
 export async function deleteApplication(id: string): Promise<void> {
   const base = getApiBaseUrl();
   const res = await fetch(`${base}/v1/applications/${encodeURIComponent(id)}`, {
-    method: 'DELETE',
-    credentials: 'include',
+    method: "DELETE",
+    credentials: "include",
   });
   if (!res.ok) {
     const data = await res.json().catch(() => ({}));
     const message =
-      typeof data?.message === 'string' ? data.message : res.statusText;
+      typeof data?.message === "string" ? data.message : res.statusText;
     throw new Error(message);
   }
 }

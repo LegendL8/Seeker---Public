@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useRouter } from 'next/navigation';
-import { deleteApplication } from '../api';
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
+import { deleteApplication } from "../api";
 
 export function useDeleteApplication(id: string) {
   const queryClient = useQueryClient();
@@ -11,9 +11,9 @@ export function useDeleteApplication(id: string) {
   return useMutation({
     mutationFn: () => deleteApplication(id),
     onSuccess: () => {
-      queryClient.removeQueries({ queryKey: ['applications', id] });
-      queryClient.invalidateQueries({ queryKey: ['applications', 'list'] });
-      router.push('/applications');
+      queryClient.removeQueries({ queryKey: ["applications", id] });
+      queryClient.invalidateQueries({ queryKey: ["applications", "list"] });
+      router.push("/applications");
     },
   });
 }

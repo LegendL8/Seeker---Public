@@ -1,5 +1,5 @@
-import type { ErrorRequestHandler } from 'express';
-import { logger } from './logger';
+import type { ErrorRequestHandler } from "express";
+import { logger } from "./logger";
 
 export class AppError extends Error {
   readonly code: string;
@@ -7,7 +7,7 @@ export class AppError extends Error {
 
   constructor(code: string, message: string, statusCode: number) {
     super(message);
-    this.name = 'AppError';
+    this.name = "AppError";
     this.code = code;
     this.statusCode = statusCode;
     Object.setPrototypeOf(this, AppError.prototype);
@@ -16,32 +16,32 @@ export class AppError extends Error {
 
 export class AuthError extends AppError {
   constructor(message: string) {
-    super('UNAUTHORIZED', message, 401);
-    this.name = 'AuthError';
+    super("UNAUTHORIZED", message, 401);
+    this.name = "AuthError";
     Object.setPrototypeOf(this, AuthError.prototype);
   }
 }
 
 export class ValidationError extends AppError {
-  constructor(message: string, code = 'VALIDATION_ERROR') {
+  constructor(message: string, code = "VALIDATION_ERROR") {
     super(code, message, 400);
-    this.name = 'ValidationError';
+    this.name = "ValidationError";
     Object.setPrototypeOf(this, ValidationError.prototype);
   }
 }
 
 export class NotFoundError extends AppError {
-  constructor(message: string, code = 'NOT_FOUND') {
+  constructor(message: string, code = "NOT_FOUND") {
     super(code, message, 404);
-    this.name = 'NotFoundError';
+    this.name = "NotFoundError";
     Object.setPrototypeOf(this, NotFoundError.prototype);
   }
 }
 
 export class ForbiddenError extends AppError {
-  constructor(message: string, code = 'FORBIDDEN') {
+  constructor(message: string, code = "FORBIDDEN") {
     super(code, message, 403);
-    this.name = 'ForbiddenError';
+    this.name = "ForbiddenError";
     Object.setPrototypeOf(this, ForbiddenError.prototype);
   }
 }
@@ -57,7 +57,10 @@ export const errorHandler: ErrorRequestHandler = (err, _req, res, next) => {
   }
 
   if (isAppError(err)) {
-    logger.warn({ err, code: err.code, statusCode: err.statusCode }, err.message);
+    logger.warn(
+      { err, code: err.code, statusCode: err.statusCode },
+      err.message,
+    );
     res.status(err.statusCode).json({
       error: err.code,
       message: err.message,
@@ -67,27 +70,27 @@ export const errorHandler: ErrorRequestHandler = (err, _req, res, next) => {
   }
 
   const multerErr = err as { code?: string; message?: string };
-  if (multerErr.code === 'LIMIT_FILE_SIZE') {
+  if (multerErr.code === "LIMIT_FILE_SIZE") {
     res.status(400).json({
-      error: 'VALIDATION_ERROR',
-      message: 'File too large. Maximum size is 5MB.',
+      error: "VALIDATION_ERROR",
+      message: "File too large. Maximum size is 5MB.",
       statusCode: 400,
     });
     return;
   }
-  if (multerErr.code === 'LIMIT_UNEXPECTED_FILE') {
+  if (multerErr.code === "LIMIT_UNEXPECTED_FILE") {
     res.status(400).json({
-      error: 'VALIDATION_ERROR',
+      error: "VALIDATION_ERROR",
       message: 'Unexpected file field. Use "file" for the upload.',
       statusCode: 400,
     });
     return;
   }
 
-  logger.error({ err }, 'Unhandled error');
+  logger.error({ err }, "Unhandled error");
   res.status(500).json({
-    error: 'INTERNAL_ERROR',
-    message: 'An unexpected error occurred',
+    error: "INTERNAL_ERROR",
+    message: "An unexpected error occurred",
     statusCode: 500,
   });
 };

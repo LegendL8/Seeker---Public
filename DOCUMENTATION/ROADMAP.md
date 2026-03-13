@@ -1,11 +1,13 @@
 # Seeker — Project Roadmap
 
 ## Goal
+
 Deliver a functional product as fast as possible. Every milestone builds toward launch.
 
 ---
 
 ## Milestone 0 — Project Foundation
+
 **Goal:** Working local development environment with nothing broken before a single feature is built.
 
 - [x] Next.js scaffolded with TypeScript, ESLint, Prettier
@@ -26,104 +28,108 @@ Deliver a functional product as fast as possible. Every milestone builds toward 
 ---
 
 ## Milestone 1 — Authentication
+
 **Goal:** A real user can sign up, log in, and log out using Auth0.
 
 - ~~[ ] Auth0 integrated with Next.js frontend~~
 - [x] Auth0 integrated with Next.js frontend
-*Updated 2026-03-09*
+      _Updated 2026-03-09_
 - ~~[ ] JWT access tokens issued on login~~
 - [x] JWT access tokens issued on login (via Auth0 SDK; JWT for API requires Auth0 API + audience, see DOCUMENTATION/AUTH0.md)
-*Updated 2026-03-09*
+      _Updated 2026-03-09_
 - ~~[ ] Refresh tokens stored in httpOnly cookies~~
 - [x] Refresh tokens stored in httpOnly cookies (session cookie via Auth0 SDK)
-*Updated 2026-03-09*
+      _Updated 2026-03-09_
 - ~~[ ] Automatic token refresh before expiration~~
 - [x] Automatic token refresh before expiration (SDK handles on getSession/getAccessToken)
-*Updated 2026-03-09*
+      _Updated 2026-03-09_
 - ~~[ ] Backend JWT verification middleware on Express~~
 - [x] Backend JWT verification middleware on Express (`server/auth/middleware.ts` requireAuth)
-*Updated 2026-03-09*
+      _Updated 2026-03-09_
 - ~~[ ] Protected routes — unauthenticated users redirected to login~~
 - [x] Protected routes — unauthenticated users redirected to login (all routes except `/auth/*`; landing/login to be exposed later)
-*Updated 2026-03-09*
+      _Updated 2026-03-09_
 - ~~[ ] Basic user profile stored in PostgreSQL on first login~~
 - [x] Basic user profile stored in PostgreSQL on first login (ensureUserFromToken in auth middleware; GET /api/v1/me)
-*Updated 2026-03-09*
+      _Updated 2026-03-09_
 - ~~[ ] Logout clears tokens and redirects~~
 - [x] Logout clears tokens and redirects
-*Updated 2026-03-09*
+      _Updated 2026-03-09_
 
 ---
 
 ## Milestone 2 — Job Application Tracking
+
 **Goal:** A logged-in user can add, view, update, and delete job applications.
 
 - ~~[ ] Applications database table and Drizzle schema~~
 - [x] Applications database table and Drizzle schema (existed; used as-is)
-*Updated 2026-03-09*
+      _Updated 2026-03-09_
 - ~~[ ] REST API endpoints — GET, POST, PATCH, DELETE `/api/v1/applications`~~
 - [x] REST API endpoints — GET, POST, PATCH, DELETE `/api/v1/applications` (server/applications/routes.ts, offset pagination)
-*Updated 2026-03-09*
+      _Updated 2026-03-09_
 - ~~[ ] Application status union type~~
 - [x] Application status union type (saved | applied | interviewing | offer | rejected; server/applications/types.ts)
-*Updated 2026-03-09*
+      _Updated 2026-03-09_
 - ~~[ ] Add application form with Zod validation~~
 - [x] Add application form with Zod validation (src/features/applications/AddApplicationForm.tsx, schemas.ts; POST via proxy)
-*Updated 2026-03-09*
+      _Updated 2026-03-09_
 - ~~[ ] Applications list view with pagination~~
 - [x] Applications list view with pagination (src/features/applications/ApplicationsList.tsx, /applications page; TanStack Query)
-*Updated 2026-03-09*
+      _Updated 2026-03-09_
 - ~~[ ] Application detail view~~
 - [x] Application detail view (ApplicationDetail.tsx, /applications/[id]; useApplication, GET by id)
-*Updated 2026-03-09*
+      _Updated 2026-03-09_
 - ~~[ ] Edit and delete application~~
 - [x] Edit and delete application (EditApplicationForm at /applications/[id]/edit, PATCH; delete with confirm on detail)
-*Updated 2026-03-09*
+      _Updated 2026-03-09_
 - ~~[ ] TanStack Query for all data fetching~~
 - [x] TanStack Query for all data fetching (QueryClientProvider in app, useApplicationsList, useCreateApplication; BFF proxy at /api/proxy)
-*Updated 2026-03-09*
+      _Updated 2026-03-09_
 - ~~[ ] Custom error classes wired up~~
 - [x] Custom error classes wired up (Milestone 1; server/errors.ts, central errorHandler)
-*Updated 2026-03-09*
+      _Updated 2026-03-09_
 - ~~[ ] Standardized error responses across all endpoints~~
 - [x] Standardized error responses across auth and health (Milestone 1; format per ARCHITECTURE)
-*Updated 2026-03-09*
+      _Updated 2026-03-09_
 - ~~[ ] Rate limiting on all application endpoints~~
 - [x] Rate limiting on all application endpoints (express-rate-limit: global 100/min per IP, applications 60/min per user)
-*Updated 2026-03-09*
+      _Updated 2026-03-09_
 - ~~[ ] Seed file updated with sample applications~~
 - [x] Seed file updated with sample applications (seed.active.ts: user + 6 applications; npm run db:seed:active)
-*Updated 2026-03-09*
+      _Updated 2026-03-09_
 
 ---
 
 ## Milestone 3 — Interview Tracking & Notes
+
 **Goal:** A user can log interviews tied to applications and add notes to each.
 
 - [x] Interviews database table and Drizzle schema (existed in initial migration)
-*Updated 2026-03-10*
+      _Updated 2026-03-10_
 - [x] Notes database table and Drizzle schema (existed in initial migration)
-*Updated 2026-03-10*
+      _Updated 2026-03-10_
 - [x] REST API endpoints for interviews (nested under applications + standalone GET/PATCH/DELETE)
-*Updated 2026-03-10*
+      _Updated 2026-03-10_
 - [x] REST API endpoints for notes (list, get, create, update, delete; filter by typeTag and relational ids)
-*Updated 2026-03-10*
+      _Updated 2026-03-10_
 - [x] Add interview form (AddInterviewForm on application detail)
-*Updated 2026-03-10*
+      _Updated 2026-03-10_
 - [x] Interview type union type (phone | technical | behavioral | onsite | final; server/interviews/types.ts)
-*Updated 2026-03-10*
+      _Updated 2026-03-10_
 - [x] Notes tab — standalone notes with type and relational tags (/notes, NotesList, filters)
-*Updated 2026-03-10*
+      _Updated 2026-03-10_
 - [x] Notes editor — editable text area with debounced saves (NoteEditor, 500ms debounce)
-*Updated 2026-03-10*
+      _Updated 2026-03-10_
 - [x] Interview list tied to application detail view (InterviewList on ApplicationDetail)
-*Updated 2026-03-10*
+      _Updated 2026-03-10_
 - [x] Seed file updated with sample interviews and notes (seed.active.ts: 4 interviews, 5 notes)
-*Updated 2026-03-10*
+      _Updated 2026-03-10_
 
 ---
 
 ## Milestone 4 — Dashboard & Metrics
+
 **Goal:** A user lands on a dashboard showing meaningful metrics about their job search.
 
 - [x] Dashboard page as authenticated home screen
@@ -133,7 +139,7 @@ Deliver a functional product as fast as possible. Every milestone builds toward 
 - [x] Responsive layout — clean and impressive visually
 - [x] Empty state when no data exists
 
-*Milestone 4 complete 2026-03-10*
+_Milestone 4 complete 2026-03-10_
 
 ---
 
@@ -151,6 +157,7 @@ See ARCHITECTURE.md Layer 4 (Repository Strategy, Post-Milestone 4) for details.
 ---
 
 ## Milestone 5 — Resume Upload
+
 **Goal:** A user can upload a resume and attach it to their profile or an application.
 
 - [ ] AWS S3 bucket configured
@@ -164,6 +171,7 @@ See ARCHITECTURE.md Layer 4 (Repository Strategy, Post-Milestone 4) for details.
 ---
 
 ## Milestone 6 — Polish & Launch Prep
+
 **Goal:** App looks and feels professional and ready for use.
 
 - [ ] CSS polish across all views
@@ -191,6 +199,7 @@ See ARCHITECTURE.md Layer 4 (Repository Strategy, Post-Milestone 4) for details.
 ---
 
 ## Definition of Done (Per Milestone)
+
 1. All features in the milestone working locally
 2. All relevant tests pass
 3. No TypeScript errors

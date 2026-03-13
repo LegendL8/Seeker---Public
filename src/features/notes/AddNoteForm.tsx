@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useCreateNote } from './hooks/useCreateNote';
-import type { CreateNoteInput } from './types';
-import styles from './AddNoteForm.module.css';
+import { useState } from "react";
+import { useCreateNote } from "./hooks/useCreateNote";
+import type { CreateNoteInput } from "./types";
+import styles from "./AddNoteForm.module.css";
 
 const TYPE_TAGS = [
-  { value: 'general', label: 'General' },
-  { value: 'interview', label: 'Interview' },
-  { value: 'job_description', label: 'Job description' },
-  { value: 'research', label: 'Research' },
+  { value: "general", label: "General" },
+  { value: "interview", label: "Interview" },
+  { value: "job_description", label: "Job description" },
+  { value: "research", label: "Research" },
 ];
 
 export interface AddNoteFormProps {
@@ -17,8 +17,8 @@ export interface AddNoteFormProps {
 }
 
 export function AddNoteForm({ onSuccess }: AddNoteFormProps) {
-  const [content, setContent] = useState('');
-  const [typeTag, setTypeTag] = useState<CreateNoteInput['typeTag']>('general');
+  const [content, setContent] = useState("");
+  const [typeTag, setTypeTag] = useState<CreateNoteInput["typeTag"]>("general");
   const createMutation = useCreateNote();
 
   function handleSubmit(e: React.FormEvent) {
@@ -29,10 +29,10 @@ export function AddNoteForm({ onSuccess }: AddNoteFormProps) {
       { content: trimmed, typeTag },
       {
         onSuccess: () => {
-          setContent('');
+          setContent("");
           onSuccess?.();
         },
-      }
+      },
     );
   }
 
@@ -59,7 +59,7 @@ export function AddNoteForm({ onSuccess }: AddNoteFormProps) {
           id="note-typeTag"
           value={typeTag}
           onChange={(e) =>
-            setTypeTag(e.target.value as CreateNoteInput['typeTag'])
+            setTypeTag(e.target.value as CreateNoteInput["typeTag"])
           }
           className={styles.select}
           disabled={createMutation.isPending}
@@ -75,7 +75,7 @@ export function AddNoteForm({ onSuccess }: AddNoteFormProps) {
         <p className={styles.error}>
           {createMutation.error instanceof Error
             ? createMutation.error.message
-            : 'Failed to create note'}
+            : "Failed to create note"}
         </p>
       )}
       <button
@@ -83,7 +83,7 @@ export function AddNoteForm({ onSuccess }: AddNoteFormProps) {
         className={styles.submitBtn}
         disabled={createMutation.isPending || !content.trim()}
       >
-        {createMutation.isPending ? 'Adding…' : 'Add note'}
+        {createMutation.isPending ? "Adding…" : "Add note"}
       </button>
     </form>
   );

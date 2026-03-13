@@ -1,7 +1,7 @@
-import * as cache from './dashboard/cache';
-import { getMetrics } from './dashboard/service';
+import * as cache from "./dashboard/cache";
+import { getMetrics } from "./dashboard/service";
 
-const mockUserId = '550e8400-e29b-41d4-a716-446655440001';
+const mockUserId = "550e8400-e29b-41d4-a716-446655440001";
 
 const mockMetrics = {
   totalApplications: 6,
@@ -18,17 +18,17 @@ const mockMetrics = {
   rejectionsReceived: 1,
 };
 
-describe('getMetrics', () => {
+describe("getMetrics", () => {
   beforeEach(() => {
-    jest.spyOn(cache, 'getCachedMetrics').mockResolvedValue(null);
-    jest.spyOn(cache, 'setCachedMetrics').mockResolvedValue(undefined);
+    jest.spyOn(cache, "getCachedMetrics").mockResolvedValue(null);
+    jest.spyOn(cache, "setCachedMetrics").mockResolvedValue(undefined);
   });
 
   afterEach(() => {
     jest.restoreAllMocks();
   });
 
-  it('returns cached metrics when cache hit', async () => {
+  it("returns cached metrics when cache hit", async () => {
     (cache.getCachedMetrics as jest.Mock).mockResolvedValueOnce(mockMetrics);
 
     const result = await getMetrics(mockUserId);
@@ -38,21 +38,21 @@ describe('getMetrics', () => {
     expect(result).toEqual(mockMetrics);
   });
 
-  it('queries db and caches when cache miss', async () => {
-    const db = jest.requireActual('./db').db;
+  it("queries db and caches when cache miss", async () => {
+    const db = jest.requireActual("./db").db;
     let selectCallCount = 0;
-    const selectSpy = jest.spyOn(db, 'select').mockImplementation(() => {
+    const selectSpy = jest.spyOn(db, "select").mockImplementation(() => {
       selectCallCount++;
       if (selectCallCount === 1) {
         return {
           from: jest.fn().mockReturnValue({
             where: jest.fn().mockReturnValue({
               groupBy: jest.fn().mockResolvedValue([
-                { status: 'saved', count: 1 },
-                { status: 'applied', count: 2 },
-                { status: 'interviewing', count: 1 },
-                { status: 'offer', count: 1 },
-                { status: 'rejected', count: 1 },
+                { status: "saved", count: 1 },
+                { status: "applied", count: 2 },
+                { status: "interviewing", count: 1 },
+                { status: "offer", count: 1 },
+                { status: "rejected", count: 1 },
               ]),
             }),
           }),
@@ -60,9 +60,11 @@ describe('getMetrics', () => {
       }
       return {
         from: jest.fn().mockReturnValue({
-          where: jest.fn().mockResolvedValue(
-            selectCallCount === 2 ? [{ count: 6 }] : [{ count: 4 }]
-          ),
+          where: jest
+            .fn()
+            .mockResolvedValue(
+              selectCallCount === 2 ? [{ count: 6 }] : [{ count: 4 }],
+            ),
         }),
       } as unknown as ReturnType<typeof db.select>;
     });
@@ -70,7 +72,10 @@ describe('getMetrics', () => {
     const result = await getMetrics(mockUserId);
 
     expect(cache.getCachedMetrics).toHaveBeenCalledWith(mockUserId);
-    expect(cache.setCachedMetrics).toHaveBeenCalledWith(mockUserId, expect.any(Object));
+    expect(cache.setCachedMetrics).toHaveBeenCalledWith(
+      mockUserId,
+      expect.any(Object),
+    );
     expect(result.totalApplications).toBe(6);
     expect(result.applicationsByStatus.saved).toBe(1);
     expect(result.applicationsByStatus.applied).toBe(2);
@@ -84,10 +89,10 @@ describe('getMetrics', () => {
     selectSpy.mockRestore();
   });
 
-  it('returns all zeros and interview rate 0 when user has no data', async () => {
-    const db = jest.requireActual('./db').db;
+  it("returns all zeros and interview rate 0 when user has no data", async () => {
+    const db = jest.requireActual("./db").db;
     let selectCallCount = 0;
-    const selectSpy = jest.spyOn(db, 'select').mockImplementation(() => {
+    const selectSpy = jest.spyOn(db, "select").mockImplementation(() => {
       selectCallCount++;
       if (selectCallCount === 1) {
         return {
@@ -122,18 +127,18 @@ describe('getMetrics', () => {
     selectSpy.mockRestore();
   });
 
-  it('ignores unknown status in groupBy rows', async () => {
-    const db = jest.requireActual('./db').db;
+  it("ignores unknown status in groupBy rows", async () => {
+    const db = jest.requireActual("./db").db;
     let selectCallCount = 0;
-    const selectSpy = jest.spyOn(db, 'select').mockImplementation(() => {
+    const selectSpy = jest.spyOn(db, "select").mockImplementation(() => {
       selectCallCount++;
       if (selectCallCount === 1) {
         return {
           from: jest.fn().mockReturnValue({
             where: jest.fn().mockReturnValue({
               groupBy: jest.fn().mockResolvedValue([
-                { status: 'applied', count: 2 },
-                { status: 'unknown_status', count: 99 },
+                { status: "applied", count: 2 },
+                { status: "unknown_status", count: 99 },
               ]),
             }),
           }),
@@ -141,9 +146,11 @@ describe('getMetrics', () => {
       }
       return {
         from: jest.fn().mockReturnValue({
-          where: jest.fn().mockResolvedValue(
-            selectCallCount === 2 ? [{ count: 2 }] : [{ count: 0 }]
-          ),
+          where: jest
+            .fn()
+            .mockResolvedValue(
+              selectCallCount === 2 ? [{ count: 2 }] : [{ count: 0 }],
+            ),
         }),
       } as unknown as ReturnType<typeof db.select>;
     });

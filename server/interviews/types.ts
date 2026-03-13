@@ -1,16 +1,21 @@
-import z from 'zod';
+import z from "zod";
 
 export const INTERVIEW_TYPES = [
-  'phone',
-  'technical',
-  'behavioral',
-  'onsite',
-  'final',
+  "phone",
+  "technical",
+  "behavioral",
+  "onsite",
+  "final",
 ] as const;
 
 export type InterviewType = (typeof INTERVIEW_TYPES)[number];
 
-export const INTERVIEW_OUTCOMES = ['pending', 'completed', 'cancelled', 'no_show'] as const;
+export const INTERVIEW_OUTCOMES = [
+  "pending",
+  "completed",
+  "cancelled",
+  "no_show",
+] as const;
 
 export type InterviewOutcome = (typeof INTERVIEW_OUTCOMES)[number];
 

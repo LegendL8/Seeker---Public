@@ -1,46 +1,46 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { useParams } from 'next/navigation';
-import { useState } from 'react';
-import { InterviewList } from '@/features/interviews/InterviewList';
-import { useApplication } from './hooks/useApplication';
-import { useDeleteApplication } from './hooks/useDeleteApplication';
-import styles from './ApplicationDetail.module.css';
+import Link from "next/link";
+import { useParams } from "next/navigation";
+import { useState } from "react";
+import { InterviewList } from "@/features/interviews/InterviewList";
+import { useApplication } from "./hooks/useApplication";
+import { useDeleteApplication } from "./hooks/useDeleteApplication";
+import styles from "./ApplicationDetail.module.css";
 
 function formatDate(iso: string | null): string {
-  if (!iso) return '—';
+  if (!iso) return "—";
   try {
     return new Date(iso).toLocaleDateString(undefined, {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
+      year: "numeric",
+      month: "short",
+      day: "numeric",
     });
   } catch {
-    return '—';
+    return "—";
   }
 }
 
 function formatDateTime(iso: string | null): string {
-  if (!iso) return '—';
+  if (!iso) return "—";
   try {
     return new Date(iso).toLocaleString(undefined, {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   } catch {
-    return '—';
+    return "—";
   }
 }
 
 export function ApplicationDetail() {
   const params = useParams();
-  const id = typeof params?.id === 'string' ? params.id : null;
+  const id = typeof params?.id === "string" ? params.id : null;
   const { data: application, isPending, isError, error } = useApplication(id);
-  const deleteMutation = useDeleteApplication(id ?? '');
+  const deleteMutation = useDeleteApplication(id ?? "");
   const [confirmDelete, setConfirmDelete] = useState(false);
 
   if (id === null) {
@@ -54,7 +54,7 @@ export function ApplicationDetail() {
   if (isError || !application) {
     return (
       <p className={styles.error}>
-        {error instanceof Error ? error.message : 'Application not found.'}
+        {error instanceof Error ? error.message : "Application not found."}
       </p>
     );
   }
@@ -86,7 +86,7 @@ export function ApplicationDetail() {
         <dd className={styles.dd}>{application.status}</dd>
 
         <dt className={styles.dt}>Location</dt>
-        <dd className={styles.dd}>{application.location ?? '—'}</dd>
+        <dd className={styles.dd}>{application.location ?? "—"}</dd>
 
         <dt className={styles.dt}>Job posting URL</dt>
         <dd className={styles.dd}>
@@ -100,7 +100,7 @@ export function ApplicationDetail() {
               {application.jobPostingUrl}
             </a>
           ) : (
-            '—'
+            "—"
           )}
         </dd>
 
@@ -110,15 +110,15 @@ export function ApplicationDetail() {
             ? [application.salaryMin, application.salaryMax]
                 .filter((n) => n != null)
                 .map((n) => n?.toLocaleString())
-                .join(' – ')
-            : '—'}
+                .join(" – ")
+            : "—"}
         </dd>
 
         <dt className={styles.dt}>Applied date</dt>
         <dd className={styles.dd}>{formatDate(application.appliedAt)}</dd>
 
         <dt className={styles.dt}>Source</dt>
-        <dd className={styles.dd}>{application.source ?? '—'}</dd>
+        <dd className={styles.dd}>{application.source ?? "—"}</dd>
 
         <dt className={styles.dt}>Created</dt>
         <dd className={styles.dd}>{formatDateTime(application.createdAt)}</dd>
@@ -132,7 +132,9 @@ export function ApplicationDetail() {
       <div className={styles.deleteSection}>
         {confirmDelete ? (
           <div className={styles.deleteConfirm}>
-            <p className={styles.deleteText}>Delete this application? This cannot be undone.</p>
+            <p className={styles.deleteText}>
+              Delete this application? This cannot be undone.
+            </p>
             <div className={styles.deleteActions}>
               <button
                 type="button"
@@ -140,7 +142,7 @@ export function ApplicationDetail() {
                 onClick={handleDelete}
                 disabled={deleteMutation.isPending}
               >
-                {deleteMutation.isPending ? 'Deleting…' : 'Yes, delete'}
+                {deleteMutation.isPending ? "Deleting…" : "Yes, delete"}
               </button>
               <button
                 type="button"

@@ -1,44 +1,55 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import Link from "next/link";
+import { useState, useEffect } from "react";
 import {
   updateApplicationFormSchema,
   type UpdateApplicationFormInput,
   type UpdateApplicationFormValues,
-} from './schemas';
-import { useUpdateApplication } from './hooks/useUpdateApplication';
-import { useResumesList } from '@/features/resumes/hooks/useResumesList';
-import type { Application } from './types';
-import styles from './AddApplicationForm.module.css';
+} from "./schemas";
+import { useUpdateApplication } from "./hooks/useUpdateApplication";
+import { useResumesList } from "@/features/resumes/hooks/useResumesList";
+import type { Application } from "./types";
+import styles from "./AddApplicationForm.module.css";
 
-const STATUS_OPTIONS: { value: NonNullable<UpdateApplicationFormValues['status']>; label: string }[] = [
-  { value: 'saved', label: 'Saved' },
-  { value: 'applied', label: 'Applied' },
-  { value: 'interviewing', label: 'Interviewing' },
-  { value: 'offer', label: 'Offer' },
-  { value: 'rejected', label: 'Rejected' },
+const STATUS_OPTIONS: {
+  value: NonNullable<UpdateApplicationFormValues["status"]>;
+  label: string;
+}[] = [
+  { value: "saved", label: "Saved" },
+  { value: "applied", label: "Applied" },
+  { value: "interviewing", label: "Interviewing" },
+  { value: "offer", label: "Offer" },
+  { value: "rejected", label: "Rejected" },
 ];
 
 function applicationToFormInput(app: Application): UpdateApplicationFormInput {
   return {
     jobTitle: app.jobTitle,
-    status: app.status as UpdateApplicationFormValues['status'],
-    jobPostingUrl: app.jobPostingUrl ?? '',
-    location: app.location ?? '',
-    salaryMin: app.salaryMin != null ? String(app.salaryMin) : '',
-    salaryMax: app.salaryMax != null ? String(app.salaryMax) : '',
-    appliedAt: app.appliedAt ? app.appliedAt.slice(0, 10) : '',
-    source: app.source ?? '',
-    resumeId: app.resumeId ?? '',
+    status: app.status as UpdateApplicationFormValues["status"],
+    jobPostingUrl: app.jobPostingUrl ?? "",
+    location: app.location ?? "",
+    salaryMin: app.salaryMin != null ? String(app.salaryMin) : "",
+    salaryMax: app.salaryMax != null ? String(app.salaryMax) : "",
+    appliedAt: app.appliedAt ? app.appliedAt.slice(0, 10) : "",
+    source: app.source ?? "",
+    resumeId: app.resumeId ?? "",
   };
 }
 
-export function EditApplicationForm({ application, id }: { application: Application; id: string }) {
+export function EditApplicationForm({
+  application,
+  id,
+}: {
+  application: Application;
+  id: string;
+}) {
   const [values, setValues] = useState<UpdateApplicationFormInput>(() =>
-    applicationToFormInput(application)
+    applicationToFormInput(application),
   );
-  const [fieldErrors, setFieldErrors] = useState<Partial<Record<keyof UpdateApplicationFormValues, string>>>({});
+  const [fieldErrors, setFieldErrors] = useState<
+    Partial<Record<keyof UpdateApplicationFormValues, string>>
+  >({});
   const { mutate, isPending, error: submitError } = useUpdateApplication(id);
   const { data: resumesData } = useResumesList();
   const resumes = resumesData?.items ?? [];
@@ -48,7 +59,7 @@ export function EditApplicationForm({ application, id }: { application: Applicat
   }, [application]);
 
   function handleChange(
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) {
     const { name, value } = e.target;
     setValues((prev) => ({ ...prev, [name]: value }));
@@ -63,10 +74,11 @@ export function EditApplicationForm({ application, id }: { application: Applicat
     setFieldErrors({});
     const parsed = updateApplicationFormSchema.safeParse(values);
     if (!parsed.success) {
-      const errors: Partial<Record<keyof UpdateApplicationFormValues, string>> = {};
+      const errors: Partial<Record<keyof UpdateApplicationFormValues, string>> =
+        {};
       for (const issue of parsed.error.issues) {
         const path = issue.path[0];
-        if (typeof path === 'string') {
+        if (typeof path === "string") {
           const key = path as keyof UpdateApplicationFormValues;
           if (!errors[key]) errors[key] = issue.message;
         }
@@ -106,7 +118,7 @@ export function EditApplicationForm({ application, id }: { application: Applicat
             id="jobTitle"
             name="jobTitle"
             type="text"
-            value={values.jobTitle ?? ''}
+            value={values.jobTitle ?? ""}
             onChange={handleChange}
             className={styles.input}
             autoComplete="off"
@@ -124,7 +136,7 @@ export function EditApplicationForm({ application, id }: { application: Applicat
           <select
             id="status"
             name="status"
-            value={values.status ?? 'saved'}
+            value={values.status ?? "saved"}
             onChange={handleChange}
             className={styles.select}
             disabled={isPending}
@@ -145,7 +157,7 @@ export function EditApplicationForm({ application, id }: { application: Applicat
             id="jobPostingUrl"
             name="jobPostingUrl"
             type="url"
-            value={values.jobPostingUrl ?? ''}
+            value={values.jobPostingUrl ?? ""}
             onChange={handleChange}
             className={styles.input}
             placeholder="https://..."
@@ -164,7 +176,7 @@ export function EditApplicationForm({ application, id }: { application: Applicat
             id="location"
             name="location"
             type="text"
-            value={values.location ?? ''}
+            value={values.location ?? ""}
             onChange={handleChange}
             className={styles.input}
             maxLength={255}
@@ -183,7 +195,11 @@ export function EditApplicationForm({ application, id }: { application: Applicat
               type="number"
               min={0}
               step={1}
-              value={values.salaryMin === undefined || values.salaryMin === null ? '' : String(values.salaryMin)}
+              value={
+                values.salaryMin === undefined || values.salaryMin === null
+                  ? ""
+                  : String(values.salaryMin)
+              }
               onChange={handleChange}
               className={styles.input}
               disabled={isPending}
@@ -202,7 +218,11 @@ export function EditApplicationForm({ application, id }: { application: Applicat
               type="number"
               min={0}
               step={1}
-              value={values.salaryMax === undefined || values.salaryMax === null ? '' : String(values.salaryMax)}
+              value={
+                values.salaryMax === undefined || values.salaryMax === null
+                  ? ""
+                  : String(values.salaryMax)
+              }
               onChange={handleChange}
               className={styles.input}
               disabled={isPending}
@@ -222,9 +242,9 @@ export function EditApplicationForm({ application, id }: { application: Applicat
             name="appliedAt"
             type="date"
             value={
-              values.appliedAt && values.appliedAt !== ''
+              values.appliedAt && values.appliedAt !== ""
                 ? String(values.appliedAt).slice(0, 10)
-                : ''
+                : ""
             }
             onChange={handleChange}
             className={styles.input}
@@ -243,7 +263,7 @@ export function EditApplicationForm({ application, id }: { application: Applicat
             id="source"
             name="source"
             type="text"
-            value={values.source ?? ''}
+            value={values.source ?? ""}
             onChange={handleChange}
             className={styles.input}
             maxLength={255}
@@ -260,7 +280,7 @@ export function EditApplicationForm({ application, id }: { application: Applicat
             <select
               id="resumeId"
               name="resumeId"
-              value={values.resumeId ?? ''}
+              value={values.resumeId ?? ""}
               onChange={handleChange}
               className={styles.select}
               disabled={isPending}
@@ -277,13 +297,19 @@ export function EditApplicationForm({ application, id }: { application: Applicat
 
         {submitError && (
           <p className={styles.submitError}>
-            {submitError instanceof Error ? submitError.message : 'Failed to update application'}
+            {submitError instanceof Error
+              ? submitError.message
+              : "Failed to update application"}
           </p>
         )}
 
         <div className={styles.actions}>
-          <button type="submit" className={styles.submitBtn} disabled={isPending}>
-            {isPending ? 'Saving…' : 'Save changes'}
+          <button
+            type="submit"
+            className={styles.submitBtn}
+            disabled={isPending}
+          >
+            {isPending ? "Saving…" : "Save changes"}
           </button>
           <Link href={`/applications/${id}`} className={styles.cancelLink}>
             Cancel

@@ -1,5 +1,5 @@
-import { NotesList } from '@/features/notes/NotesList';
-import styles from './page.module.css';
+import { NotesList } from "@/features/notes/NotesList";
+import styles from "./page.module.css";
 
 export default function NotesPage() {
   return (

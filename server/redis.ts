@@ -1,6 +1,6 @@
-import { createClient } from 'redis';
+import { createClient } from "redis";
 
-import { env } from './config';
+import { env } from "./config";
 
 const client = createClient({ url: env.REDIS_URL });
 

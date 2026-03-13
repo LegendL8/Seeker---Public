@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { useDashboardMetrics } from './hooks/useDashboardMetrics';
-import styles from './Dashboard.module.css';
+import Link from "next/link";
+import { useDashboardMetrics } from "./hooks/useDashboardMetrics";
+import styles from "./Dashboard.module.css";
 
 function formatRate(rate: number): string {
-  if (rate === 0) return '0%';
+  if (rate === 0) return "0%";
   const pct = rate * 100;
   return pct % 1 === 0 ? `${pct}%` : `${pct.toFixed(1)}%`;
 }
@@ -31,7 +31,8 @@ export function Dashboard() {
           <h1 className={styles.title}>Dashboard</h1>
         </div>
         <p className={styles.error}>
-          Failed to load metrics: {error instanceof Error ? error.message : 'Unknown error'}
+          Failed to load metrics:{" "}
+          {error instanceof Error ? error.message : "Unknown error"}
         </p>
       </div>
     );
@@ -41,19 +42,38 @@ export function Dashboard() {
   const hasData = m.totalApplications > 0;
 
   const topStats = [
-    { label: 'Total applications', value: String(m.totalApplications), accent: 'blue' as const },
-    { label: 'Interview rate', value: formatRate(m.interviewRate), accent: 'purple' as const },
-    { label: 'Saved', value: String(m.applicationsByStatus.saved), accent: null },
-    { label: 'Interviewing', value: String(m.applicationsByStatus.interviewing), accent: null },
+    {
+      label: "Total applications",
+      value: String(m.totalApplications),
+      accent: "blue" as const,
+    },
+    {
+      label: "Interview rate",
+      value: formatRate(m.interviewRate),
+      accent: "purple" as const,
+    },
+    {
+      label: "Saved",
+      value: String(m.applicationsByStatus.saved),
+      accent: null,
+    },
+    {
+      label: "Interviewing",
+      value: String(m.applicationsByStatus.interviewing),
+      accent: null,
+    },
   ];
 
   const rightStats = [
-    { label: 'Applied', value: String(m.applicationsByStatus.applied) },
-    { label: 'Rejections', value: String(m.rejectionsReceived) },
-    { label: 'Saved', value: String(m.applicationsByStatus.saved) },
-    { label: 'Interviewing', value: String(m.applicationsByStatus.interviewing) },
-    { label: 'Offer', value: String(m.applicationsByStatus.offer) },
-    { label: 'Active', value: String(m.activeApplications) },
+    { label: "Applied", value: String(m.applicationsByStatus.applied) },
+    { label: "Rejections", value: String(m.rejectionsReceived) },
+    { label: "Saved", value: String(m.applicationsByStatus.saved) },
+    {
+      label: "Interviewing",
+      value: String(m.applicationsByStatus.interviewing),
+    },
+    { label: "Offer", value: String(m.applicationsByStatus.offer) },
+    { label: "Active", value: String(m.activeApplications) },
   ];
 
   return (
@@ -68,9 +88,9 @@ export function Dashboard() {
             <div className={styles.metricCardLabel}>{s.label}</div>
             <div
               className={
-                s.accent === 'blue'
+                s.accent === "blue"
                   ? `${styles.metricCardValue} ${styles.metricCardValue_accentBlue}`
-                  : s.accent === 'purple'
+                  : s.accent === "purple"
                     ? `${styles.metricCardValue} ${styles.metricCardValue_accentPurple}`
                     : styles.metricCardValue
               }
@@ -83,7 +103,9 @@ export function Dashboard() {
 
       <div className={styles.mainRow}>
         <div className={styles.notificationCard}>
-          <p className={styles.notificationPlaceholder}>No notifications yet. This section will be repurposed later.</p>
+          <p className={styles.notificationPlaceholder}>
+            No notifications yet. This section will be repurposed later.
+          </p>
         </div>
 
         <div className={styles.statsCard}>

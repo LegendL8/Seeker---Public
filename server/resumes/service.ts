@@ -1,16 +1,12 @@
-import { and, count, desc, eq } from 'drizzle-orm';
-import { randomUUID } from 'node:crypto';
+import { and, count, desc, eq } from "drizzle-orm";
+import { randomUUID } from "node:crypto";
 
-import { db } from '../db';
-import { resumes } from '../db/schema';
-import { ForbiddenError, NotFoundError } from '../errors';
-import {
-  deleteResumeFromS3,
-  getResumeSignedUrl,
-  uploadResumeToS3,
-} from './s3';
-import type { ResumeFileType } from './types';
-import { FREE_TIER_RESUME_CAP } from './types';
+import { db } from "../db";
+import { resumes } from "../db/schema";
+import { ForbiddenError, NotFoundError } from "../errors";
+import { deleteResumeFromS3, getResumeSignedUrl, uploadResumeToS3 } from "./s3";
+import type { ResumeFileType } from "./types";
+import { FREE_TIER_RESUME_CAP } from "./types";
 
 export type ResumeRow = typeof resumes.$inferSelect;
 
@@ -24,14 +20,14 @@ export async function listResumes(userId: string): Promise<ResumeRow[]> {
 
 export async function getResumeById(
   userId: string,
-  id: string
+  id: string,
 ): Promise<ResumeRow> {
   const [row] = await db
     .select()
     .from(resumes)
     .where(and(eq(resumes.id, id), eq(resumes.userId, userId)))
     .limit(1);
-  if (!row) throw new NotFoundError('Resume not found');
+  if (!row) throw new NotFoundError("Resume not found");
   return row;
 }
 
@@ -40,7 +36,7 @@ export async function createResume(
   buffer: Buffer,
   fileName: string,
   fileType: ResumeFileType,
-  fileSizeBytes: number
+  fileSizeBytes: number,
 ): Promise<ResumeRow> {
   const [{ count: total }] = await db
     .select({ count: count() })
@@ -48,7 +44,7 @@ export async function createResume(
     .where(eq(resumes.userId, userId));
   if (total >= FREE_TIER_RESUME_CAP) {
     throw new ForbiddenError(
-      `Free tier is limited to ${FREE_TIER_RESUME_CAP} resume. Delete an existing resume to upload another.`
+      `Free tier is limited to ${FREE_TIER_RESUME_CAP} resume. Delete an existing resume to upload another.`,
     );
   }
 
@@ -56,9 +52,9 @@ export async function createResume(
   const ext = fileType;
   const s3Key = `resumes/${userId}/${id}.${ext}`;
   const contentType =
-    fileType === 'pdf'
-      ? 'application/pdf'
-      : 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+    fileType === "pdf"
+      ? "application/pdf"
+      : "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
 
   await uploadResumeToS3(s3Key, buffer, contentType);
 
@@ -77,13 +73,13 @@ export async function createResume(
       updatedAt: now,
     })
     .returning();
-  if (!row) throw new Error('Failed to insert resume');
+  if (!row) throw new Error("Failed to insert resume");
   return row;
 }
 
 export async function getResumeWithSignedUrl(
   userId: string,
-  id: string
+  id: string,
 ): Promise<ResumeRow & { signedUrl: string }> {
   const row = await getResumeById(userId, id);
   const signedUrl = await getResumeSignedUrl(row.s3Key);
@@ -93,7 +89,7 @@ export async function getResumeWithSignedUrl(
 export async function setActiveResume(
   userId: string,
   id: string,
-  isActive: boolean
+  isActive: boolean,
 ): Promise<ResumeRow> {
   await getResumeById(userId, id);
   if (isActive) {
@@ -107,7 +103,7 @@ export async function setActiveResume(
     .set({ isActive, updatedAt: new Date() })
     .where(and(eq(resumes.id, id), eq(resumes.userId, userId)))
     .returning();
-  if (!row) throw new NotFoundError('Resume not found');
+  if (!row) throw new NotFoundError("Resume not found");
   return row;
 }
 

@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import styles from './NavBar.module.css';
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import styles from "./NavBar.module.css";
 
-const AUTH_PATH_PREFIX = '/auth';
+const AUTH_PATH_PREFIX = "/auth";
 
 export function NavBar() {
   const pathname = usePathname();

@@ -1,29 +1,32 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { useState } from 'react';
-import { useApplicationsList } from './hooks/useApplicationsList';
-import styles from './ApplicationsList.module.css';
+import Link from "next/link";
+import { useState } from "react";
+import { useApplicationsList } from "./hooks/useApplicationsList";
+import styles from "./ApplicationsList.module.css";
 
 const DEFAULT_PAGE = 1;
 const DEFAULT_LIMIT = 20;
 
 function formatDate(iso: string | null): string {
-  if (!iso) return '—';
+  if (!iso) return "—";
   try {
     return new Date(iso).toLocaleDateString(undefined, {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
+      year: "numeric",
+      month: "short",
+      day: "numeric",
     });
   } catch {
-    return '—';
+    return "—";
   }
 }
 
 export function ApplicationsList() {
   const [page, setPage] = useState(DEFAULT_PAGE);
-  const { data, isPending, isError, error } = useApplicationsList(page, DEFAULT_LIMIT);
+  const { data, isPending, isError, error } = useApplicationsList(
+    page,
+    DEFAULT_LIMIT,
+  );
 
   if (isPending && !data) {
     return <p className={styles.status}>Loading applications…</p>;
@@ -32,7 +35,8 @@ export function ApplicationsList() {
   if (isError) {
     return (
       <p className={styles.error}>
-        Failed to load applications: {error instanceof Error ? error.message : 'Unknown error'}
+        Failed to load applications:{" "}
+        {error instanceof Error ? error.message : "Unknown error"}
       </p>
     );
   }
@@ -75,12 +79,15 @@ export function ApplicationsList() {
               {items.map((app) => (
                 <tr key={app.id}>
                   <td className={styles.td}>
-                    <Link href={`/applications/${app.id}`} className={styles.cellLink}>
+                    <Link
+                      href={`/applications/${app.id}`}
+                      className={styles.cellLink}
+                    >
                       {app.jobTitle}
                     </Link>
                   </td>
                   <td className={styles.td}>{app.status}</td>
-                  <td className={styles.td}>{app.location ?? '—'}</td>
+                  <td className={styles.td}>{app.location ?? "—"}</td>
                   <td className={styles.td}>{formatDate(app.appliedAt)}</td>
                 </tr>
               ))}
@@ -88,7 +95,10 @@ export function ApplicationsList() {
           </table>
 
           {totalPages > 1 && (
-            <nav className={styles.pagination} aria-label="Applications pagination">
+            <nav
+              className={styles.pagination}
+              aria-label="Applications pagination"
+            >
               <button
                 type="button"
                 className={styles.pageBtn}

@@ -1,5 +1,5 @@
-import { ResumesList } from '@/features/resumes/ResumesList';
-import styles from '../applications/page.module.css';
+import { ResumesList } from "@/features/resumes/ResumesList";
+import styles from "../applications/page.module.css";
 
 export default function ResumesPage() {
   return (

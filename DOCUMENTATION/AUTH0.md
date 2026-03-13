@@ -47,10 +47,10 @@ When the Next.js app calls the Express API (e.g. GET /api/v1/me), it must send a
 
 ## Summary
 
-| Use case              | Required in Auth0                    | Required in env                          |
-|-----------------------|--------------------------------------|------------------------------------------|
-| Login / logout (Next) | Regular Web App, callback/logout URLs| AUTH0_DOMAIN, CLIENT_ID, SECRET, etc.    |
-| API (Express)         | API with an identifier (audience)    | AUTH0_ISSUER_BASE_URL, AUTH0_AUDIENCE   |
+| Use case              | Required in Auth0                     | Required in env                       |
+| --------------------- | ------------------------------------- | ------------------------------------- |
+| Login / logout (Next) | Regular Web App, callback/logout URLs | AUTH0_DOMAIN, CLIENT_ID, SECRET, etc. |
+| API (Express)         | API with an identifier (audience)     | AUTH0_ISSUER_BASE_URL, AUTH0_AUDIENCE |
 
 ---
 

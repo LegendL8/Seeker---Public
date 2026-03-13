@@ -49,10 +49,10 @@ Use a `.env` with `DATABASE_URL` and `REDIS_URL` pointing at localhost and the s
 docker compose up -d
 ```
 
-- **Next.js:** http://localhost:3000  
-- **API (Express):** http://localhost:3001 (e.g. GET http://localhost:3001/api/v1/health)  
-- **PostgreSQL:** localhost:5432  
-- **Redis:** localhost:6379  
+- **Next.js:** http://localhost:3000
+- **API (Express):** http://localhost:3001 (e.g. GET http://localhost:3001/api/v1/health)
+- **PostgreSQL:** localhost:5432
+- **Redis:** localhost:6379
 
 Build runs on first `up` or when the Dockerfile or compose file changes.
 
@@ -90,10 +90,10 @@ Copy `.env.example` to `.env` and fill in Auth0, etc. Next and server services u
 
 When the app runs on the host and Postgres/Redis are in Docker, use the same user/password/database and ports as in `docker-compose.yml` (postgres service `environment`, and `ports`). Example shape:
 
-| Service    | Host     | Port | User   | Password | Database |
-|------------|----------|------|--------|----------|----------|
+| Service    | Host      | Port | User          | Password      | Database      |
+| ---------- | --------- | ---- | ------------- | ------------- | ------------- |
 | PostgreSQL | localhost | 5432 | (see compose) | (see compose) | (see compose) |
-| Redis      | localhost | 6379 | (none) | (none)   | (none)   |
+| Redis      | localhost | 6379 | (none)        | (none)        | (none)        |
 
 `DATABASE_URL` format: `postgresql://USER:PASSWORD@localhost:PORT/DATABASE` — get USER, PASSWORD, DATABASE from the postgres service in `docker-compose.yml`.
 

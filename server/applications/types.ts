@@ -1,11 +1,11 @@
-import z from 'zod';
+import z from "zod";
 
 export const APPLICATION_STATUSES = [
-  'saved',
-  'applied',
-  'interviewing',
-  'offer',
-  'rejected',
+  "saved",
+  "applied",
+  "interviewing",
+  "offer",
+  "rejected",
 ] as const;
 
 export type ApplicationStatus = (typeof APPLICATION_STATUSES)[number];
@@ -20,9 +20,9 @@ export const createApplicationBodySchema = z.object({
   status: applicationStatusSchema.optional(),
   companyId: optionalUuid(),
   jobPostingUrl: z
-    .union([z.string().url().max(500), z.literal('')])
+    .union([z.string().url().max(500), z.literal("")])
     .optional()
-    .transform((v) => (v === '' ? undefined : v)),
+    .transform((v) => (v === "" ? undefined : v)),
   location: optionalString(255),
   salaryMin: z.number().int().optional(),
   salaryMax: z.number().int().optional(),
@@ -36,10 +36,10 @@ export const updateApplicationBodySchema = z.object({
   status: applicationStatusSchema.optional(),
   companyId: optionalUuid().nullable(),
   jobPostingUrl: z
-    .union([z.string().url().max(500), z.literal('')])
+    .union([z.string().url().max(500), z.literal("")])
     .optional()
     .nullable()
-    .transform((v) => (v === '' ? undefined : v)),
+    .transform((v) => (v === "" ? undefined : v)),
   location: optionalString(255).nullable(),
   salaryMin: z.number().int().optional().nullable(),
   salaryMax: z.number().int().optional().nullable(),

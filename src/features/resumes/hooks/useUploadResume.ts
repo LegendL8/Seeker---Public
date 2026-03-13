@@ -1,5 +1,5 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { uploadResume } from '../api';
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { uploadResume } from "../api";
 
 export function useUploadResume() {
   const queryClient = useQueryClient();
@@ -7,7 +7,7 @@ export function useUploadResume() {
   return useMutation({
     mutationFn: (file: File) => uploadResume(file),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['resumes'] });
+      queryClient.invalidateQueries({ queryKey: ["resumes"] });
     },
   });
 }

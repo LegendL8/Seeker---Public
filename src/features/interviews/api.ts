@@ -1,21 +1,21 @@
-import { getApiBaseUrl } from '@/lib/api';
+import { getApiBaseUrl } from "@/lib/api";
 import type {
   CreateInterviewInput,
   Interview,
   ListInterviewsResponse,
   UpdateInterviewInput,
-} from './types';
+} from "./types";
 
 export async function fetchInterviewsByApplicationId(
-  applicationId: string
+  applicationId: string,
 ): Promise<ListInterviewsResponse> {
   const base = getApiBaseUrl();
   const url = `${base}/v1/applications/${encodeURIComponent(applicationId)}/interviews`;
-  const res = await fetch(url, { credentials: 'include' });
+  const res = await fetch(url, { credentials: "include" });
   if (!res.ok) {
     const data = await res.json().catch(() => ({}));
     const message =
-      typeof data?.message === 'string' ? data.message : res.statusText;
+      typeof data?.message === "string" ? data.message : res.statusText;
     throw new Error(message);
   }
   return res.json() as Promise<ListInterviewsResponse>;
@@ -23,22 +23,22 @@ export async function fetchInterviewsByApplicationId(
 
 export async function createInterview(
   applicationId: string,
-  body: CreateInterviewInput
+  body: CreateInterviewInput,
 ): Promise<Interview> {
   const base = getApiBaseUrl();
   const res = await fetch(
     `${base}/v1/applications/${encodeURIComponent(applicationId)}/interviews`,
     {
-      method: 'POST',
-      credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
-    }
+    },
   );
   if (!res.ok) {
     const data = await res.json().catch(() => ({}));
     const message =
-      typeof data?.message === 'string' ? data.message : res.statusText;
+      typeof data?.message === "string" ? data.message : res.statusText;
     throw new Error(message);
   }
   return res.json() as Promise<Interview>;
@@ -47,12 +47,12 @@ export async function createInterview(
 export async function fetchInterviewById(id: string): Promise<Interview> {
   const base = getApiBaseUrl();
   const res = await fetch(`${base}/v1/interviews/${encodeURIComponent(id)}`, {
-    credentials: 'include',
+    credentials: "include",
   });
   if (!res.ok) {
     const data = await res.json().catch(() => ({}));
     const message =
-      typeof data?.message === 'string' ? data.message : res.statusText;
+      typeof data?.message === "string" ? data.message : res.statusText;
     throw new Error(message);
   }
   return res.json() as Promise<Interview>;
@@ -60,19 +60,19 @@ export async function fetchInterviewById(id: string): Promise<Interview> {
 
 export async function updateInterview(
   id: string,
-  body: UpdateInterviewInput
+  body: UpdateInterviewInput,
 ): Promise<Interview> {
   const base = getApiBaseUrl();
   const res = await fetch(`${base}/v1/interviews/${encodeURIComponent(id)}`, {
-    method: 'PATCH',
-    credentials: 'include',
-    headers: { 'Content-Type': 'application/json' },
+    method: "PATCH",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
   });
   if (!res.ok) {
     const data = await res.json().catch(() => ({}));
     const message =
-      typeof data?.message === 'string' ? data.message : res.statusText;
+      typeof data?.message === "string" ? data.message : res.statusText;
     throw new Error(message);
   }
   return res.json() as Promise<Interview>;
@@ -81,13 +81,13 @@ export async function updateInterview(
 export async function deleteInterview(id: string): Promise<void> {
   const base = getApiBaseUrl();
   const res = await fetch(`${base}/v1/interviews/${encodeURIComponent(id)}`, {
-    method: 'DELETE',
-    credentials: 'include',
+    method: "DELETE",
+    credentials: "include",
   });
   if (!res.ok) {
     const data = await res.json().catch(() => ({}));
     const message =
-      typeof data?.message === 'string' ? data.message : res.statusText;
+      typeof data?.message === "string" ? data.message : res.statusText;
     throw new Error(message);
   }
 }

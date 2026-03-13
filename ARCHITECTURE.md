@@ -13,7 +13,6 @@ giving job seekers their own dashboard to track applications, interviews, notes,
 
 ## Layer 1: Core Tech Stack
 
-
 | Category         | Decision                                           |
 | ---------------- | -------------------------------------------------- |
 | Framework        | Next.js (full-stack)                               |
@@ -39,12 +38,11 @@ giving job seekers their own dashboard to track applications, interviews, notes,
 | Styling          | Pure CSS — CSS Modules, BEM, CSS Custom Properties |
 | Dependencies     | Minimal — prefer built-ins over libraries          |
 
-
 ### Flagged for Implementation
 
 - Path aliases: implemented — `@/*` -> `./src/*` in `tsconfig.json`
 - Error handling and server auth typing implemented (see Error Handling section above).
-*Added 2026-03-09*
+  _Added 2026-03-09_
 - `[IMPL]` Absolute vs relative imports for server code
 - `[IMPL]` Specific `tsconfig.json` settings beyond strict and target
 
@@ -52,14 +50,12 @@ giving job seekers their own dashboard to track applications, interviews, notes,
 
 ## Layer 2: Third-Party Services
 
-
 | Service     | Purpose                                  |
 | ----------- | ---------------------------------------- |
-| Auth0       | Authentication                          |
+| Auth0       | Authentication                           |
 | AWS S3      | File storage — PDF & DOCX resume uploads |
-| Redis Cloud | Caching                                 |
+| Redis Cloud | Caching                                  |
 | OpenAI      | AI integration (future — not in MVP)     |
-
 
 ### Future Considerations
 
@@ -108,19 +104,19 @@ giving job seekers their own dashboard to track applications, interviews, notes,
 - Standardized error response format:
 
 ```json
-  { "error": "CODE", "message": "Description", "statusCode": 400 }
+{ "error": "CODE", "message": "Description", "statusCode": 400 }
 ```
 
 - All errors logged via Pino
 - Implemented: `server/errors.ts` (classes + central errorHandler), `server/asyncHandler.ts`; Express `Request` extended with optional `user` via `server/express.d.ts`; server loads `.env` via dotenv at startup.
-*Added 2026-03-09*
+  _Added 2026-03-09_
 
 ### Rate Limiting
 
 - Global rate limiting as a safety net
 - Stricter per-endpoint limits on sensitive routes (login, token refresh)
 - Implemented: express-rate-limit; global 100 req/min per IP on `/api`; applications routes 60 req/min per user (server/rateLimit.ts). 429 response uses standard error format.
-*Added 2026-03-09*
+  _Added 2026-03-09_
 
 ### Input Validation & Sanitization
 
@@ -174,31 +170,30 @@ giving job seekers their own dashboard to track applications, interviews, notes,
 ```
 
 Applications feature implemented: `server/applications/` (types.ts, service.ts, routes.ts). List/Get/Create/Update/Delete with offset pagination and Zod validation. Frontend: `src/features/applications/` (list, detail, add form, edit form, delete with confirm); routes `/applications`, `/applications/new`, `/applications/[id]`, `/applications/[id]/edit`.
-*Updated 2026-03-09*
-*Added 2026-03-09*
+_Updated 2026-03-09_
+_Added 2026-03-09_
 
 Interviews: `server/interviews/` (types.ts, service.ts, routes.ts). Nested under applications: GET/POST `/api/v1/applications/:applicationId/interviews`. Standalone: GET/PATCH/DELETE `/api/v1/interviews/:id`. Frontend: `src/features/interviews/` (InterviewList, AddInterviewForm on application detail).
-*Added 2026-03-10*
+_Added 2026-03-10_
 
 Notes: `server/notes/` (types.ts, service.ts, routes.ts). GET list (paginated, filter by typeTag, applicationId, interviewId, companyId), GET/POST/PATCH/DELETE `/api/v1/notes` and `/api/v1/notes/:id`. At most one relational tag per note (enforced in schema and service). Frontend: `src/features/notes/` (NotesList at `/notes`, AddNoteForm, NoteEditor with debounced save).
-*Added 2026-03-10*
+_Added 2026-03-10_
 
 Dashboard: `server/dashboard/` (types.ts, cache.ts, service.ts, routes.ts). GET `/api/v1/dashboard/metrics` returns totalApplications, applicationsByStatus (saved, applied, interviewing, offer, rejected), interviewRate, activeApplications, offersReceived, rejectionsReceived. Redis cache per user (60s TTL); invalidated on application or interview create/update/delete. Frontend: `src/features/dashboard/` (Dashboard at `/` when authenticated, useDashboardMetrics, fetchDashboardMetrics).
-*Added 2026-03-10*
+_Added 2026-03-10_
 
 ### Implementation Notes
 
 - `[IMPL]` Resolve remaining documentation inconsistencies. (1) Application status — API.md POST/PATCH body examples and SCHEMA.md applications table show "offered" and "withdrawn"; implementation uses "offer" and has no "withdrawn". Align docs to current behavior or implement missing values. (2) SCHEMA.md Seed Files — seed.active.ts inserts 6 applications and 4 interviews; SCHEMA.md says "10 applications" and "5 interviews". Correct counts.
 - `[IMPL]` PDF preview iframe issue — related to X-Frame-Options and S3 header
-configuration. Previous ATS had this bug. S3 must serve PDFs with headers
-allowing embedding within own domain only. Do not repeat this mistake.
+  configuration. Previous ATS had this bug. S3 must serve PDFs with headers
+  allowing embedding within own domain only. Do not repeat this mistake.
 
 ---
 
 ## Layer 4: Deployment & Infrastructure
 
 ### Environments
-
 
 | Environment | Platform                  |
 | ----------- | ------------------------- |
@@ -207,11 +202,9 @@ allowing embedding within own domain only. Do not repeat this mistake.
 | Staging     | Mirrors production        |
 | Production  | AWS                       |
 
-
 Each environment has its own `.env` file. Staging and production secrets managed via AWS Secrets Manager.
 
 ### AWS Production Infrastructure
-
 
 | Service                   | Purpose                        |
 | ------------------------- | ------------------------------ |
@@ -221,7 +214,6 @@ Each environment has its own `.env` file. Staging and production secrets managed
 | Secrets Manager           | API keys & credentials         |
 | Application Load Balancer | Traffic distribution & scaling |
 | AWS Certificate Manager   | SSL certificates (auto-renews) |
-
 
 ### Containerization
 
@@ -267,7 +259,6 @@ Each environment has its own `.env` file. Staging and production secrets managed
 
 ## Layer 5: Development Tools & Workflows
 
-
 | Tool                   | Purpose                                 |
 | ---------------------- | --------------------------------------- |
 | ESLint                 | Linting                                 |
@@ -281,7 +272,6 @@ Each environment has its own `.env` file. Staging and production secrets managed
 | VS Code Debugger       | Breakpoint debugging via `launch.json`  |
 | Insomnia               | API testing during development          |
 
-
 ### Testing Strategy
 
 - Unit tests — individual functions and components
@@ -289,7 +279,7 @@ Each environment has its own `.env` file. Staging and production secrets managed
 - End-to-end tests — full user flows via Playwright
 - ~~Jest configured; server test files named `0001nameoffeature.test.ts` (see DOCUMENTATION/DEVELOPMENT.md). Tests: errors, asyncHandler, config schema, applications validation/service, rate limit handler.~~
 - Jest configured; roots: `server/` and `src/`. Server and frontend test files named `0001nameoffeature.test.ts` (see DOCUMENTATION/DEVELOPMENT.md). Server: errors, asyncHandler, config, applications validation/service, interviews validation/service, notes validation/service, rate limit, dashboard service (0011), dashboard cache (0012), dashboard routes (0013). Frontend: getApiBaseUrl (src/lib), applications form schema and API client, interviews API client, notes API client, dashboard API client (0001dashboardApi). Edge cases: cache hit/miss, empty data, invalid JSON in cache, 401 when unauthenticated, list empty results, validation bounds (limit, page, invalid UUIDs).
-*Updated 2026-03-10*
+  _Updated 2026-03-10_
 
 ### Flagged for Implementation
 
@@ -297,4 +287,3 @@ Each environment has its own `.env` file. Staging and production secrets managed
 - `[IMPL]` Git branching strategy
 - `[IMPL]` VS Code workspace settings and extensions
 - `[IMPL]` `launch.json` debugger configuration
-

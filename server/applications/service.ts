@@ -1,17 +1,17 @@
-import { and, count, desc, eq } from 'drizzle-orm';
+import { and, count, desc, eq } from "drizzle-orm";
 
-import { invalidateDashboardCache } from '../dashboard/cache';
-import { db } from '../db';
-import { applications } from '../db/schema';
-import { NotFoundError } from '../errors';
-import type { CreateApplicationBody, UpdateApplicationBody } from './types';
+import { invalidateDashboardCache } from "../dashboard/cache";
+import { db } from "../db";
+import { applications } from "../db/schema";
+import { NotFoundError } from "../errors";
+import type { CreateApplicationBody, UpdateApplicationBody } from "./types";
 
 export type ApplicationRow = typeof applications.$inferSelect;
 
 export async function listApplications(
   userId: string,
   page: number,
-  limit: number
+  limit: number,
 ): Promise<{ items: ApplicationRow[]; total: number }> {
   const offset = (page - 1) * limit;
   const [items, totalResult] = await Promise.all([
@@ -33,27 +33,27 @@ export async function listApplications(
 
 export async function getApplicationById(
   userId: string,
-  id: string
+  id: string,
 ): Promise<ApplicationRow> {
   const [row] = await db
     .select()
     .from(applications)
     .where(and(eq(applications.id, id), eq(applications.userId, userId)))
     .limit(1);
-  if (!row) throw new NotFoundError('Application not found');
+  if (!row) throw new NotFoundError("Application not found");
   return row;
 }
 
 export async function createApplication(
   userId: string,
-  body: CreateApplicationBody
+  body: CreateApplicationBody,
 ): Promise<ApplicationRow> {
   const [row] = await db
     .insert(applications)
     .values({
       userId,
       jobTitle: body.jobTitle,
-      status: body.status ?? 'saved',
+      status: body.status ?? "saved",
       companyId: body.companyId ?? null,
       jobPostingUrl: body.jobPostingUrl ?? null,
       location: body.location ?? null,
@@ -64,7 +64,7 @@ export async function createApplication(
       resumeId: body.resumeId ?? null,
     })
     .returning();
-  if (!row) throw new NotFoundError('Failed to create application');
+  if (!row) throw new NotFoundError("Failed to create application");
   await invalidateDashboardCache(userId);
   return row;
 }
@@ -72,14 +72,15 @@ export async function createApplication(
 export async function updateApplication(
   userId: string,
   id: string,
-  body: UpdateApplicationBody
+  body: UpdateApplicationBody,
 ): Promise<ApplicationRow> {
   const existing = await getApplicationById(userId, id);
   const update: Record<string, unknown> = {};
   if (body.jobTitle !== undefined) update.jobTitle = body.jobTitle;
   if (body.status !== undefined) update.status = body.status;
   if (body.companyId !== undefined) update.companyId = body.companyId;
-  if (body.jobPostingUrl !== undefined) update.jobPostingUrl = body.jobPostingUrl;
+  if (body.jobPostingUrl !== undefined)
+    update.jobPostingUrl = body.jobPostingUrl;
   if (body.location !== undefined) update.location = body.location;
   if (body.salaryMin !== undefined) update.salaryMin = body.salaryMin;
   if (body.salaryMax !== undefined) update.salaryMax = body.salaryMax;
@@ -94,19 +95,19 @@ export async function updateApplication(
     .set(update)
     .where(and(eq(applications.id, id), eq(applications.userId, userId)))
     .returning();
-  if (!row) throw new NotFoundError('Application not found');
+  if (!row) throw new NotFoundError("Application not found");
   await invalidateDashboardCache(userId);
   return row;
 }
 
 export async function deleteApplication(
   userId: string,
-  id: string
+  id: string,
 ): Promise<void> {
   const result = await db
     .delete(applications)
     .where(and(eq(applications.id, id), eq(applications.userId, userId)))
     .returning({ id: applications.id });
-  if (result.length === 0) throw new NotFoundError('Application not found');
+  if (result.length === 0) throw new NotFoundError("Application not found");
   await invalidateDashboardCache(userId);
 }

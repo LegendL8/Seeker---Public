@@ -1,18 +1,18 @@
-import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
-import { NavBar } from '@/features/layout/NavBar';
-import { Providers } from './providers';
-import './globals.css';
-import styles from './layout.module.css';
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import { NavBar } from "@/features/layout/NavBar";
+import { Providers } from "./providers";
+import "./globals.css";
+import styles from "./layout.module.css";
 
 const inter = Inter({
-  variable: '--font-inter',
-  subsets: ['latin'],
+  variable: "--font-inter",
+  subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
-  title: 'Seeker',
-  description: 'Applicant tracking for job seekers.',
+  title: "Seeker",
+  description: "Applicant tracking for job seekers.",
 };
 
 export default function RootLayout({

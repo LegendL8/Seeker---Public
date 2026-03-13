@@ -16,7 +16,7 @@ Short reference for how we work on this project. Details are in the project rule
 - Tests are written only when explicitly requested (e.g. "Generate tests").
 - Jest for unit and integration tests; Playwright for e2e. Tests live alongside the feature they cover.
 - Jest runs from both `server/` and `src/`. Frontend unit tests (e.g. API helper, form schemas, API client) live under `src/` with the same naming convention (`0001nameoffeature.test.ts`).
-*Added 2026-03-09*
+  _Added 2026-03-09_
 
 ---
 

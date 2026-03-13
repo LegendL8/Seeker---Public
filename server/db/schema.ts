@@ -38,7 +38,7 @@ export const preferences = pgTable(
     createdAt: timestamptz("created_at"),
     updatedAt: timestamptz("updated_at"),
   },
-  (t) => [uniqueIndex("idx_preferences_user_id").on(t.userId)]
+  (t) => [uniqueIndex("idx_preferences_user_id").on(t.userId)],
 );
 
 export const companies = pgTable("companies", {
@@ -102,7 +102,7 @@ export const applications = pgTable(
     index("idx_applications_status").on(t.status),
     index("idx_applications_company_id").on(t.companyId),
     index("idx_applications_posting_status").on(t.postingStatus),
-  ]
+  ],
 );
 
 export const interviews = pgTable(
@@ -126,7 +126,7 @@ export const interviews = pgTable(
   (t) => [
     index("idx_interviews_application_id").on(t.applicationId),
     index("idx_interviews_user_id").on(t.userId),
-  ]
+  ],
 );
 
 export const notes = pgTable(
@@ -156,7 +156,7 @@ export const notes = pgTable(
     index("idx_notes_application_id").on(t.applicationId),
     index("idx_notes_interview_id").on(t.interviewId),
     index("idx_notes_company_id").on(t.companyId),
-  ]
+  ],
 );
 
 export const notifications = pgTable(
@@ -177,5 +177,5 @@ export const notifications = pgTable(
   (t) => [
     index("idx_notifications_user_id").on(t.userId),
     index("idx_notifications_is_read").on(t.userId, t.isRead),
-  ]
+  ],
 );

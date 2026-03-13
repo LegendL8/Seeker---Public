@@ -1,5 +1,5 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { deleteNote } from '../api';
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { deleteNote } from "../api";
 
 export function useDeleteNote() {
   const queryClient = useQueryClient();
@@ -7,7 +7,7 @@ export function useDeleteNote() {
   return useMutation({
     mutationFn: (id: string) => deleteNote(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['notes'] });
+      queryClient.invalidateQueries({ queryKey: ["notes"] });
     },
   });
 }

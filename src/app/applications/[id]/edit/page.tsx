@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { useParams } from 'next/navigation';
-import { EditApplicationForm } from '@/features/applications/EditApplicationForm';
-import { useApplication } from '@/features/applications/hooks/useApplication';
-import styles from '../../page.module.css';
+import Link from "next/link";
+import { useParams } from "next/navigation";
+import { EditApplicationForm } from "@/features/applications/EditApplicationForm";
+import { useApplication } from "@/features/applications/hooks/useApplication";
+import styles from "../../page.module.css";
 
 export default function EditApplicationPage() {
   const params = useParams();
-  const id = typeof params?.id === 'string' ? params.id : null;
+  const id = typeof params?.id === "string" ? params.id : null;
   const { data: application, isPending, isError, error } = useApplication(id);
 
   if (id === null) {
@@ -36,7 +36,9 @@ export default function EditApplicationPage() {
     return (
       <div className={styles.page}>
         <main className={styles.main}>
-          <p>{error instanceof Error ? error.message : 'Application not found.'}</p>
+          <p>
+            {error instanceof Error ? error.message : "Application not found."}
+          </p>
           <Link href="/applications">Back to applications</Link>
         </main>
       </div>

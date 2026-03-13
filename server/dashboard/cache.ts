@@ -1,7 +1,7 @@
-import { getRedisClient } from '../redis';
-import type { DashboardMetrics } from './types';
+import { getRedisClient } from "../redis";
+import type { DashboardMetrics } from "./types";
 
-const KEY_PREFIX = 'dashboard:metrics:';
+const KEY_PREFIX = "dashboard:metrics:";
 const TTL_SECONDS = 60;
 
 function cacheKey(userId: string): string {
@@ -9,7 +9,7 @@ function cacheKey(userId: string): string {
 }
 
 export async function getCachedMetrics(
-  userId: string
+  userId: string,
 ): Promise<DashboardMetrics | null> {
   const client = getRedisClient();
   const raw = await client.get(cacheKey(userId));
@@ -23,14 +23,10 @@ export async function getCachedMetrics(
 
 export async function setCachedMetrics(
   userId: string,
-  metrics: DashboardMetrics
+  metrics: DashboardMetrics,
 ): Promise<void> {
   const client = getRedisClient();
-  await client.setEx(
-    cacheKey(userId),
-    TTL_SECONDS,
-    JSON.stringify(metrics)
-  );
+  await client.setEx(cacheKey(userId), TTL_SECONDS, JSON.stringify(metrics));
 }
 
 export async function invalidateDashboardCache(userId: string): Promise<void> {

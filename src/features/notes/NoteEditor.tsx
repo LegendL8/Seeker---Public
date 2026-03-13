@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { useNote } from './hooks/useNote';
-import { useUpdateNote } from './hooks/useUpdateNote';
-import styles from './NoteEditor.module.css';
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useNote } from "./hooks/useNote";
+import { useUpdateNote } from "./hooks/useUpdateNote";
+import styles from "./NoteEditor.module.css";
 
 const DEBOUNCE_MS = 500;
 
@@ -14,9 +14,9 @@ export interface NoteEditorProps {
 export function NoteEditor({ noteId }: NoteEditorProps) {
   const { data: note, isPending, isError, error } = useNote(noteId);
   const updateMutation = useUpdateNote(noteId);
-  const [localContent, setLocalContent] = useState('');
+  const [localContent, setLocalContent] = useState("");
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const lastSavedRef = useRef<string>('');
+  const lastSavedRef = useRef<string>("");
   const prevNoteIdRef = useRef<string | null>(null);
 
   const flushSave = useCallback(() => {
@@ -34,7 +34,7 @@ export function NoteEditor({ noteId }: NoteEditorProps) {
             setLocalContent(updated.content);
             lastSavedRef.current = updated.content;
           },
-        }
+        },
       );
     }
   }, [localContent, noteId, updateMutation]);
@@ -70,7 +70,7 @@ export function NoteEditor({ noteId }: NoteEditorProps) {
               setLocalContent(updated.content);
               lastSavedRef.current = updated.content;
             },
-          }
+          },
         );
       }
     }, DEBOUNCE_MS);
@@ -87,7 +87,7 @@ export function NoteEditor({ noteId }: NoteEditorProps) {
   if (isError || !note) {
     return (
       <p className={styles.error}>
-        {error instanceof Error ? error.message : 'Note not found'}
+        {error instanceof Error ? error.message : "Note not found"}
       </p>
     );
   }
@@ -107,12 +107,12 @@ export function NoteEditor({ noteId }: NoteEditorProps) {
       />
       <p className={styles.saveStatus}>
         {updateMutation.isPending
-          ? 'Saving…'
+          ? "Saving…"
           : updateMutation.isError
             ? updateMutation.error instanceof Error
               ? updateMutation.error.message
-              : 'Save failed'
-            : 'Saved'}
+              : "Save failed"
+            : "Saved"}
       </p>
     </div>
   );

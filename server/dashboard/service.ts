@@ -1,9 +1,9 @@
-import { count, eq } from 'drizzle-orm';
+import { count, eq } from "drizzle-orm";
 
-import { db } from '../db';
-import { applications, interviews } from '../db/schema';
-import { getCachedMetrics, setCachedMetrics } from './cache';
-import type { ApplicationsByStatus, DashboardMetrics } from './types';
+import { db } from "../db";
+import { applications, interviews } from "../db/schema";
+import { getCachedMetrics, setCachedMetrics } from "./cache";
+import type { ApplicationsByStatus, DashboardMetrics } from "./types";
 
 function defaultApplicationsByStatus(): ApplicationsByStatus {
   const out: ApplicationsByStatus = {
@@ -17,7 +17,7 @@ function defaultApplicationsByStatus(): ApplicationsByStatus {
 }
 
 function statusCountsToMap(
-  rows: { status: string; count: number }[]
+  rows: { status: string; count: number }[],
 ): ApplicationsByStatus {
   const map = defaultApplicationsByStatus();
   for (const row of rows) {
@@ -32,29 +32,30 @@ export async function getMetrics(userId: string): Promise<DashboardMetrics> {
   const cached = await getCachedMetrics(userId);
   if (cached !== null) return cached;
 
-  const [byStatusRows, totalAppsResult, totalInterviewsResult] = await Promise.all([
-    db
-      .select({
-        status: applications.status,
-        count: count(),
-      })
-      .from(applications)
-      .where(eq(applications.userId, userId))
-      .groupBy(applications.status),
-    db
-      .select({ count: count() })
-      .from(applications)
-      .where(eq(applications.userId, userId)),
-    db
-      .select({ count: count() })
-      .from(interviews)
-      .where(eq(interviews.userId, userId)),
-  ]);
+  const [byStatusRows, totalAppsResult, totalInterviewsResult] =
+    await Promise.all([
+      db
+        .select({
+          status: applications.status,
+          count: count(),
+        })
+        .from(applications)
+        .where(eq(applications.userId, userId))
+        .groupBy(applications.status),
+      db
+        .select({ count: count() })
+        .from(applications)
+        .where(eq(applications.userId, userId)),
+      db
+        .select({ count: count() })
+        .from(interviews)
+        .where(eq(interviews.userId, userId)),
+    ]);
 
   const totalApplications = Number(totalAppsResult[0]?.count ?? 0);
   const totalInterviews = Number(totalInterviewsResult[0]?.count ?? 0);
   const applicationsByStatus = statusCountsToMap(
-    byStatusRows.map((r) => ({ status: r.status, count: Number(r.count) }))
+    byStatusRows.map((r) => ({ status: r.status, count: Number(r.count) })),
   );
   const activeApplications =
     applicationsByStatus.applied + applicationsByStatus.interviewing;

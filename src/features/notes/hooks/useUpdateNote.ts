@@ -1,6 +1,6 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { updateNote } from '../api';
-import type { UpdateNoteInput } from '../types';
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { updateNote } from "../api";
+import type { UpdateNoteInput } from "../types";
 
 export function useUpdateNote(id: string) {
   const queryClient = useQueryClient();
@@ -8,8 +8,8 @@ export function useUpdateNote(id: string) {
   return useMutation({
     mutationFn: (body: UpdateNoteInput) => updateNote(id, body),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['notes'] });
-      queryClient.invalidateQueries({ queryKey: ['notes', id] });
+      queryClient.invalidateQueries({ queryKey: ["notes"] });
+      queryClient.invalidateQueries({ queryKey: ["notes", id] });
     },
   });
 }

@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { useQuery } from '@tanstack/react-query';
-import { fetchDashboardMetrics } from '../api';
+import { useQuery } from "@tanstack/react-query";
+import { fetchDashboardMetrics } from "../api";
 
 export function useDashboardMetrics() {
   return useQuery({
-    queryKey: ['dashboard', 'metrics'],
+    queryKey: ["dashboard", "metrics"],
     queryFn: () => fetchDashboardMetrics(),
   });
 }

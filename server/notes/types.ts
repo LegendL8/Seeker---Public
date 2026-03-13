@@ -1,10 +1,10 @@
-import z from 'zod';
+import z from "zod";
 
 export const NOTE_TYPE_TAGS = [
-  'interview',
-  'job_description',
-  'research',
-  'general',
+  "interview",
+  "job_description",
+  "research",
+  "general",
 ] as const;
 
 export type NoteTypeTag = (typeof NOTE_TYPE_TAGS)[number];
@@ -27,29 +27,37 @@ export const createNoteBodySchema = z
         data.applicationId,
         data.interviewId,
         data.companyId,
-      ].filter((v) => v != null && v !== '').length;
+      ].filter((v) => v != null && v !== "").length;
       return count <= 1;
     },
-    { message: 'Only one relational tag (applicationId, interviewId, companyId) allowed' }
+    {
+      message:
+        "Only one relational tag (applicationId, interviewId, companyId) allowed",
+    },
   );
 
-export const updateNoteBodySchema = z.object({
-  content: z.string().min(1).optional(),
-  typeTag: noteTypeTagSchema.optional(),
-  applicationId: optionalUuid(),
-  interviewId: optionalUuid(),
-  companyId: optionalUuid(),
-}).refine(
-  (data) => {
-    const count = [
-      data.applicationId,
-      data.interviewId,
-      data.companyId,
-    ].filter((v) => v != null && v !== '').length;
-    return count <= 1;
-  },
-  { message: 'Only one relational tag (applicationId, interviewId, companyId) allowed' }
-);
+export const updateNoteBodySchema = z
+  .object({
+    content: z.string().min(1).optional(),
+    typeTag: noteTypeTagSchema.optional(),
+    applicationId: optionalUuid(),
+    interviewId: optionalUuid(),
+    companyId: optionalUuid(),
+  })
+  .refine(
+    (data) => {
+      const count = [
+        data.applicationId,
+        data.interviewId,
+        data.companyId,
+      ].filter((v) => v != null && v !== "").length;
+      return count <= 1;
+    },
+    {
+      message:
+        "Only one relational tag (applicationId, interviewId, companyId) allowed",
+    },
+  );
 
 export const listNotesQuerySchema = z.object({
   page: z.coerce.number().int().min(1).default(1),

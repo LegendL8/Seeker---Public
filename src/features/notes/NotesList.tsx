@@ -1,20 +1,20 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { useState } from 'react';
-import { useNotesList } from './hooks/useNotesList';
-import { useDeleteNote } from './hooks/useDeleteNote';
-import { NoteEditor } from './NoteEditor';
-import { AddNoteForm } from './AddNoteForm';
-import type { Note } from './types';
-import styles from './NotesList.module.css';
+import Link from "next/link";
+import { useState } from "react";
+import { useNotesList } from "./hooks/useNotesList";
+import { useDeleteNote } from "./hooks/useDeleteNote";
+import { NoteEditor } from "./NoteEditor";
+import { AddNoteForm } from "./AddNoteForm";
+import type { Note } from "./types";
+import styles from "./NotesList.module.css";
 
 const TYPE_TAGS = [
-  { value: '', label: 'All types' },
-  { value: 'general', label: 'General' },
-  { value: 'interview', label: 'Interview' },
-  { value: 'job_description', label: 'Job description' },
-  { value: 'research', label: 'Research' },
+  { value: "", label: "All types" },
+  { value: "general", label: "General" },
+  { value: "interview", label: "Interview" },
+  { value: "job_description", label: "Job description" },
+  { value: "research", label: "Research" },
 ];
 
 const DEFAULT_PAGE = 1;
@@ -23,18 +23,18 @@ const DEFAULT_LIMIT = 20;
 function formatDate(iso: string): string {
   try {
     return new Date(iso).toLocaleDateString(undefined, {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
+      month: "short",
+      day: "numeric",
+      year: "numeric",
     });
   } catch {
-    return '';
+    return "";
   }
 }
 
 export function NotesList() {
   const [page, setPage] = useState(DEFAULT_PAGE);
-  const [typeTag, setTypeTag] = useState<string>('');
+  const [typeTag, setTypeTag] = useState<string>("");
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [showAddForm, setShowAddForm] = useState(false);
 
@@ -54,8 +54,8 @@ export function NotesList() {
 
   function handleDelete(id: string) {
     if (
-      typeof window !== 'undefined' &&
-      window.confirm('Delete this note? This cannot be undone.')
+      typeof window !== "undefined" &&
+      window.confirm("Delete this note? This cannot be undone.")
     ) {
       deleteMutation.mutate(id);
       if (selectedId === id) setSelectedId(null);
@@ -72,7 +72,7 @@ export function NotesList() {
           </Link>
         </div>
         <p className={styles.error}>
-          {error instanceof Error ? error.message : 'Failed to load notes'}
+          {error instanceof Error ? error.message : "Failed to load notes"}
         </p>
       </div>
     );
@@ -101,7 +101,7 @@ export function NotesList() {
               className={styles.select}
             >
               {TYPE_TAGS.map((opt) => (
-                <option key={opt.value || 'all'} value={opt.value}>
+                <option key={opt.value || "all"} value={opt.value}>
                   {opt.label}
                 </option>
               ))}
@@ -125,16 +125,16 @@ export function NotesList() {
                 <li key={note.id}>
                   <button
                     type="button"
-                    className={`${styles.noteItem} ${selectedId === note.id ? styles.noteItemActive : ''}`}
+                    className={`${styles.noteItem} ${selectedId === note.id ? styles.noteItemActive : ""}`}
                     onClick={() => {
                       setSelectedId(note.id);
                       setShowAddForm(false);
                     }}
                   >
-                    <span>{formatDate(note.updatedAt)} · {note.typeTag}</span>
-                    <div className={styles.notePreview}>
-                      {note.content}
-                    </div>
+                    <span>
+                      {formatDate(note.updatedAt)} · {note.typeTag}
+                    </span>
+                    <div className={styles.notePreview}>{note.content}</div>
                   </button>
                 </li>
               ))}

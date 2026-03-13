@@ -35,7 +35,6 @@ Applicant tracking for job seekers. Track your own applications, companies, inte
    ```
 
 4. Optional: seed the database
-
    - New user, no data: `npm run db:seed:fresh`
    - Active job search sample: `npm run db:seed:active` (requires `SEED_ACTIVE_AUTH0_ID`; see [ARCHITECTURE.md](ARCHITECTURE.md) Layer 4 Database)
    - Full sample dataset: `npm run db:seed:demo`
@@ -46,15 +45,15 @@ Applicant tracking for job seekers. Track your own applications, companies, inte
 
 ## Stack
 
-| Layer    | Choice     |
-| -------- | ---------- |
-| Language | TypeScript |
-| Runtime  | Node.js    |
-| UI       | React (Next.js) |
-| API      | Express    |
+| Layer    | Choice                   |
+| -------- | ------------------------ |
+| Language | TypeScript               |
+| Runtime  | Node.js                  |
+| UI       | React (Next.js)          |
+| API      | Express                  |
 | Database | PostgreSQL (Drizzle ORM) |
-| Cache    | Redis      |
-| Auth     | Auth0 (JWT) |
+| Cache    | Redis                    |
+| Auth     | Auth0 (JWT)              |
 
 ---
 

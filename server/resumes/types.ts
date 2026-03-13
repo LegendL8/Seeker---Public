@@ -1,6 +1,6 @@
-import z from 'zod';
+import z from "zod";
 
-export const RESUME_FILE_TYPES = ['pdf', 'docx'] as const;
+export const RESUME_FILE_TYPES = ["pdf", "docx"] as const;
 export type ResumeFileType = (typeof RESUME_FILE_TYPES)[number];
 
 export const resumeFileTypeSchema = z.enum(RESUME_FILE_TYPES);
@@ -27,9 +27,9 @@ export const setActiveBodySchema = z.object({
 export type SetActiveBody = z.infer<typeof setActiveBodySchema>;
 
 const MIME_TO_EXT: Record<string, ResumeFileType> = {
-  'application/pdf': 'pdf',
-  'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
-    'docx',
+  "application/pdf": "pdf",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+    "docx",
 };
 
 export function mimeToFileType(mime: string): ResumeFileType | null {

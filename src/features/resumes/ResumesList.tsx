@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
-import { useEffect, useRef, useState } from 'react';
-import { useResumesList } from './hooks/useResumesList';
-import { useUploadResume } from './hooks/useUploadResume';
-import { useResumeWithUrl } from './hooks/useResumeWithUrl';
-import { useSetActiveResume } from './hooks/useSetActiveResume';
-import { useDeleteResume } from './hooks/useDeleteResume';
-import type { Resume } from './types';
-import styles from './ResumesList.module.css';
+import { useEffect, useRef, useState } from "react";
+import { useResumesList } from "./hooks/useResumesList";
+import { useUploadResume } from "./hooks/useUploadResume";
+import { useResumeWithUrl } from "./hooks/useResumeWithUrl";
+import { useSetActiveResume } from "./hooks/useSetActiveResume";
+import { useDeleteResume } from "./hooks/useDeleteResume";
+import type { Resume } from "./types";
+import styles from "./ResumesList.module.css";
 
 const FREE_TIER_CAP = 1;
-const ALLOWED_TYPES = '.pdf,.docx';
+const ALLOWED_TYPES = ".pdf,.docx";
 const MAX_SIZE_MB = 5;
 
 function formatBytes(n: number): string {
@@ -22,7 +22,7 @@ function formatBytes(n: number): string {
 function ResumeItem({ resume }: { resume: Resume }) {
   const [previewing, setPreviewing] = useState(false);
   const { data: withUrl, isPending: urlPending } = useResumeWithUrl(
-    previewing ? resume.id : null
+    previewing ? resume.id : null,
   );
   const setActiveMutation = useSetActiveResume();
   const deleteMutation = useDeleteResume();
@@ -33,7 +33,7 @@ function ResumeItem({ resume }: { resume: Resume }) {
 
   useEffect(() => {
     if (previewing && withUrl?.signedUrl) {
-      window.open(withUrl.signedUrl, '_blank', 'noopener,noreferrer');
+      window.open(withUrl.signedUrl, "_blank", "noopener,noreferrer");
       const t = setTimeout(() => setPreviewing(false), 0);
       return () => clearTimeout(t);
     }
@@ -45,8 +45,8 @@ function ResumeItem({ resume }: { resume: Resume }) {
 
   function handleDelete() {
     if (
-      typeof window !== 'undefined' &&
-      window.confirm('Delete this resume? This cannot be undone.')
+      typeof window !== "undefined" &&
+      window.confirm("Delete this resume? This cannot be undone.")
     ) {
       deleteMutation.mutate(resume.id);
     }
@@ -60,7 +60,7 @@ function ResumeItem({ resume }: { resume: Resume }) {
           {resume.fileType.toUpperCase()} – {formatBytes(resume.fileSizeBytes)}
           {resume.isActive && (
             <>
-              {' · '}
+              {" · "}
               <span className={styles.badge}>Active</span>
             </>
           )}
@@ -73,7 +73,7 @@ function ResumeItem({ resume }: { resume: Resume }) {
           onClick={handlePreview}
           disabled={urlPending}
         >
-          {urlPending ? 'Loading…' : 'Preview'}
+          {urlPending ? "Loading…" : "Preview"}
         </button>
         {!resume.isActive && (
           <button
@@ -111,8 +111,8 @@ export function ResumesList() {
     const input = fileInputRef.current;
     if (!input?.files?.length) return;
     const file = input.files[0];
-    const ext = file.name.split('.').pop()?.toLowerCase();
-    if (ext !== 'pdf' && ext !== 'docx') {
+    const ext = file.name.split(".").pop()?.toLowerCase();
+    if (ext !== "pdf" && ext !== "docx") {
       return;
     }
     if (file.size > MAX_SIZE_MB * 1024 * 1024) {
@@ -120,7 +120,7 @@ export function ResumesList() {
     }
     uploadMutation.mutate(file, {
       onSuccess: () => {
-        input.value = '';
+        input.value = "";
       },
     });
   }
@@ -130,7 +130,7 @@ export function ResumesList() {
       <div className={styles.wrapper}>
         <h2 className={styles.title}>Resumes</h2>
         <p className={styles.error}>
-          {error instanceof Error ? error.message : 'Failed to load resumes'}
+          {error instanceof Error ? error.message : "Failed to load resumes"}
         </p>
       </div>
     );
@@ -161,20 +161,21 @@ export function ResumesList() {
               className={styles.uploadBtn}
               disabled={atCap || uploadMutation.isPending}
             >
-              {uploadMutation.isPending ? 'Uploading…' : 'Upload'}
+              {uploadMutation.isPending ? "Uploading…" : "Upload"}
             </button>
           </div>
         </form>
         {atCap && (
           <p className={styles.capMessage}>
-            Free tier is limited to {FREE_TIER_CAP} resume. Delete one to upload another.
+            Free tier is limited to {FREE_TIER_CAP} resume. Delete one to upload
+            another.
           </p>
         )}
         {uploadMutation.isError && (
           <p className={styles.error}>
             {uploadMutation.error instanceof Error
               ? uploadMutation.error.message
-              : 'Upload failed'}
+              : "Upload failed"}
           </p>
         )}
       </div>
@@ -183,7 +184,9 @@ export function ResumesList() {
         <p className={styles.status}>Loading resumes…</p>
       ) : items.length === 0 ? (
         <div className={styles.empty}>
-          <p className={styles.status}>No resumes yet. Upload a PDF or DOCX above.</p>
+          <p className={styles.status}>
+            No resumes yet. Upload a PDF or DOCX above.
+          </p>
         </div>
       ) : (
         <div className={styles.list}>

@@ -1,23 +1,23 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useCreateInterview } from './hooks/useCreateInterview';
-import type { CreateInterviewInput } from './types';
-import styles from './AddInterviewForm.module.css';
+import { useState } from "react";
+import { useCreateInterview } from "./hooks/useCreateInterview";
+import type { CreateInterviewInput } from "./types";
+import styles from "./AddInterviewForm.module.css";
 
 const INTERVIEW_TYPES = [
-  { value: 'phone', label: 'Phone' },
-  { value: 'technical', label: 'Technical' },
-  { value: 'behavioral', label: 'Behavioral' },
-  { value: 'onsite', label: 'On-site' },
-  { value: 'final', label: 'Final' },
+  { value: "phone", label: "Phone" },
+  { value: "technical", label: "Technical" },
+  { value: "behavioral", label: "Behavioral" },
+  { value: "onsite", label: "On-site" },
+  { value: "final", label: "Final" },
 ];
 
 const OUTCOMES = [
-  { value: 'pending', label: 'Pending' },
-  { value: 'completed', label: 'Completed' },
-  { value: 'cancelled', label: 'Cancelled' },
-  { value: 'no_show', label: 'No show' },
+  { value: "pending", label: "Pending" },
+  { value: "completed", label: "Completed" },
+  { value: "cancelled", label: "Cancelled" },
+  { value: "no_show", label: "No show" },
 ];
 
 export interface AddInterviewFormProps {
@@ -31,11 +31,13 @@ export function AddInterviewForm({
   onSuccess,
   onCancel,
 }: AddInterviewFormProps) {
-  const [interviewType, setInterviewType] = useState<CreateInterviewInput['interviewType']>('phone');
-  const [scheduledAt, setScheduledAt] = useState('');
-  const [interviewerName, setInterviewerName] = useState('');
-  const [interviewerTitle, setInterviewerTitle] = useState('');
-  const [outcome, setOutcome] = useState<CreateInterviewInput['outcome']>('pending');
+  const [interviewType, setInterviewType] =
+    useState<CreateInterviewInput["interviewType"]>("phone");
+  const [scheduledAt, setScheduledAt] = useState("");
+  const [interviewerName, setInterviewerName] = useState("");
+  const [interviewerTitle, setInterviewerTitle] = useState("");
+  const [outcome, setOutcome] =
+    useState<CreateInterviewInput["outcome"]>("pending");
 
   const createMutation = useCreateInterview(applicationId);
 
@@ -52,9 +54,9 @@ export function AddInterviewForm({
     }
     createMutation.mutate(body, {
       onSuccess: () => {
-        setScheduledAt('');
-        setInterviewerName('');
-        setInterviewerTitle('');
+        setScheduledAt("");
+        setInterviewerName("");
+        setInterviewerTitle("");
         onSuccess?.();
       },
     });
@@ -70,7 +72,9 @@ export function AddInterviewForm({
           id="interviewType"
           value={interviewType}
           onChange={(e) =>
-            setInterviewType(e.target.value as CreateInterviewInput['interviewType'])
+            setInterviewType(
+              e.target.value as CreateInterviewInput["interviewType"],
+            )
           }
           className={styles.select}
           disabled={createMutation.isPending}
@@ -134,7 +138,7 @@ export function AddInterviewForm({
           id="outcome"
           value={outcome}
           onChange={(e) =>
-            setOutcome(e.target.value as CreateInterviewInput['outcome'])
+            setOutcome(e.target.value as CreateInterviewInput["outcome"])
           }
           className={styles.select}
           disabled={createMutation.isPending}
@@ -151,7 +155,7 @@ export function AddInterviewForm({
         <p className={styles.error}>
           {createMutation.error instanceof Error
             ? createMutation.error.message
-            : 'Failed to add interview'}
+            : "Failed to add interview"}
         </p>
       )}
 
@@ -161,7 +165,7 @@ export function AddInterviewForm({
           className={styles.submitBtn}
           disabled={createMutation.isPending}
         >
-          {createMutation.isPending ? 'Adding…' : 'Add interview'}
+          {createMutation.isPending ? "Adding…" : "Add interview"}
         </button>
         {onCancel && (
           <button

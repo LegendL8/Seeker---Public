@@ -1,15 +1,15 @@
 /** @type {import('jest').Config} */
 const config = {
-  testEnvironment: 'node',
-  testMatch: ['**/*.test.ts', '**/*.test.tsx'],
-  setupFiles: ['<rootDir>/jest.setup.ts'],
+  testEnvironment: "node",
+  testMatch: ["**/*.test.ts", "**/*.test.tsx"],
+  setupFiles: ["<rootDir>/jest.setup.ts"],
   transform: {
-    '^.+\\.tsx?$': ['ts-jest', { useESM: false }],
+    "^.+\\.tsx?$": ["ts-jest", { useESM: false }],
   },
-  moduleFileExtensions: ['ts', 'tsx', 'js', 'json'],
-  roots: ['<rootDir>/server', '<rootDir>/src'],
+  moduleFileExtensions: ["ts", "tsx", "js", "json"],
+  roots: ["<rootDir>/server", "<rootDir>/src"],
   moduleNameMapper: {
-    '^@/(.*)$': '<rootDir>/src/$1',
+    "^@/(.*)$": "<rootDir>/src/$1",
   },
 };
 

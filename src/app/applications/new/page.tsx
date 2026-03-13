@@ -1,5 +1,5 @@
-import { AddApplicationForm } from '@/features/applications/AddApplicationForm';
-import styles from '../page.module.css';
+import { AddApplicationForm } from "@/features/applications/AddApplicationForm";
+import styles from "../page.module.css";
 
 export default function NewApplicationPage() {
   return (

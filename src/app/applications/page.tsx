@@ -1,5 +1,5 @@
-import { ApplicationsList } from '@/features/applications/ApplicationsList';
-import styles from './page.module.css';
+import { ApplicationsList } from "@/features/applications/ApplicationsList";
+import styles from "./page.module.css";
 
 export default function ApplicationsPage() {
   return (

@@ -1,18 +1,14 @@
-import { NotFoundError } from './errors';
-import {
-  deleteNote,
-  getNoteById,
-  listNotes,
-} from './notes/service';
+import { NotFoundError } from "./errors";
+import { deleteNote, getNoteById, listNotes } from "./notes/service";
 
-const mockUserId = '550e8400-e29b-41d4-a716-446655440001';
-const mockNoteId = '550e8400-e29b-41d4-a716-446655440004';
+const mockUserId = "550e8400-e29b-41d4-a716-446655440001";
+const mockNoteId = "550e8400-e29b-41d4-a716-446655440004";
 
 const mockRow = {
   id: mockNoteId,
   userId: mockUserId,
-  content: 'Test note',
-  typeTag: 'general',
+  content: "Test note",
+  typeTag: "general",
   applicationId: null,
   interviewId: null,
   companyId: null,
@@ -20,11 +16,13 @@ const mockRow = {
   updatedAt: new Date(),
 };
 
-describe('listNotes', () => {
-  it('returns items, total, page, limit', async () => {
-    const db = jest.requireActual('./db').db;
-    const selectSpy = jest.spyOn(db, 'select').mockImplementation(((arg?: unknown) => {
-      if (arg && typeof arg === 'object' && 'count' in (arg as object)) {
+describe("listNotes", () => {
+  it("returns items, total, page, limit", async () => {
+    const db = jest.requireActual("./db").db;
+    const selectSpy = jest.spyOn(db, "select").mockImplementation(((
+      arg?: unknown,
+    ) => {
+      if (arg && typeof arg === "object" && "count" in (arg as object)) {
         return {
           from: jest.fn().mockReturnValue({
             where: jest.fn().mockResolvedValue([{ count: 1 }]),
@@ -45,17 +43,19 @@ describe('listNotes', () => {
     }) as typeof db.select);
     const result = await listNotes(mockUserId, { page: 1, limit: 20 });
     expect(result.items).toHaveLength(1);
-    expect(result.items[0].content).toBe('Test note');
+    expect(result.items[0].content).toBe("Test note");
     expect(result.total).toBe(1);
     expect(result.page).toBe(1);
     expect(result.limit).toBe(20);
     selectSpy.mockRestore();
   });
 
-  it('returns empty items and total 0 when user has no notes', async () => {
-    const db = jest.requireActual('./db').db;
-    const selectSpy = jest.spyOn(db, 'select').mockImplementation(((arg?: unknown) => {
-      if (arg && typeof arg === 'object' && 'count' in (arg as object)) {
+  it("returns empty items and total 0 when user has no notes", async () => {
+    const db = jest.requireActual("./db").db;
+    const selectSpy = jest.spyOn(db, "select").mockImplementation(((
+      arg?: unknown,
+    ) => {
+      if (arg && typeof arg === "object" && "count" in (arg as object)) {
         return {
           from: jest.fn().mockReturnValue({
             where: jest.fn().mockResolvedValue([{ count: 0 }]),
@@ -83,10 +83,10 @@ describe('listNotes', () => {
   });
 });
 
-describe('getNoteById', () => {
-  it('throws NotFoundError when no row returned', async () => {
-    const db = jest.requireActual('./db').db;
-    const selectSpy = jest.spyOn(db, 'select').mockReturnValue({
+describe("getNoteById", () => {
+  it("throws NotFoundError when no row returned", async () => {
+    const db = jest.requireActual("./db").db;
+    const selectSpy = jest.spyOn(db, "select").mockReturnValue({
       from: jest.fn().mockReturnValue({
         where: jest.fn().mockReturnValue({
           limit: jest.fn().mockResolvedValue([]),
@@ -94,19 +94,19 @@ describe('getNoteById', () => {
       }),
     } as unknown as ReturnType<typeof db.select>);
     await expect(getNoteById(mockUserId, mockNoteId)).rejects.toThrow(
-      NotFoundError
+      NotFoundError,
     );
     await expect(getNoteById(mockUserId, mockNoteId)).rejects.toThrow(
-      'Note not found'
+      "Note not found",
     );
     selectSpy.mockRestore();
   });
 });
 
-describe('deleteNote', () => {
-  it('succeeds when row exists', async () => {
-    const db = jest.requireActual('./db').db;
-    const deleteSpy = jest.spyOn(db, 'delete').mockReturnValue({
+describe("deleteNote", () => {
+  it("succeeds when row exists", async () => {
+    const db = jest.requireActual("./db").db;
+    const deleteSpy = jest.spyOn(db, "delete").mockReturnValue({
       where: jest.fn().mockReturnValue({
         returning: jest.fn().mockResolvedValue([{ id: mockNoteId }]),
       }),
@@ -115,15 +115,15 @@ describe('deleteNote', () => {
     deleteSpy.mockRestore();
   });
 
-  it('throws NotFoundError when note does not exist', async () => {
-    const db = jest.requireActual('./db').db;
-    const deleteSpy = jest.spyOn(db, 'delete').mockReturnValue({
+  it("throws NotFoundError when note does not exist", async () => {
+    const db = jest.requireActual("./db").db;
+    const deleteSpy = jest.spyOn(db, "delete").mockReturnValue({
       where: jest.fn().mockReturnValue({
         returning: jest.fn().mockResolvedValue([]),
       }),
     } as unknown as ReturnType<typeof db.delete>);
     await expect(deleteNote(mockUserId, mockNoteId)).rejects.toThrow(
-      NotFoundError
+      NotFoundError,
     );
     deleteSpy.mockRestore();
   });

@@ -5,6 +5,7 @@ Open source. All features are free.
 ---
 
 ## Job Applications
+
 - Add a job application manually
 - Link application to job posting URL
 - View job posting status on application detail
@@ -22,6 +23,7 @@ Open source. All features are free.
 - Bulk import via CSV
 
 ## Interview Tracking
+
 - Add an interview tied to an application
 - Track type: `"phone" | "technical" | "behavioral" | "onsite" | "final"`
 - Track date, time, interviewer name, title, and outcome
@@ -30,6 +32,7 @@ Open source. All features are free.
 - Track outcome: `"pending" | "passed" | "failed" | "no_show"`
 
 ## Notes
+
 - Dedicated notes tab — notes are first-class, not nested inside other views
 - Add a note with one type tag: `"interview" | "job_description" | "research" | "general"`
 - Add one relational tag linking to a real record — application, interview, or company
@@ -39,6 +42,7 @@ Open source. All features are free.
 - Paginated notes list
 
 ## Dashboard & Metrics
+
 - Total applications submitted
 - Applications by status
 - Interview rate — interviews divided by applications
@@ -53,6 +57,7 @@ Open source. All features are free.
 - Best days and times to apply based on market data (future)
 
 ## Resume Management
+
 - Upload a resume — PDF or DOCX only
 - One or more resumes per user
 - Attach resume to user profile
@@ -61,6 +66,7 @@ Open source. All features are free.
 - Delete resume
 
 ## User Profile & Settings
+
 - View and edit display name
 - View and edit email
 - Change password via Auth0
@@ -69,6 +75,7 @@ Open source. All features are free.
 - Configure notification preferences by channel (future)
 
 ## Notifications
+
 - In-app notification when application status changes
 - In-app reminder to follow up on applications with no activity for X days
 - Mark notifications as read
@@ -78,6 +85,7 @@ Open source. All features are free.
 - Real-time alerts for tracked companies posting new roles (future)
 
 ## Webhooks & Integrations
+
 - Receive webhooks from supported job boards
 - Webhook event log
 - Retry failed webhook events
@@ -86,6 +94,7 @@ Open source. All features are free.
 ---
 
 ## Future Features (Post-Launch)
+
 - OpenAI — resume analysis, interview prep, cover letter generation
 - Company research — auto-pull public company data
 - Contacts tracking — log people you have spoken to at each company

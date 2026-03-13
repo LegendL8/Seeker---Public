@@ -1,128 +1,126 @@
-import { createApplicationFormSchema } from './schemas';
+import { createApplicationFormSchema } from "./schemas";
 
-describe('createApplicationFormSchema', () => {
-  it('accepts minimal valid input (jobTitle only)', () => {
-    const result = createApplicationFormSchema.parse({ jobTitle: 'Engineer' });
-    expect(result.jobTitle).toBe('Engineer');
+describe("createApplicationFormSchema", () => {
+  it("accepts minimal valid input (jobTitle only)", () => {
+    const result = createApplicationFormSchema.parse({ jobTitle: "Engineer" });
+    expect(result.jobTitle).toBe("Engineer");
     expect(result.status).toBeUndefined();
   });
 
-  it('accepts valid status', () => {
+  it("accepts valid status", () => {
     const result = createApplicationFormSchema.parse({
-      jobTitle: 'Engineer',
-      status: 'applied',
+      jobTitle: "Engineer",
+      status: "applied",
     });
-    expect(result.status).toBe('applied');
+    expect(result.status).toBe("applied");
   });
 
-  it('transforms empty jobPostingUrl to undefined', () => {
+  it("transforms empty jobPostingUrl to undefined", () => {
     const result = createApplicationFormSchema.parse({
-      jobTitle: 'Engineer',
-      jobPostingUrl: '',
+      jobTitle: "Engineer",
+      jobPostingUrl: "",
     });
     expect(result.jobPostingUrl).toBeUndefined();
   });
 
-  it('accepts valid URL for jobPostingUrl', () => {
+  it("accepts valid URL for jobPostingUrl", () => {
     const result = createApplicationFormSchema.parse({
-      jobTitle: 'Engineer',
-      jobPostingUrl: 'https://example.com/job',
+      jobTitle: "Engineer",
+      jobPostingUrl: "https://example.com/job",
     });
-    expect(result.jobPostingUrl).toBe('https://example.com/job');
+    expect(result.jobPostingUrl).toBe("https://example.com/job");
   });
 
-  it('rejects missing jobTitle', () => {
+  it("rejects missing jobTitle", () => {
     expect(() => createApplicationFormSchema.parse({})).toThrow();
   });
 
-  it('rejects empty jobTitle', () => {
-    expect(() =>
-      createApplicationFormSchema.parse({ jobTitle: '' })
-    ).toThrow();
+  it("rejects empty jobTitle", () => {
+    expect(() => createApplicationFormSchema.parse({ jobTitle: "" })).toThrow();
   });
 
-  it('rejects invalid jobPostingUrl', () => {
+  it("rejects invalid jobPostingUrl", () => {
     expect(() =>
       createApplicationFormSchema.parse({
-        jobTitle: 'Engineer',
-        jobPostingUrl: 'not-a-url',
-      })
+        jobTitle: "Engineer",
+        jobPostingUrl: "not-a-url",
+      }),
     ).toThrow();
   });
 
-  it('rejects invalid status', () => {
+  it("rejects invalid status", () => {
     expect(() =>
       createApplicationFormSchema.parse({
-        jobTitle: 'Engineer',
-        status: 'invalid',
-      })
+        jobTitle: "Engineer",
+        status: "invalid",
+      }),
     ).toThrow();
   });
 
-  it('transforms salary string to number', () => {
+  it("transforms salary string to number", () => {
     const result = createApplicationFormSchema.parse({
-      jobTitle: 'Engineer',
-      salaryMin: '100000',
-      salaryMax: '150000',
+      jobTitle: "Engineer",
+      salaryMin: "100000",
+      salaryMax: "150000",
     });
     expect(result.salaryMin).toBe(100000);
     expect(result.salaryMax).toBe(150000);
   });
 
-  it('transforms empty salary to undefined', () => {
+  it("transforms empty salary to undefined", () => {
     const result = createApplicationFormSchema.parse({
-      jobTitle: 'Engineer',
-      salaryMin: '',
-      salaryMax: '',
+      jobTitle: "Engineer",
+      salaryMin: "",
+      salaryMax: "",
     });
     expect(result.salaryMin).toBeUndefined();
     expect(result.salaryMax).toBeUndefined();
   });
 
-  it('rejects invalid salary (non-numeric)', () => {
+  it("rejects invalid salary (non-numeric)", () => {
     expect(() =>
       createApplicationFormSchema.parse({
-        jobTitle: 'Engineer',
-        salaryMin: 'abc',
-      })
+        jobTitle: "Engineer",
+        salaryMin: "abc",
+      }),
     ).toThrow();
   });
 
-  it('transforms date string to ISO', () => {
+  it("transforms date string to ISO", () => {
     const result = createApplicationFormSchema.parse({
-      jobTitle: 'Engineer',
-      appliedAt: '2025-03-09',
+      jobTitle: "Engineer",
+      appliedAt: "2025-03-09",
     });
     expect(result.appliedAt).toMatch(/^2025-03-09T/);
     expect(result.appliedAt).toMatch(/Z$/);
   });
 
-  it('transforms empty appliedAt to undefined', () => {
+  it("transforms empty appliedAt to undefined", () => {
     const result = createApplicationFormSchema.parse({
-      jobTitle: 'Engineer',
-      appliedAt: '',
+      jobTitle: "Engineer",
+      appliedAt: "",
     });
     expect(result.appliedAt).toBeUndefined();
   });
 
-  it('accepts full valid form input', () => {
+  it("accepts full valid form input", () => {
     const result = createApplicationFormSchema.parse({
-      jobTitle: 'Senior Engineer',
-      status: 'interviewing',
-      jobPostingUrl: 'https://example.com/job',
-      location: 'Remote',
-      salaryMin: '120000',
-      salaryMax: '160000',
-      appliedAt: '2025-02-01',
-      source: 'LinkedIn',
+      jobTitle: "Senior Engineer",
+      status: "interviewing",
+      jobPostingUrl: "https://example.com/job",
+      location: "Remote",
+      salaryMin: "120000",
+      salaryMax: "160000",
+      appliedAt: "2025-02-01",
+      source: "LinkedIn",
     });
-    expect(result.jobTitle).toBe('Senior Engineer');
-    expect(result.status).toBe('interviewing');
-    expect(result.jobPostingUrl).toBe('https://example.com/job');
-    expect(result.location).toBe('Remote');
+    expect(result.jobTitle).toBe("Senior Engineer");
+    expect(result.status).toBe("interviewing");
+    expect(result.jobPostingUrl).toBe("https://example.com/job");
+    expect(result.location).toBe("Remote");
     expect(result.salaryMin).toBe(120000);
     expect(result.salaryMax).toBe(160000);
     expect(result.appliedAt).toMatch(/^2025-02-01/);
-    expect(result.source).toBe('LinkedIn');
+    expect(result.source).toBe("LinkedIn");
   });
 });

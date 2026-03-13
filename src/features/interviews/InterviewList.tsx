@@ -1,24 +1,24 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useInterviewsForApplication } from './hooks/useInterviewsForApplication';
-import { useDeleteInterview } from './hooks/useDeleteInterview';
-import { AddInterviewForm } from './AddInterviewForm';
-import type { Interview } from './types';
-import styles from './AddInterviewForm.module.css';
+import { useState } from "react";
+import { useInterviewsForApplication } from "./hooks/useInterviewsForApplication";
+import { useDeleteInterview } from "./hooks/useDeleteInterview";
+import { AddInterviewForm } from "./AddInterviewForm";
+import type { Interview } from "./types";
+import styles from "./AddInterviewForm.module.css";
 
 function formatDateTime(iso: string | null): string {
-  if (!iso) return '—';
+  if (!iso) return "—";
   try {
     return new Date(iso).toLocaleString(undefined, {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   } catch {
-    return '—';
+    return "—";
   }
 }
 
@@ -46,7 +46,7 @@ export function InterviewList({ applicationId }: InterviewListProps) {
       <section className={styles.section}>
         <h3 className={styles.sectionTitle}>Interviews</h3>
         <p className={styles.error}>
-          {error instanceof Error ? error.message : 'Failed to load interviews'}
+          {error instanceof Error ? error.message : "Failed to load interviews"}
         </p>
       </section>
     );
@@ -83,7 +83,7 @@ export function InterviewList({ applicationId }: InterviewListProps) {
                 {interview.interviewType}
                 {interview.interviewerName
                   ? ` with ${interview.interviewerName}`
-                  : ''}
+                  : ""}
               </span>
               <div className={styles.itemMeta}>
                 {formatDateTime(interview.scheduledAt)} · {interview.outcome}
@@ -93,8 +93,8 @@ export function InterviewList({ applicationId }: InterviewListProps) {
                   type="button"
                   onClick={() => {
                     if (
-                      typeof window !== 'undefined' &&
-                      window.confirm('Delete this interview?')
+                      typeof window !== "undefined" &&
+                      window.confirm("Delete this interview?")
                     ) {
                       deleteMutation.mutate(interview.id);
                     }

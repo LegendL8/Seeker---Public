@@ -1,45 +1,51 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { useState } from 'react';
+import Link from "next/link";
+import { useState } from "react";
 import {
   createApplicationFormSchema,
   type CreateApplicationFormInput,
   type CreateApplicationFormValues,
-} from './schemas';
-import { useCreateApplication } from './hooks/useCreateApplication';
-import { useResumesList } from '@/features/resumes/hooks/useResumesList';
-import styles from './AddApplicationForm.module.css';
+} from "./schemas";
+import { useCreateApplication } from "./hooks/useCreateApplication";
+import { useResumesList } from "@/features/resumes/hooks/useResumesList";
+import styles from "./AddApplicationForm.module.css";
 
-const STATUS_OPTIONS: { value: NonNullable<CreateApplicationFormValues['status']>; label: string }[] = [
-  { value: 'saved', label: 'Saved' },
-  { value: 'applied', label: 'Applied' },
-  { value: 'interviewing', label: 'Interviewing' },
-  { value: 'offer', label: 'Offer' },
-  { value: 'rejected', label: 'Rejected' },
+const STATUS_OPTIONS: {
+  value: NonNullable<CreateApplicationFormValues["status"]>;
+  label: string;
+}[] = [
+  { value: "saved", label: "Saved" },
+  { value: "applied", label: "Applied" },
+  { value: "interviewing", label: "Interviewing" },
+  { value: "offer", label: "Offer" },
+  { value: "rejected", label: "Rejected" },
 ];
 
 const initialValues: CreateApplicationFormInput = {
-  jobTitle: '',
-  status: 'saved',
-  jobPostingUrl: '',
-  location: '',
+  jobTitle: "",
+  status: "saved",
+  jobPostingUrl: "",
+  location: "",
   salaryMin: undefined,
   salaryMax: undefined,
   appliedAt: undefined,
-  source: '',
-  resumeId: '',
+  source: "",
+  resumeId: "",
 };
 
 export function AddApplicationForm() {
-  const [values, setValues] = useState<CreateApplicationFormInput>(initialValues);
-  const [fieldErrors, setFieldErrors] = useState<Partial<Record<keyof CreateApplicationFormValues, string>>>({});
+  const [values, setValues] =
+    useState<CreateApplicationFormInput>(initialValues);
+  const [fieldErrors, setFieldErrors] = useState<
+    Partial<Record<keyof CreateApplicationFormValues, string>>
+  >({});
   const { mutate, isPending, error: submitError } = useCreateApplication();
   const { data: resumesData } = useResumesList();
   const resumes = resumesData?.items ?? [];
 
   function handleChange(
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) {
     const { name, value } = e.target;
     setValues((prev) => ({ ...prev, [name]: value }));
@@ -54,10 +60,11 @@ export function AddApplicationForm() {
     setFieldErrors({});
     const parsed = createApplicationFormSchema.safeParse(values);
     if (!parsed.success) {
-      const errors: Partial<Record<keyof CreateApplicationFormValues, string>> = {};
+      const errors: Partial<Record<keyof CreateApplicationFormValues, string>> =
+        {};
       for (const issue of parsed.error.issues) {
         const path = issue.path[0];
-        if (typeof path === 'string') {
+        if (typeof path === "string") {
           const key = path as keyof CreateApplicationFormValues;
           if (!errors[key]) errors[key] = issue.message;
         }
@@ -115,7 +122,7 @@ export function AddApplicationForm() {
           <select
             id="status"
             name="status"
-            value={values.status ?? 'saved'}
+            value={values.status ?? "saved"}
             onChange={handleChange}
             className={styles.select}
             disabled={isPending}
@@ -136,7 +143,7 @@ export function AddApplicationForm() {
             id="jobPostingUrl"
             name="jobPostingUrl"
             type="url"
-            value={values.jobPostingUrl ?? ''}
+            value={values.jobPostingUrl ?? ""}
             onChange={handleChange}
             className={styles.input}
             placeholder="https://..."
@@ -155,7 +162,7 @@ export function AddApplicationForm() {
             id="location"
             name="location"
             type="text"
-            value={values.location ?? ''}
+            value={values.location ?? ""}
             onChange={handleChange}
             className={styles.input}
             maxLength={255}
@@ -174,7 +181,9 @@ export function AddApplicationForm() {
               type="number"
               min={0}
               step={1}
-              value={values.salaryMin === undefined ? '' : String(values.salaryMin)}
+              value={
+                values.salaryMin === undefined ? "" : String(values.salaryMin)
+              }
               onChange={handleChange}
               className={styles.input}
               disabled={isPending}
@@ -193,7 +202,9 @@ export function AddApplicationForm() {
               type="number"
               min={0}
               step={1}
-              value={values.salaryMax === undefined ? '' : String(values.salaryMax)}
+              value={
+                values.salaryMax === undefined ? "" : String(values.salaryMax)
+              }
               onChange={handleChange}
               className={styles.input}
               disabled={isPending}
@@ -212,11 +223,7 @@ export function AddApplicationForm() {
             id="appliedAt"
             name="appliedAt"
             type="date"
-            value={
-              values.appliedAt
-                ? values.appliedAt.slice(0, 10)
-                : ''
-            }
+            value={values.appliedAt ? values.appliedAt.slice(0, 10) : ""}
             onChange={handleChange}
             className={styles.input}
             disabled={isPending}
@@ -234,7 +241,7 @@ export function AddApplicationForm() {
             id="source"
             name="source"
             type="text"
-            value={values.source ?? ''}
+            value={values.source ?? ""}
             onChange={handleChange}
             className={styles.input}
             maxLength={255}
@@ -251,7 +258,7 @@ export function AddApplicationForm() {
             <select
               id="resumeId"
               name="resumeId"
-              value={values.resumeId ?? ''}
+              value={values.resumeId ?? ""}
               onChange={handleChange}
               className={styles.select}
               disabled={isPending}
@@ -268,13 +275,19 @@ export function AddApplicationForm() {
 
         {submitError && (
           <p className={styles.submitError}>
-            {submitError instanceof Error ? submitError.message : 'Failed to create application'}
+            {submitError instanceof Error
+              ? submitError.message
+              : "Failed to create application"}
           </p>
         )}
 
         <div className={styles.actions}>
-          <button type="submit" className={styles.submitBtn} disabled={isPending}>
-            {isPending ? 'Saving…' : 'Add application'}
+          <button
+            type="submit"
+            className={styles.submitBtn}
+            disabled={isPending}
+          >
+            {isPending ? "Saving…" : "Add application"}
           </button>
           <Link href="/applications" className={styles.cancelLink}>
             Cancel

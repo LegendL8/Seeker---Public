@@ -1,6 +1,6 @@
-import { auth0 } from '@/lib/auth0';
-import { Dashboard } from '@/features/dashboard/Dashboard';
-import styles from './page.module.css';
+import { auth0 } from "@/lib/auth0";
+import { Dashboard } from "@/features/dashboard/Dashboard";
+import styles from "./page.module.css";
 
 export default async function Home() {
   const session = await auth0.getSession();
