@@ -15,7 +15,7 @@ import {
   setActiveResume,
 } from "./service";
 import { isS3Configured } from "./s3";
-import { mimeToFileType } from "./types";
+import { listResumesQuerySchema, mimeToFileType } from "./types";
 import { setActiveBodySchema } from "./types";
 
 const uuidParamSchema = z.string().uuid();
@@ -40,12 +40,19 @@ router.use(asyncHandler(requireAuth));
 router.get(
   "/",
   asyncHandler(async (req: Request, res: Response) => {
+    const queryResult = listResumesQuerySchema.safeParse(req.query);
+    if (!queryResult.success) {
+      throw new ValidationError(
+        queryResult.error.errors.map((e) => e.message).join("; "),
+      );
+    }
+    const { page, limit } = queryResult.data;
     if (!isS3Configured()) {
-      return res.json({ items: [] });
+      return res.json({ items: [], page, limit, total: 0 });
     }
     const user = req.user!;
-    const items = await listResumes(user.id);
-    res.json({ items });
+    const { items, total } = await listResumes(user.id, page, limit);
+    res.json({ items, page, limit, total });
   }),
 );
 

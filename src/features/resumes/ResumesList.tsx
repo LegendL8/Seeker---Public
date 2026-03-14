@@ -10,6 +10,8 @@ import type { Resume } from "./types";
 import styles from "./ResumesList.module.css";
 
 const FREE_TIER_CAP = 1;
+const DEFAULT_PAGE = 1;
+const DEFAULT_LIMIT = 20;
 const ALLOWED_TYPES = ".pdf,.docx";
 const MAX_SIZE_MB = 5;
 
@@ -100,11 +102,20 @@ function ResumeItem({ resume }: { resume: Resume }) {
 
 export function ResumesList() {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { data, isPending, isError, error } = useResumesList();
+  const [page, setPage] = useState(DEFAULT_PAGE);
+  const { data, isPending, isError, error } = useResumesList(
+    page,
+    DEFAULT_LIMIT,
+  );
   const uploadMutation = useUploadResume();
 
   const items = data?.items ?? [];
-  const atCap = items.length >= FREE_TIER_CAP;
+  const total = data?.total ?? 0;
+  const limit = data?.limit ?? DEFAULT_LIMIT;
+  const atCap = total >= FREE_TIER_CAP;
+  const totalPages = Math.max(1, Math.ceil(total / limit));
+  const hasPrev = page > 1;
+  const hasNext = page < totalPages;
 
   function handleUpload(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -189,11 +200,39 @@ export function ResumesList() {
           </p>
         </div>
       ) : (
-        <div className={styles.list}>
-          {items.map((r) => (
-            <ResumeItem key={r.id} resume={r} />
-          ))}
-        </div>
+        <>
+          <div className={styles.list}>
+            {items.map((r) => (
+              <ResumeItem key={r.id} resume={r} />
+            ))}
+          </div>
+          {totalPages > 1 && (
+            <nav
+              className={styles.pagination}
+              aria-label="Resumes pagination"
+            >
+              <button
+                type="button"
+                className={styles.pageBtn}
+                disabled={!hasPrev}
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+              >
+                Previous
+              </button>
+              <span className={styles.pageInfo}>
+                Page {page} of {totalPages} ({total} total)
+              </span>
+              <button
+                type="button"
+                className={styles.pageBtn}
+                disabled={!hasNext}
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              >
+                Next
+              </button>
+            </nav>
+          )}
+        </>
       )}
     </div>
   );

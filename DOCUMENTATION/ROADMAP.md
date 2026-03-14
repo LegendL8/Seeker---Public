@@ -159,7 +159,8 @@ _Milestone 4 complete 2026-03-10_
 
 **High priority**
 
-- [ ] Resumes list: add offset pagination (server: `?page=1&limit=20`, max limit 100, return `{ items, page, limit, total }`; frontend: useResumesList with page/limit, ResumesList UI)
+- [x] Resumes list: add offset pagination (server: `?page=1&limit=20`, max limit 100, return `{ items, page, limit, total }`; frontend: useResumesList with page/limit, ResumesList UI)
+      _Updated 2026-03-13_
 - [ ] Application detail: parallel prefetch (frontend only: pass route `id` into both useApplication(id) and useInterviewsForApplication(id) so both requests run in parallel; no API change)
 - [ ] Application detail (optional alternative): combined endpoint e.g. `GET /api/v1/applications/:id?include=interviews` returning `{ application, interviews }`; frontend single fetch (update DOCUMENTATION/API.md; no ARCHITECTURE change)
 

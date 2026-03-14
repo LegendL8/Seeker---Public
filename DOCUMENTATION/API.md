@@ -259,11 +259,13 @@ _Amended 2026-03-09_
 
 | Method | Route                 | Description                           |
 | ------ | --------------------- | ------------------------------------- |
-| GET    | `/api/v1/resumes`     | List resumes                          |
+| GET    | `/api/v1/resumes`     | List resumes — paginated              |
 | POST   | `/api/v1/resumes`     | Upload resume — free tier capped at 1 |
 | GET    | `/api/v1/resumes/:id` | Get resume metadata and signed URL    |
 | PATCH  | `/api/v1/resumes/:id` | Set resume as active                  |
 | DELETE | `/api/v1/resumes/:id` | Delete from S3 and database           |
+
+**Query params (list):** `?page=1&limit=20` (limit max 100). Response: `{ items, page, limit, total }`.
 
 **Note:** S3 key never returned. Signed URLs expire in 15 minutes. DELETE removes from S3 first, then database.
 

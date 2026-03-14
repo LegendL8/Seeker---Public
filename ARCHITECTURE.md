@@ -182,6 +182,9 @@ _Added 2026-03-10_
 Dashboard: `server/dashboard/` (types.ts, cache.ts, service.ts, routes.ts). GET `/api/v1/dashboard/metrics` returns totalApplications, applicationsByStatus (saved, applied, interviewing, offer, rejected), interviewRate, activeApplications, offersReceived, rejectionsReceived. Redis cache per user (60s TTL); invalidated on application or interview create/update/delete. Frontend: `src/features/dashboard/` (Dashboard at `/` when authenticated, useDashboardMetrics, fetchDashboardMetrics).
 _Added 2026-03-10_
 
+Resumes list: GET `/api/v1/resumes` accepts `?page=1&limit=20` (limit max 100), returns `{ items, page, limit, total }`. Frontend: `useResumesList(page, limit)`, ResumesList with pagination UI.
+_Added 2026-03-13_
+
 ### Implementation Notes
 
 - `[IMPL]` Resolve remaining documentation inconsistencies. (1) Application status — API.md POST/PATCH body examples and SCHEMA.md applications table show "offered" and "withdrawn"; implementation uses "offer" and has no "withdrawn". Align docs to current behavior or implement missing values. (2) SCHEMA.md Seed Files — seed.active.ts inserts 6 applications and 4 interviews; SCHEMA.md says "10 applications" and "5 interviews". Correct counts.

@@ -176,3 +176,34 @@
   border: 1px solid var(--border);
   border-radius: 10px;
 }
+
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.pageBtn {
+  padding: 8px 16px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  color: var(--foreground);
+  border-radius: 6px;
+}
+
+.pageBtn:hover:not(:disabled) {
+  background: var(--background-hover);
+}
+
+.pageBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pageInfo {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}

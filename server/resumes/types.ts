@@ -26,6 +26,13 @@ export const setActiveBodySchema = z.object({
 
 export type SetActiveBody = z.infer<typeof setActiveBodySchema>;
 
+export const listResumesQuerySchema = z.object({
+  page: z.coerce.number().int().min(1).default(1),
+  limit: z.coerce.number().int().min(1).max(100).default(20),
+});
+
+export type ListResumesQuery = z.infer<typeof listResumesQuerySchema>;
+
 const MIME_TO_EXT: Record<string, ResumeFileType> = {
   "application/pdf": "pdf",
   "application/vnd.openxmlformats-officedocument.wordprocessingml.document":

@@ -1,9 +1,13 @@
 import { getApiBaseUrl } from "@/lib/api";
 import type { ListResumesResponse, Resume, ResumeWithSignedUrl } from "./types";
 
-export async function fetchResumesList(): Promise<ListResumesResponse> {
+export async function fetchResumesList(
+  page: number,
+  limit: number,
+): Promise<ListResumesResponse> {
   const base = getApiBaseUrl();
-  const res = await fetch(`${base}/v1/resumes`, { credentials: "include" });
+  const url = `${base}/v1/resumes?page=${encodeURIComponent(page)}&limit=${encodeURIComponent(limit)}`;
+  const res = await fetch(url, { credentials: "include" });
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));
     const message =

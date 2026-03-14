@@ -10,12 +10,27 @@ import { FREE_TIER_RESUME_CAP } from "./types";
 
 export type ResumeRow = typeof resumes.$inferSelect;
 
-export async function listResumes(userId: string): Promise<ResumeRow[]> {
-  return db
-    .select()
-    .from(resumes)
-    .where(eq(resumes.userId, userId))
-    .orderBy(desc(resumes.createdAt));
+export async function listResumes(
+  userId: string,
+  page: number,
+  limit: number,
+): Promise<{ items: ResumeRow[]; total: number }> {
+  const offset = (page - 1) * limit;
+  const [items, totalResult] = await Promise.all([
+    db
+      .select()
+      .from(resumes)
+      .where(eq(resumes.userId, userId))
+      .orderBy(desc(resumes.createdAt))
+      .limit(limit)
+      .offset(offset),
+    db
+      .select({ count: count() })
+      .from(resumes)
+      .where(eq(resumes.userId, userId)),
+  ]);
+  const total = totalResult[0]?.count ?? 0;
+  return { items, total };
 }
 
 export async function getResumeById(

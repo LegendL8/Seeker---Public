@@ -13,4 +13,7 @@ export interface ResumeWithSignedUrl extends Resume {
 
 export interface ListResumesResponse {
   items: Resume[];
+  page: number;
+  limit: number;
+  total: number;
 }
