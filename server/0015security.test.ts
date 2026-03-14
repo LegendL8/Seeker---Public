@@ -35,8 +35,9 @@ describe("securityHeaders", () => {
   });
 
   it("does not set HSTS when NODE_ENV is not production", () => {
-    const orig = process.env.NODE_ENV;
-    process.env.NODE_ENV = "development";
+    const env = process.env as NodeJS.ProcessEnv & { NODE_ENV?: string };
+    const orig = env.NODE_ENV;
+    env.NODE_ENV = "development";
     const res = mockRes();
     const next = mockNext();
     securityHeaders({} as Request, res, next);
@@ -44,12 +45,13 @@ describe("securityHeaders", () => {
       "Strict-Transport-Security",
       expect.any(String),
     );
-    process.env.NODE_ENV = orig;
+    env.NODE_ENV = orig;
   });
 
   it("sets HSTS when NODE_ENV is production", () => {
-    const orig = process.env.NODE_ENV;
-    process.env.NODE_ENV = "production";
+    const env = process.env as NodeJS.ProcessEnv & { NODE_ENV?: string };
+    const orig = env.NODE_ENV;
+    env.NODE_ENV = "production";
     const res = mockRes();
     const next = mockNext();
     securityHeaders({} as Request, res, next);
@@ -57,7 +59,7 @@ describe("securityHeaders", () => {
       "Strict-Transport-Security",
       "max-age=31536000; includeSubDomains",
     );
-    process.env.NODE_ENV = orig;
+    env.NODE_ENV = orig;
   });
 });
 
