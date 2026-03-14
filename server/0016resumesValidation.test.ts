@@ -50,9 +50,7 @@ describe("setActiveBodySchema", () => {
   });
 
   it("rejects non-boolean isActive", () => {
-    expect(() =>
-      setActiveBodySchema.parse({ isActive: "yes" }),
-    ).toThrow();
+    expect(() => setActiveBodySchema.parse({ isActive: "yes" })).toThrow();
   });
 });
 

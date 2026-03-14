@@ -132,13 +132,13 @@ _Added 2026-03-09_
 
 ## Applications
 
-| Method | Route                                    | Description                                          |
-| ------ | ---------------------------------------- | ---------------------------------------------------- |
-| GET    | `/api/v1/applications`                   | List applications — paginated                        |
-| POST   | `/api/v1/applications`                   | Create an application                                |
-| GET    | `/api/v1/applications/:id`               | Get application with interviews                      |
-| PATCH  | `/api/v1/applications/:id`               | Update application                                   |
-| DELETE | `/api/v1/applications/:id`               | Delete application                                   |
+| Method | Route                                    | Description                                                     |
+| ------ | ---------------------------------------- | --------------------------------------------------------------- |
+| GET    | `/api/v1/applications`                   | List applications — paginated                                   |
+| POST   | `/api/v1/applications`                   | Create an application                                           |
+| GET    | `/api/v1/applications/:id`               | Get application with interviews                                 |
+| PATCH  | `/api/v1/applications/:id`               | Update application                                              |
+| DELETE | `/api/v1/applications/:id`               | Delete application                                              |
 | POST   | `/api/v1/applications/:id/check-posting` | Trigger manual posting status check — reserved; not implemented |
 
 **Query params (list):** Offset mode: `?page=1&limit=20`. Cursor mode: `?cursor=<opaque>&limit=20` for next page (select O(k); no total). Response with offset: `{ items, page, limit, total }`. Response with cursor: `{ items, nextCursor }` (nextCursor null when no next page).
@@ -257,13 +257,13 @@ _Amended 2026-03-09_
 
 ## Resumes
 
-| Method | Route                 | Description                           |
-| ------ | --------------------- | ------------------------------------- |
-| GET    | `/api/v1/resumes`     | List resumes — paginated              |
-| POST   | `/api/v1/resumes`     | Upload resume — limit 1 per user      |
-| GET    | `/api/v1/resumes/:id` | Get resume metadata and signed URL    |
-| PATCH  | `/api/v1/resumes/:id` | Set resume as active                  |
-| DELETE | `/api/v1/resumes/:id` | Delete from S3 and database           |
+| Method | Route                 | Description                        |
+| ------ | --------------------- | ---------------------------------- |
+| GET    | `/api/v1/resumes`     | List resumes — paginated           |
+| POST   | `/api/v1/resumes`     | Upload resume — limit 1 per user   |
+| GET    | `/api/v1/resumes/:id` | Get resume metadata and signed URL |
+| PATCH  | `/api/v1/resumes/:id` | Set resume as active               |
+| DELETE | `/api/v1/resumes/:id` | Delete from S3 and database        |
 
 **Query params (list):** `?page=1&limit=20` (limit max 100). Response: `{ items, page, limit, total }`.
 

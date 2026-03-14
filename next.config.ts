@@ -32,7 +32,8 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       {
-        source: "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|ico|json)$).*)",
+        source:
+          "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|ico|json)$).*)",
         headers: [
           { key: "Content-Security-Policy", value: csp },
           { key: "Permissions-Policy", value: permissionsPolicy },

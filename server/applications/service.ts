@@ -25,9 +25,7 @@ function encodeCursor(row: {
   );
 }
 
-function decodeCursor(
-  cursor: string,
-): { updatedAt: Date; id: string } | null {
+function decodeCursor(cursor: string): { updatedAt: Date; id: string } | null {
   if (!cursor.startsWith(CURSOR_PREFIX)) return null;
   try {
     const raw = Buffer.from(
@@ -35,10 +33,7 @@ function decodeCursor(
       "base64url",
     ).toString("utf-8");
     const parsed = JSON.parse(raw) as { updatedAt?: string; id?: string };
-    if (
-      typeof parsed.updatedAt !== "string" ||
-      typeof parsed.id !== "string"
-    ) {
+    if (typeof parsed.updatedAt !== "string" || typeof parsed.id !== "string") {
       return null;
     }
     const updatedAt = new Date(parsed.updatedAt);
@@ -95,8 +90,7 @@ export async function listApplicationsByCursor(
     .orderBy(desc(applications.updatedAt), desc(applications.id))
     .limit(limit + 1);
   const items = rows.slice(0, limit);
-  const nextCursor =
-    rows.length > limit ? encodeCursor(rows[limit - 1]) : null;
+  const nextCursor = rows.length > limit ? encodeCursor(rows[limit - 1]) : null;
   return { items, nextCursor };
 }
 

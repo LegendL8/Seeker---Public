@@ -42,8 +42,7 @@ describe("fetchResumesList", () => {
   it("encodes page and limit in URL", async () => {
     mockFetch.mockResolvedValueOnce({
       ok: true,
-      json: () =>
-        Promise.resolve({ items: [], page: 2, limit: 10, total: 0 }),
+      json: () => Promise.resolve({ items: [], page: 2, limit: 10, total: 0 }),
     });
 
     await fetchResumesList(2, 10);
@@ -94,10 +93,9 @@ describe("fetchResumeWithUrl", () => {
     const result = await fetchResumeWithUrl("uuid-1");
 
     expect(mockFetch).toHaveBeenCalledTimes(1);
-    expect(mockFetch).toHaveBeenCalledWith(
-      "/api/proxy/v1/resumes/uuid-1",
-      { credentials: "include" },
-    );
+    expect(mockFetch).toHaveBeenCalledWith("/api/proxy/v1/resumes/uuid-1", {
+      credentials: "include",
+    });
     expect(result).toEqual(resume);
   });
 

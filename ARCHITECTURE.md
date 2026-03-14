@@ -131,7 +131,7 @@ giving job seekers their own dashboard to track applications, interviews, notes,
 - X-Frame-Options: DENY (Express)
 - X-Content-Type-Options: nosniff (Express)
 - Referrer-Policy: no-referrer (Express)
-- Content Security Policy (CSP) — set in Next.js on document responses; allows 'self' and Auth0 (*.auth0.com); script/style use 'unsafe-inline' for Next.js and Auth0 SDK; frame-ancestors 'none'. Source: next.config.ts headers.
+- Content Security Policy (CSP) — set in Next.js on document responses; allows 'self' and Auth0 (\*.auth0.com); script/style use 'unsafe-inline' for Next.js and Auth0 SDK; frame-ancestors 'none'. Source: next.config.ts headers.
 - Permissions-Policy — set in Next.js; camera, microphone, geolocation, payment, usb, magnetometer, gyroscope, accelerometer disabled.
 
 ### CORS
@@ -184,8 +184,8 @@ _Added 2026-03-10_
 Dashboard: `server/dashboard/` (types.ts, cache.ts, service.ts, routes.ts). GET `/api/v1/dashboard/metrics` returns totalApplications, applicationsByStatus (saved, applied, interviewing, offer, rejected), interviewRate, activeApplications, offersReceived, rejectionsReceived. Redis cache per user (60s TTL); invalidated on application or interview create/update/delete. Frontend: `src/features/dashboard/` (Dashboard at `/` when authenticated, useDashboardMetrics, fetchDashboardMetrics).
 _Added 2026-03-10_
 
-Resumes list: GET `/api/v1/resumes` accepts `?page=1&limit=20` (limit max 100), returns `{ items, page, limit, total }`. Frontend: `useResumesList(page, limit)`, ResumesList with pagination UI. setActiveResume: one conditional update when setting active (SET is_active = (id = :id) WHERE user_id); one update when setting inactive; no separate read or bulk step.
-_Added 2026-03-13_
+Resumes list: GET `/api/v1/resumes` accepts `?page=1&limit=20` (limit max 100), returns `{ items, page, limit, total }`. Frontend: `useResumesList(page, limit)`, ResumesList with pagination UI. setActiveResume: one conditional update when setting active (SET is*active = (id = :id) WHERE user_id); one update when setting inactive; no separate read or bulk step.
+\_Added 2026-03-13*
 
 ### Implementation Notes
 

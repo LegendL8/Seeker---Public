@@ -206,10 +206,7 @@ export function ResumesList() {
             ))}
           </div>
           {totalPages > 1 && (
-            <nav
-              className={styles.pagination}
-              aria-label="Resumes pagination"
-            >
+            <nav className={styles.pagination} aria-label="Resumes pagination">
               <button
                 type="button"
                 className={styles.pageBtn}

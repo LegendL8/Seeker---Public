@@ -21,11 +21,7 @@ export const envSchema = z.object({
     .number()
     .optional()
     .default(5 * 1024 * 1024),
-  ALLOWED_ORIGIN: z
-    .string()
-    .url()
-    .optional()
-    .default("http://localhost:3000"),
+  ALLOWED_ORIGIN: z.string().url().optional().default("http://localhost:3000"),
 });
 
 export const env = envSchema.parse(process.env);

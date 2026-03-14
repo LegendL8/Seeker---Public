@@ -13,10 +13,7 @@ const BEARER_PREFIX = "Bearer ";
 
 const USER_CACHE_TTL_MS = 60_000;
 
-const userCache = new Map<
-  string,
-  { user: User; expiresAt: number }
->();
+const userCache = new Map<string, { user: User; expiresAt: number }>();
 
 function getCachedUser(sub: string): User | undefined {
   const entry = userCache.get(sub);

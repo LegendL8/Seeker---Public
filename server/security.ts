@@ -12,7 +12,10 @@ export function securityHeaders(
   next: NextFunction,
 ): void {
   if (process.env.NODE_ENV === "production") {
-    res.setHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
+    res.setHeader(
+      "Strict-Transport-Security",
+      "max-age=31536000; includeSubDomains",
+    );
   }
   res.setHeader("X-Frame-Options", "DENY");
   res.setHeader("X-Content-Type-Options", "nosniff");
@@ -24,11 +27,7 @@ export function securityHeaders(
  * CORS middleware: allow only the configured origin (ARCHITECTURE: strict, own domain).
  * Sets Access-Control-Allow-Origin when Origin matches; supports credentials.
  */
-export function cors(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-): void {
+export function cors(req: Request, res: Response, next: NextFunction): void {
   const origin = req.headers.origin;
   const allowed = env.ALLOWED_ORIGIN;
 
@@ -40,10 +39,7 @@ export function cors(
     "Access-Control-Allow-Methods",
     "GET, POST, PATCH, DELETE, OPTIONS",
   );
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "Content-Type, Authorization",
-  );
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
 
   if (req.method === "OPTIONS") {
     res.sendStatus(204);
