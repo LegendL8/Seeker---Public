@@ -7,5 +7,9 @@
 }
 
 .main {
-  margin: 0 auto;
+  width: 100%;
+  max-width: 720px;
+  margin-left: auto;
+  margin-right: auto;
+  box-sizing: border-box;
 }

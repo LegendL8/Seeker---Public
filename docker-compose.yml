@@ -4,6 +4,9 @@ services:
     command: ["npm", "run", "dev", "--", "-H", "0.0.0.0"]
     ports:
       - "3000:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
     env_file: .env
     environment:
       - NODE_ENV=development
