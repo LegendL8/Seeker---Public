@@ -99,7 +99,7 @@ export async function updateNote(
   id: string,
   body: UpdateNoteBody,
 ): Promise<NoteRow> {
-  await getNoteById(userId, id);
+  const existing = await getNoteById(userId, id);
 
   const relationalCount = [
     body.applicationId,
@@ -131,7 +131,7 @@ export async function updateNote(
   if (body.interviewId !== undefined) update.interviewId = body.interviewId;
   if (body.companyId !== undefined) update.companyId = body.companyId;
   if (Object.keys(update).length === 0) {
-    return getNoteById(userId, id);
+    return existing;
   }
   update.updatedAt = new Date();
 

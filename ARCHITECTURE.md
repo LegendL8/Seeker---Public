@@ -173,11 +173,11 @@ Applications feature implemented: `server/applications/` (types.ts, service.ts, 
 _Updated 2026-03-09_
 _Added 2026-03-09_
 
-Interviews: `server/interviews/` (types.ts, service.ts, routes.ts). Nested under applications: GET/POST `/api/v1/applications/:applicationId/interviews`. Standalone: GET/PATCH/DELETE `/api/v1/interviews/:id`. Frontend: `src/features/interviews/` (InterviewList, AddInterviewForm on application detail). Application detail page prefetches interviews in parallel (ApplicationDetail calls useInterviewsForApplication(id) at top level with route id).
+Interviews: `server/interviews/` (types.ts, service.ts, routes.ts). Nested under applications: GET/POST `/api/v1/applications/:applicationId/interviews`. Standalone: GET/PATCH/DELETE `/api/v1/interviews/:id`. PATCH no-op returns first-fetched row (one read). Frontend: `src/features/interviews/` (InterviewList, AddInterviewForm on application detail). Application detail page prefetches interviews in parallel (ApplicationDetail calls useInterviewsForApplication(id) at top level with route id).
 _Added 2026-03-10_
 _Updated 2026-03-13_
 
-Notes: `server/notes/` (types.ts, service.ts, routes.ts). GET list (paginated, filter by typeTag, applicationId, interviewId, companyId), GET/POST/PATCH/DELETE `/api/v1/notes` and `/api/v1/notes/:id`. At most one relational tag per note (enforced in schema and service). Frontend: `src/features/notes/` (NotesList at `/notes`, AddNoteForm, NoteEditor with debounced save).
+Notes: `server/notes/` (types.ts, service.ts, routes.ts). GET list (paginated, filter by typeTag, applicationId, interviewId, companyId), GET/POST/PATCH/DELETE `/api/v1/notes` and `/api/v1/notes/:id`. At most one relational tag per note (enforced in schema and service). PATCH no-op returns first-fetched row (one read). Frontend: `src/features/notes/` (NotesList at `/notes`, AddNoteForm, NoteEditor with debounced save).
 _Added 2026-03-10_
 
 Dashboard: `server/dashboard/` (types.ts, cache.ts, service.ts, routes.ts). GET `/api/v1/dashboard/metrics` returns totalApplications, applicationsByStatus (saved, applied, interviewing, offer, rejected), interviewRate, activeApplications, offersReceived, rejectionsReceived. Redis cache per user (60s TTL); invalidated on application or interview create/update/delete. Frontend: `src/features/dashboard/` (Dashboard at `/` when authenticated, useDashboardMetrics, fetchDashboardMetrics).
