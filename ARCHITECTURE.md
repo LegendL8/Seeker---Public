@@ -173,8 +173,9 @@ Applications feature implemented: `server/applications/` (types.ts, service.ts, 
 _Updated 2026-03-09_
 _Added 2026-03-09_
 
-Interviews: `server/interviews/` (types.ts, service.ts, routes.ts). Nested under applications: GET/POST `/api/v1/applications/:applicationId/interviews`. Standalone: GET/PATCH/DELETE `/api/v1/interviews/:id`. Frontend: `src/features/interviews/` (InterviewList, AddInterviewForm on application detail).
+Interviews: `server/interviews/` (types.ts, service.ts, routes.ts). Nested under applications: GET/POST `/api/v1/applications/:applicationId/interviews`. Standalone: GET/PATCH/DELETE `/api/v1/interviews/:id`. Frontend: `src/features/interviews/` (InterviewList, AddInterviewForm on application detail). Application detail page prefetches interviews in parallel (ApplicationDetail calls useInterviewsForApplication(id) at top level with route id).
 _Added 2026-03-10_
+_Updated 2026-03-13_
 
 Notes: `server/notes/` (types.ts, service.ts, routes.ts). GET list (paginated, filter by typeTag, applicationId, interviewId, companyId), GET/POST/PATCH/DELETE `/api/v1/notes` and `/api/v1/notes/:id`. At most one relational tag per note (enforced in schema and service). Frontend: `src/features/notes/` (NotesList at `/notes`, AddNoteForm, NoteEditor with debounced save).
 _Added 2026-03-10_
@@ -182,7 +183,7 @@ _Added 2026-03-10_
 Dashboard: `server/dashboard/` (types.ts, cache.ts, service.ts, routes.ts). GET `/api/v1/dashboard/metrics` returns totalApplications, applicationsByStatus (saved, applied, interviewing, offer, rejected), interviewRate, activeApplications, offersReceived, rejectionsReceived. Redis cache per user (60s TTL); invalidated on application or interview create/update/delete. Frontend: `src/features/dashboard/` (Dashboard at `/` when authenticated, useDashboardMetrics, fetchDashboardMetrics).
 _Added 2026-03-10_
 
-Resumes list: GET `/api/v1/resumes` accepts `?page=1&limit=20` (limit max 100), returns `{ items, page, limit, total }`. Frontend: `useResumesList(page, limit)`, ResumesList with pagination UI.
+Resumes list: GET `/api/v1/resumes` accepts `?page=1&limit=20` (limit max 100), returns `{ items, page, limit, total }`. Frontend: `useResumesList(page, limit)`, ResumesList with pagination UI. setActiveResume: one conditional update when setting active (SET is_active = (id = :id) WHERE user_id); one update when setting inactive; no separate read or bulk step.
 _Added 2026-03-13_
 
 ### Implementation Notes
@@ -281,7 +282,7 @@ Each environment has its own `.env` file. Staging and production secrets managed
 - Integration tests — API and service layer
 - End-to-end tests — full user flows via Playwright
 - ~~Jest configured; server test files named `0001nameoffeature.test.ts` (see DOCUMENTATION/DEVELOPMENT.md). Tests: errors, asyncHandler, config schema, applications validation/service, rate limit handler.~~
-- Jest configured; roots: `server/` and `src/`. Server and frontend test files named `0001nameoffeature.test.ts` (see DOCUMENTATION/DEVELOPMENT.md). Server: errors, asyncHandler, config, applications validation/service, interviews validation/service, notes validation/service, rate limit, dashboard service (0011), dashboard cache (0012), dashboard routes (0013). Frontend: getApiBaseUrl (src/lib), applications form schema and API client, interviews API client, notes API client, dashboard API client (0001dashboardApi). Edge cases: cache hit/miss, empty data, invalid JSON in cache, 401 when unauthenticated, list empty results, validation bounds (limit, page, invalid UUIDs).
+- Jest configured; roots: `server/` and `src/`. Server and frontend test files named `0001nameoffeature.test.ts` (see DOCUMENTATION/DEVELOPMENT.md). Server: errors, asyncHandler, config, applications validation/service, interviews validation/service, notes validation/service, rate limit, dashboard service (0011), dashboard cache (0012), dashboard routes (0013), resumes service (0014). Frontend: getApiBaseUrl (src/lib), applications form schema and API client, interviews API client, notes API client, dashboard API client (0001dashboardApi). Edge cases: cache hit/miss, empty data, invalid JSON in cache, 401 when unauthenticated, list empty results, validation bounds (limit, page, invalid UUIDs).
   _Updated 2026-03-10_
 
 ### Flagged for Implementation

@@ -9,7 +9,7 @@ import { useDeleteResume } from "./hooks/useDeleteResume";
 import type { Resume } from "./types";
 import styles from "./ResumesList.module.css";
 
-const FREE_TIER_CAP = 1;
+const RESUME_CAP = 1;
 const DEFAULT_PAGE = 1;
 const DEFAULT_LIMIT = 20;
 const ALLOWED_TYPES = ".pdf,.docx";
@@ -112,7 +112,7 @@ export function ResumesList() {
   const items = data?.items ?? [];
   const total = data?.total ?? 0;
   const limit = data?.limit ?? DEFAULT_LIMIT;
-  const atCap = total >= FREE_TIER_CAP;
+  const atCap = total >= RESUME_CAP;
   const totalPages = Math.max(1, Math.ceil(total / limit));
   const hasPrev = page > 1;
   const hasNext = page < totalPages;
@@ -178,8 +178,7 @@ export function ResumesList() {
         </form>
         {atCap && (
           <p className={styles.capMessage}>
-            Free tier is limited to {FREE_TIER_CAP} resume. Delete one to upload
-            another.
+            You can store {RESUME_CAP} resume. Delete one to upload another.
           </p>
         )}
         {uploadMutation.isError && (

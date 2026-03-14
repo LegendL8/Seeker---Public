@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";
 import { InterviewList } from "@/features/interviews/InterviewList";
+import { useInterviewsForApplication } from "@/features/interviews/hooks/useInterviewsForApplication";
 import { useApplication } from "./hooks/useApplication";
 import { useDeleteApplication } from "./hooks/useDeleteApplication";
 import styles from "./ApplicationDetail.module.css";
@@ -40,6 +41,7 @@ export function ApplicationDetail() {
   const params = useParams();
   const id = typeof params?.id === "string" ? params.id : null;
   const { data: application, isPending, isError, error } = useApplication(id);
+  useInterviewsForApplication(id);
   const deleteMutation = useDeleteApplication(id ?? "");
   const [confirmDelete, setConfirmDelete] = useState(false);
 

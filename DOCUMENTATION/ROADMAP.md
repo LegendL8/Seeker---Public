@@ -161,14 +161,16 @@ _Milestone 4 complete 2026-03-10_
 
 - [x] Resumes list: add offset pagination (server: `?page=1&limit=20`, max limit 100, return `{ items, page, limit, total }`; frontend: useResumesList with page/limit, ResumesList UI)
       _Updated 2026-03-13_
-- [ ] Application detail: parallel prefetch (frontend only: pass route `id` into both useApplication(id) and useInterviewsForApplication(id) so both requests run in parallel; no API change)
+- [x] Application detail: parallel prefetch (frontend only: pass route `id` into both useApplication(id) and useInterviewsForApplication(id) so both requests run in parallel; no API change)
+      _Updated 2026-03-13_
 - [ ] Application detail (optional alternative): combined endpoint e.g. `GET /api/v1/applications/:id?include=interviews` returning `{ application, interviews }`; frontend single fetch (update DOCUMENTATION/API.md; no ARCHITECTURE change)
 
 **Medium priority**
 
 - [ ] Notes: no-op PATCH returns first-fetched row (server: in updateNote, when no changes, return the row from the initial getNoteById instead of calling getNoteById again)
 - [ ] Interviews: no-op PATCH returns first-fetched row (server: in updateInterview, when no changes, return the row from the initial getInterviewById instead of calling getInterviewById again)
-- [ ] Resumes: setActive in two writes (server: replace read + bulk update + single update with one or two writes; e.g. conditional update so “clear others” is O(1))
+- [x] Resumes: setActive in two writes (server: replace read + bulk update + single update with one or two writes; e.g. conditional update so “clear others” is O(1))
+      _Updated 2026-03-13_
 - [ ] Auth: optional in-process user cache — **ARCHITECTURE** (server: short-TTL in-memory cache keyed by JWT sub in requireAuth; reduces DB user lookup per request. ARCHITECTURE.md currently: “Backend verifies JWT signature only — no session storage.” Decide whether to document “optional in-process user cache by sub, TTL e.g. 60s” as an allowed optimization; update ARCHITECTURE.md before or when implementing.)
 
 **Low priority**

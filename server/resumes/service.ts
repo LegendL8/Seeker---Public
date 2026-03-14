@@ -1,4 +1,4 @@
-import { and, count, desc, eq } from "drizzle-orm";
+import { and, count, desc, eq, sql } from "drizzle-orm";
 import { randomUUID } from "node:crypto";
 
 import { db } from "../db";
@@ -6,7 +6,7 @@ import { resumes } from "../db/schema";
 import { ForbiddenError, NotFoundError } from "../errors";
 import { deleteResumeFromS3, getResumeSignedUrl, uploadResumeToS3 } from "./s3";
 import type { ResumeFileType } from "./types";
-import { FREE_TIER_RESUME_CAP } from "./types";
+import { RESUME_CAP } from "./types";
 
 export type ResumeRow = typeof resumes.$inferSelect;
 
@@ -57,9 +57,9 @@ export async function createResume(
     .select({ count: count() })
     .from(resumes)
     .where(eq(resumes.userId, userId));
-  if (total >= FREE_TIER_RESUME_CAP) {
+  if (total >= RESUME_CAP) {
     throw new ForbiddenError(
-      `Free tier is limited to ${FREE_TIER_RESUME_CAP} resume. Delete an existing resume to upload another.`,
+      `Resume limit is ${RESUME_CAP} per user. Delete an existing resume to upload another.`,
     );
   }
 
@@ -106,16 +106,23 @@ export async function setActiveResume(
   id: string,
   isActive: boolean,
 ): Promise<ResumeRow> {
-  await getResumeById(userId, id);
+  const now = new Date();
   if (isActive) {
-    await db
+    const updated = await db
       .update(resumes)
-      .set({ isActive: false, updatedAt: new Date() })
-      .where(eq(resumes.userId, userId));
+      .set({
+        isActive: sql`(${resumes.id} = ${id})`,
+        updatedAt: now,
+      })
+      .where(eq(resumes.userId, userId))
+      .returning();
+    const row = updated.find((r) => r.id === id);
+    if (!row) throw new NotFoundError("Resume not found");
+    return row;
   }
   const [row] = await db
     .update(resumes)
-    .set({ isActive, updatedAt: new Date() })
+    .set({ isActive: false, updatedAt: now })
     .where(and(eq(resumes.id, id), eq(resumes.userId, userId)))
     .returning();
   if (!row) throw new NotFoundError("Resume not found");

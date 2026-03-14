@@ -139,11 +139,11 @@ _Added 2026-03-09_
 | GET    | `/api/v1/applications/:id`               | Get application with interviews                      |
 | PATCH  | `/api/v1/applications/:id`               | Update application                                   |
 | DELETE | `/api/v1/applications/:id`               | Delete application                                   |
-| POST   | `/api/v1/applications/:id/check-posting` | Trigger manual posting status check — paid tier only |
+| POST   | `/api/v1/applications/:id/check-posting` | Trigger manual posting status check — reserved; not implemented |
 
 **Query params:** `?page=1&limit=20&status=applied&postingStatus=active&sortBy=appliedAt&order=desc`
 
-**Note:** `companyId` and `resumeId` validated to belong to authenticated user before associating. Status changes trigger server-side notifications. Posting status check endpoint returns FORBIDDEN for free tier users.
+**Note:** `companyId` and `resumeId` validated to belong to authenticated user before associating. Status changes trigger server-side notifications. Check-posting endpoint not implemented.
 
 **Implemented (list, get, create, update, delete):** List returns `{ items, page, limit, total }`. GET :id returns full application row. Auth required (Bearer). Status union: `saved | applied | interviewing | offer | rejected`. Query params for list: `?page=1&limit=20` only (no status/sort filters yet).
 _Added 2026-03-09_
@@ -260,7 +260,7 @@ _Amended 2026-03-09_
 | Method | Route                 | Description                           |
 | ------ | --------------------- | ------------------------------------- |
 | GET    | `/api/v1/resumes`     | List resumes — paginated              |
-| POST   | `/api/v1/resumes`     | Upload resume — free tier capped at 1 |
+| POST   | `/api/v1/resumes`     | Upload resume — limit 1 per user      |
 | GET    | `/api/v1/resumes/:id` | Get resume metadata and signed URL    |
 | PATCH  | `/api/v1/resumes/:id` | Set resume as active                  |
 | DELETE | `/api/v1/resumes/:id` | Delete from S3 and database           |
@@ -341,7 +341,7 @@ Implemented. Status keys match current application status set (saved, applied, i
 
 ---
 
-## Webhooks (Paid Tier Only)
+## Webhooks (Reserved; not implemented)
 
 | Method | Route                           | Description            | Auth              |
 | ------ | ------------------------------- | ---------------------- | ----------------- |
