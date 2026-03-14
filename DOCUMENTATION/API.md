@@ -141,11 +141,11 @@ _Added 2026-03-09_
 | DELETE | `/api/v1/applications/:id`               | Delete application                                   |
 | POST   | `/api/v1/applications/:id/check-posting` | Trigger manual posting status check — reserved; not implemented |
 
-**Query params:** `?page=1&limit=20&status=applied&postingStatus=active&sortBy=appliedAt&order=desc`
+**Query params (list):** Offset mode: `?page=1&limit=20`. Cursor mode: `?cursor=<opaque>&limit=20` for next page (select O(k); no total). Response with offset: `{ items, page, limit, total }`. Response with cursor: `{ items, nextCursor }` (nextCursor null when no next page).
 
 **Note:** `companyId` and `resumeId` validated to belong to authenticated user before associating. Status changes trigger server-side notifications. Check-posting endpoint not implemented.
 
-**Implemented (list, get, create, update, delete):** List returns `{ items, page, limit, total }`. GET :id returns full application row. Auth required (Bearer). Status union: `saved | applied | interviewing | offer | rejected`. Query params for list: `?page=1&limit=20` only (no status/sort filters yet).
+**Implemented (list, get, create, update, delete):** List supports both offset (`page`, `limit`) and cursor (`cursor`, `limit`). GET :id returns full application row. Auth required (Bearer). Status union: `saved | applied | interviewing | offer | rejected`.
 _Added 2026-03-09_
 
 ### POST Request

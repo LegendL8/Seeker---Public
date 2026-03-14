@@ -11,6 +11,30 @@ import type { User } from "./types";
 
 const BEARER_PREFIX = "Bearer ";
 
+const USER_CACHE_TTL_MS = 60_000;
+
+const userCache = new Map<
+  string,
+  { user: User; expiresAt: number }
+>();
+
+function getCachedUser(sub: string): User | undefined {
+  const entry = userCache.get(sub);
+  if (!entry) return undefined;
+  if (entry.expiresAt <= Date.now()) {
+    userCache.delete(sub);
+    return undefined;
+  }
+  return entry.user;
+}
+
+function setCachedUser(sub: string, user: User): void {
+  userCache.set(sub, {
+    user,
+    expiresAt: Date.now() + USER_CACHE_TTL_MS,
+  });
+}
+
 function getIssuerBaseUrl(): string {
   const url = env.AUTH0_ISSUER_BASE_URL;
   if (!url) return "";
@@ -56,15 +80,19 @@ export async function requireAuth(
       throw new AuthError("Invalid token claims");
     }
 
-    let user: User | undefined = (
-      await db.select().from(users).where(eq(users.auth0Id, sub)).limit(1)
-    )[0];
+    let user: User | undefined = getCachedUser(sub);
 
     if (!user) {
-      user = await ensureUserFromToken(token, sub, issuerBase);
+      user = (
+        await db.select().from(users).where(eq(users.auth0Id, sub)).limit(1)
+      )[0];
       if (!user) {
-        throw new AuthError("Could not create user from token");
+        user = await ensureUserFromToken(token, sub, issuerBase);
+        if (!user) {
+          throw new AuthError("Could not create user from token");
+        }
       }
+      setCachedUser(sub, user);
     }
 
     req.user = user;

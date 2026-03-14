@@ -173,12 +173,13 @@ _Milestone 4 complete 2026-03-10_
       _Updated 2026-03-13_
 - [x] Resumes: setActive in two writes (server: replace read + bulk update + single update with one or two writes; e.g. conditional update so “clear others” is O(1))
       _Updated 2026-03-13_
-- [ ] Auth: optional in-process user cache — **ARCHITECTURE** (server: short-TTL in-memory cache keyed by JWT sub in requireAuth; reduces DB user lookup per request. ARCHITECTURE.md currently: “Backend verifies JWT signature only — no session storage.” Decide whether to document “optional in-process user cache by sub, TTL e.g. 60s” as an allowed optimization; update ARCHITECTURE.md before or when implementing.)
+- [x] Auth: optional in-process user cache — **ARCHITECTURE** (server: short-TTL in-memory cache keyed by JWT sub in requireAuth; reduces DB user lookup per request. ARCHITECTURE.md currently: “Backend verifies JWT signature only — no session storage.” Decide whether to document “optional in-process user cache by sub, TTL e.g. 60s” as an allowed optimization; update ARCHITECTURE.md before or when implementing.)
 
 **Low priority**
 
 - [ ] Notes create: parallelize ownership check with insert (server: run 0 or 1 ownership check in Promise.all before insert; O unchanged, code structure)
-- [ ] Applications list: cursor-based pagination — **ARCHITECTURE** (server: accept `cursor` + `limit`, return `nextCursor`; select O(k) per page. ARCHITECTURE.md currently: “Pagination: offset-based — ?page=1&limit=20”. Adding cursor changes that decision; update ARCHITECTURE.md to allow cursor and/or document both; update API if both styles coexist.)
+- [x] Applications list: cursor-based pagination — **ARCHITECTURE** (server: accept `cursor` + `limit`, return `nextCursor`; select O(k) per page. ARCHITECTURE.md currently: “Pagination: offset-based — ?page=1&limit=20”. Adding cursor changes that decision; update ARCHITECTURE.md to allow cursor and/or document both; update API if both styles coexist.)
+      _Updated 2026-03-13_
 - [ ] Dashboard: optional cache TTL increase (server: e.g. 60s to 120s in dashboard/cache.ts; implementation detail, no ARCHITECTURE change)
 
 ---

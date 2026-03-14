@@ -70,7 +70,7 @@ giving job seekers their own dashboard to track applications, interviews, notes,
 - REST APIs for all CRUD operations
 - Webhooks for incoming external data (job board integrations)
 - API versioning: all endpoints prefixed with `/api/v1/`
-- Pagination: offset-based — `?page=1&limit=20`
+- Pagination: offset-based — `?page=1&limit=20`. List endpoints may also support cursor-based pagination (`cursor` + `limit`, response includes `nextCursor`) for O(k) select cost; applications list supports both.
 
 ### Authentication Flow
 
@@ -79,6 +79,7 @@ giving job seekers their own dashboard to track applications, interviews, notes,
 - Refresh tokens stored in httpOnly cookies (XSS protection)
 - Frontend automatically refreshes access tokens before expiration
 - Backend verifies JWT signature only — no session storage
+- Optional in-process user cache: short-TTL cache keyed by JWT sub in requireAuth; cache hit avoids DB user lookup (O(1)). TTL e.g. 60s. On miss, DB lookup and cache set.
 
 ### Authorization
 

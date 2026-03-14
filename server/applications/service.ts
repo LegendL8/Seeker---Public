@@ -1,12 +1,53 @@
-import { and, count, desc, eq } from "drizzle-orm";
+import { and, count, desc, eq, lt, or } from "drizzle-orm";
 
 import { invalidateDashboardCache } from "../dashboard/cache";
 import { db } from "../db";
 import { applications } from "../db/schema";
-import { NotFoundError } from "../errors";
+import { NotFoundError, ValidationError } from "../errors";
 import type { CreateApplicationBody, UpdateApplicationBody } from "./types";
 
 export type ApplicationRow = typeof applications.$inferSelect;
+
+const CURSOR_PREFIX = "v1:";
+
+function encodeCursor(row: {
+  id: string;
+  updatedAt: Date | null;
+  createdAt: Date | null;
+}): string {
+  const ts = row.updatedAt ?? row.createdAt ?? new Date(0);
+  return (
+    CURSOR_PREFIX +
+    Buffer.from(
+      JSON.stringify({ updatedAt: ts.toISOString(), id: row.id }),
+      "utf-8",
+    ).toString("base64url")
+  );
+}
+
+function decodeCursor(
+  cursor: string,
+): { updatedAt: Date; id: string } | null {
+  if (!cursor.startsWith(CURSOR_PREFIX)) return null;
+  try {
+    const raw = Buffer.from(
+      cursor.slice(CURSOR_PREFIX.length),
+      "base64url",
+    ).toString("utf-8");
+    const parsed = JSON.parse(raw) as { updatedAt?: string; id?: string };
+    if (
+      typeof parsed.updatedAt !== "string" ||
+      typeof parsed.id !== "string"
+    ) {
+      return null;
+    }
+    const updatedAt = new Date(parsed.updatedAt);
+    if (Number.isNaN(updatedAt.getTime())) return null;
+    return { updatedAt, id: parsed.id };
+  } catch {
+    return null;
+  }
+}
 
 export async function listApplications(
   userId: string,
@@ -19,7 +60,7 @@ export async function listApplications(
       .select()
       .from(applications)
       .where(eq(applications.userId, userId))
-      .orderBy(desc(applications.updatedAt), desc(applications.createdAt))
+      .orderBy(desc(applications.updatedAt), desc(applications.id))
       .limit(limit)
       .offset(offset),
     db
@@ -29,6 +70,34 @@ export async function listApplications(
   ]);
   const total = totalResult[0]?.count ?? 0;
   return { items, total };
+}
+
+export async function listApplicationsByCursor(
+  userId: string,
+  cursor: string,
+  limit: number,
+): Promise<{ items: ApplicationRow[]; nextCursor: string | null }> {
+  const decoded = decodeCursor(cursor);
+  if (!decoded) {
+    throw new ValidationError("Invalid cursor");
+  }
+  const cursorCondition = or(
+    lt(applications.updatedAt, decoded.updatedAt),
+    and(
+      eq(applications.updatedAt, decoded.updatedAt),
+      lt(applications.id, decoded.id),
+    ),
+  );
+  const rows = await db
+    .select()
+    .from(applications)
+    .where(and(eq(applications.userId, userId), cursorCondition))
+    .orderBy(desc(applications.updatedAt), desc(applications.id))
+    .limit(limit + 1);
+  const items = rows.slice(0, limit);
+  const nextCursor =
+    rows.length > limit ? encodeCursor(rows[limit - 1]) : null;
+  return { items, nextCursor };
 }
 
 export async function getApplicationById(
