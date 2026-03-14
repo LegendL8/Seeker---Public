@@ -7,13 +7,14 @@ describe("envSchema", () => {
     expect(() => envSchema.parse({})).toThrow();
   });
 
-  it("parses minimal env with REDIS_URL and defaults for DATABASE_URL and PORT", () => {
+  it("parses minimal env with REDIS_URL and defaults for DATABASE_URL, PORT, and ALLOWED_ORIGIN", () => {
     const result = envSchema.parse(minimalEnv);
     expect(result.REDIS_URL).toBe("redis://localhost:6379");
     expect(result.DATABASE_URL).toBe(
       "postgresql://seeker:seekerdev@localhost:5432/seeker",
     );
     expect(result.PORT).toBe(3001);
+    expect(result.ALLOWED_ORIGIN).toBe("http://localhost:3000");
     expect(result.AUTH0_ISSUER_BASE_URL).toBeUndefined();
     expect(result.AUTH0_AUDIENCE).toBeUndefined();
   });
@@ -49,6 +50,25 @@ describe("envSchema", () => {
   it("throws for empty AUTH0_AUDIENCE", () => {
     expect(() =>
       envSchema.parse({ ...minimalEnv, AUTH0_AUDIENCE: "" }),
+    ).toThrow();
+  });
+
+  it("defaults ALLOWED_ORIGIN to http://localhost:3000", () => {
+    const result = envSchema.parse(minimalEnv);
+    expect(result.ALLOWED_ORIGIN).toBe("http://localhost:3000");
+  });
+
+  it("accepts custom ALLOWED_ORIGIN", () => {
+    const result = envSchema.parse({
+      ...minimalEnv,
+      ALLOWED_ORIGIN: "https://app.example.com",
+    });
+    expect(result.ALLOWED_ORIGIN).toBe("https://app.example.com");
+  });
+
+  it("throws for invalid ALLOWED_ORIGIN", () => {
+    expect(() =>
+      envSchema.parse({ ...minimalEnv, ALLOWED_ORIGIN: "not-a-url" }),
     ).toThrow();
   });
 });

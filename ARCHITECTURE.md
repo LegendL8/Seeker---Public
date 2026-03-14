@@ -127,12 +127,12 @@ giving job seekers their own dashboard to track applications, interviews, notes,
 
 ### Security Headers
 
-- HSTS — HTTPS enforcement
-- X-Frame-Options: DENY
-- X-Content-Type-Options: nosniff
-- Referrer-Policy: no-referrer
-- `[IMPL]` Content Security Policy (CSP)
-- `[IMPL]` Permissions-Policy
+- HSTS — HTTPS enforcement (Express; production only)
+- X-Frame-Options: DENY (Express)
+- X-Content-Type-Options: nosniff (Express)
+- Referrer-Policy: no-referrer (Express)
+- Content Security Policy (CSP) — set in Next.js on document responses; allows 'self' and Auth0 (*.auth0.com); script/style use 'unsafe-inline' for Next.js and Auth0 SDK; frame-ancestors 'none'. Source: next.config.ts headers.
+- Permissions-Policy — set in Next.js; camera, microphone, geolocation, payment, usb, magnetometer, gyroscope, accelerometer disabled.
 
 ### CORS
 
@@ -283,8 +283,8 @@ Each environment has its own `.env` file. Staging and production secrets managed
 - Integration tests — API and service layer
 - End-to-end tests — full user flows via Playwright
 - ~~Jest configured; server test files named `0001nameoffeature.test.ts` (see DOCUMENTATION/DEVELOPMENT.md). Tests: errors, asyncHandler, config schema, applications validation/service, rate limit handler.~~
-- Jest configured; roots: `server/` and `src/`. Server and frontend test files named `0001nameoffeature.test.ts` (see DOCUMENTATION/DEVELOPMENT.md). Server: errors, asyncHandler, config, applications validation/service, interviews validation/service, notes validation/service, rate limit, dashboard service (0011), dashboard cache (0012), dashboard routes (0013), resumes service (0014). Frontend: getApiBaseUrl (src/lib), applications form schema and API client, interviews API client, notes API client, dashboard API client (0001dashboardApi). Edge cases: cache hit/miss, empty data, invalid JSON in cache, 401 when unauthenticated, list empty results, validation bounds (limit, page, invalid UUIDs).
-  _Updated 2026-03-10_
+- Jest configured; roots: `server/` and `src/`. Server and frontend test files named `0001nameoffeature.test.ts` (see DOCUMENTATION/DEVELOPMENT.md). Server: errors, asyncHandler, config, applications validation/service (including listApplicationsByCursor and cursor in list query), interviews validation/service, notes validation/service, rate limit, dashboard service (0011)/cache (0012)/routes (0013), resumes validation (0016)/service (0014), security headers and CORS (0015). Frontend: getApiBaseUrl (src/lib), applications form schema and API client, interviews API client, notes API client, dashboard API client, resumes API client (0001resumesApi). Edge cases: cache hit/miss, empty data, invalid JSON in cache, 401 when unauthenticated, list empty results, validation bounds (limit, page, invalid UUIDs). Route-level tests for applications, interviews, notes, and resumes and auth middleware (requireAuth) tests are deferred until refactor or pre-release need.
+  _Updated 2026-03-13_
 
 ### Flagged for Implementation
 

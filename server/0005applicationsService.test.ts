@@ -2,12 +2,13 @@ jest.mock("./dashboard/cache", () => ({
   invalidateDashboardCache: jest.fn().mockResolvedValue(undefined),
 }));
 
-import { NotFoundError } from "./errors";
+import { NotFoundError, ValidationError } from "./errors";
 import {
   createApplication,
   deleteApplication,
   getApplicationById,
   listApplications,
+  listApplicationsByCursor,
   updateApplication,
 } from "./applications/service";
 
@@ -113,6 +114,82 @@ describe("listApplications", () => {
     expect(result.items).toHaveLength(0);
     expect(result.total).toBe(0);
     selectSpy.mockRestore();
+  });
+});
+
+describe("listApplicationsByCursor", () => {
+  it("returns items and nextCursor null when limit or fewer rows", async () => {
+    const validCursor =
+      "v1:" +
+      Buffer.from(
+        JSON.stringify({
+          updatedAt: new Date().toISOString(),
+          id: "550e8400-e29b-41d4-a716-446655440099",
+        }),
+        "utf-8",
+      ).toString("base64url");
+    const db = jest.requireActual("./db").db;
+    const selectSpy = jest.spyOn(db, "select").mockReturnValue({
+      from: jest.fn().mockReturnValue({
+        where: jest.fn().mockReturnValue({
+          orderBy: jest.fn().mockReturnValue({
+            limit: jest.fn().mockResolvedValue([mockRow]),
+          }),
+        }),
+      }),
+    } as unknown as ReturnType<typeof db.select>);
+    const result = await listApplicationsByCursor(mockUserId, validCursor, 20);
+    expect(result.items).toHaveLength(1);
+    expect(result.items[0].jobTitle).toBe("Engineer");
+    expect(result.nextCursor).toBeNull();
+    selectSpy.mockRestore();
+  });
+
+  it("returns items and nextCursor when more than limit rows", async () => {
+    const validCursor =
+      "v1:" +
+      Buffer.from(
+        JSON.stringify({
+          updatedAt: new Date().toISOString(),
+          id: "550e8400-e29b-41d4-a716-446655440099",
+        }),
+        "utf-8",
+      ).toString("base64url");
+    const row2 = {
+      ...mockRow,
+      id: "550e8400-e29b-41d4-a716-446655440003",
+      updatedAt: new Date(Date.now() - 1000),
+    };
+    const row3 = {
+      ...mockRow,
+      id: "550e8400-e29b-41d4-a716-446655440004",
+      updatedAt: new Date(Date.now() - 2000),
+    };
+    const db = jest.requireActual("./db").db;
+    const selectSpy = jest.spyOn(db, "select").mockReturnValue({
+      from: jest.fn().mockReturnValue({
+        where: jest.fn().mockReturnValue({
+          orderBy: jest.fn().mockReturnValue({
+            limit: jest.fn().mockResolvedValue([mockRow, row2, row3]),
+          }),
+        }),
+      }),
+    } as unknown as ReturnType<typeof db.select>);
+    const result = await listApplicationsByCursor(mockUserId, validCursor, 2);
+    expect(result.items).toHaveLength(2);
+    expect(result.nextCursor).not.toBeNull();
+    expect(typeof result.nextCursor).toBe("string");
+    expect(result.nextCursor).toMatch(/^v1:/);
+    selectSpy.mockRestore();
+  });
+
+  it("throws ValidationError when cursor is invalid", async () => {
+    await expect(
+      listApplicationsByCursor(mockUserId, "invalid", 20),
+    ).rejects.toThrow(ValidationError);
+    await expect(
+      listApplicationsByCursor(mockUserId, "invalid", 20),
+    ).rejects.toThrow("Invalid cursor");
   });
 });
 
