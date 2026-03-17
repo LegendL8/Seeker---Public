@@ -12,7 +12,11 @@ export function isAuth0LikeIdentity(value: string | null | undefined): boolean {
 }
 
 export function getDisplayName(displayName: string | null | undefined): string {
-  if (displayName != null && displayName.trim() && !isAuth0LikeIdentity(displayName)) {
+  if (
+    displayName != null &&
+    displayName.trim() &&
+    !isAuth0LikeIdentity(displayName)
+  ) {
     return displayName.trim();
   }
   return "User";
@@ -29,7 +33,11 @@ export function getWelcomeName(
   displayName: string | null | undefined,
   email: string | null | undefined,
 ): string {
-  if (displayName != null && displayName.trim() && !isAuth0LikeIdentity(displayName)) {
+  if (
+    displayName != null &&
+    displayName.trim() &&
+    !isAuth0LikeIdentity(displayName)
+  ) {
     return displayName.trim();
   }
   if (email != null && email.trim() && !isAuth0LikeIdentity(email)) {

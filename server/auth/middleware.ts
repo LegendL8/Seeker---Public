@@ -68,11 +68,16 @@ async function fetchAuth0Userinfo(
       sub?: string;
     };
     const email =
-      body.email ?? body.sub ?? `${auth0Id.replace(/\|/g, "-")}${PLACEHOLDER_EMAIL_SUFFIX}`;
+      body.email ??
+      body.sub ??
+      `${auth0Id.replace(/\|/g, "-")}${PLACEHOLDER_EMAIL_SUFFIX}`;
     const displayName = body.name ?? null;
     return { email, displayName };
   } catch (err) {
-    logger.warn({ err, auth0Id }, "Auth0 userinfo request failed during refresh");
+    logger.warn(
+      { err, auth0Id },
+      "Auth0 userinfo request failed during refresh",
+    );
     return null;
   }
 }
@@ -195,7 +200,9 @@ async function ensureUserFromToken(
         sub?: string;
       };
       email =
-        body.email ?? body.sub ?? `${auth0Id.replace(/\|/g, "-")}${PLACEHOLDER_EMAIL_SUFFIX}`;
+        body.email ??
+        body.sub ??
+        `${auth0Id.replace(/\|/g, "-")}${PLACEHOLDER_EMAIL_SUFFIX}`;
       displayName = body.name ?? null;
     }
   } catch (err) {

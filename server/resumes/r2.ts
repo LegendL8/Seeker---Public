@@ -45,9 +45,9 @@ export function getR2Client(): S3Client {
 export function isR2Configured(): boolean {
   return Boolean(
     env.R2_ACCOUNT_ID &&
-      env.R2_ACCESS_KEY_ID &&
-      env.R2_SECRET_ACCESS_KEY &&
-      env.R2_BUCKET_RESUMES,
+    env.R2_ACCESS_KEY_ID &&
+    env.R2_SECRET_ACCESS_KEY &&
+    env.R2_BUCKET_RESUMES,
   );
 }
 

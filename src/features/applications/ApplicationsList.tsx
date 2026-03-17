@@ -35,7 +35,9 @@ function formatDate(iso: string | null): string {
 function formatSalary(min: number | null, max: number | null): string {
   if (min == null && max == null) return "—";
   const fmt = (cents: number) =>
-    new Intl.NumberFormat("en-US", { style: "decimal" }).format(Math.round(cents / 100));
+    new Intl.NumberFormat("en-US", { style: "decimal" }).format(
+      Math.round(cents / 100),
+    );
   if (min != null && max != null) return `$${fmt(min)}–$${fmt(max)}`;
   if (min != null) return `$${fmt(min)}`;
   return `$${fmt(max!)}`;
@@ -144,7 +146,9 @@ export function ApplicationsList() {
 
       <div className={styles.toolbar}>
         <div className={styles.searchWrap}>
-          <span className={styles.searchIcon} aria-hidden>Q</span>
+          <span className={styles.searchIcon} aria-hidden>
+            Q
+          </span>
           <input
             type="search"
             className={styles.searchInput}
@@ -170,7 +174,9 @@ export function ApplicationsList() {
               type="button"
               role="tab"
               aria-selected={isSelected}
-              className={isSelected ? `${styles.tab} ${styles.tabActive}` : styles.tab}
+              className={
+                isSelected ? `${styles.tab} ${styles.tabActive}` : styles.tab
+              }
               onClick={() => setStatusTab(tab.value)}
             >
               {tab.label} {count}
@@ -206,7 +212,11 @@ export function ApplicationsList() {
                 {start}–{end} of {total} Applications
               </span>
               <div className={styles.tableHeaderActions}>
-                <button type="button" className={styles.iconBtn} aria-label="View toggle">
+                <button
+                  type="button"
+                  className={styles.iconBtn}
+                  aria-label="View toggle"
+                >
                   —
                 </button>
                 <button type="button" className={styles.archivedBtn}>
@@ -243,7 +253,9 @@ export function ApplicationsList() {
                       </span>
                     </div>
                   </div>
-                  <span className={`${styles.pill} ${getStatusPillClass(app.status)}`}>
+                  <span
+                    className={`${styles.pill} ${getStatusPillClass(app.status)}`}
+                  >
                     {app.status}
                   </span>
                   <span className={styles.dateCell}>
@@ -321,7 +333,11 @@ export function ApplicationsList() {
               <button
                 key={p}
                 type="button"
-                className={p === page ? `${styles.pageBtn} ${styles.pageBtnActive}` : styles.pageBtn}
+                className={
+                  p === page
+                    ? `${styles.pageBtn} ${styles.pageBtnActive}`
+                    : styles.pageBtn
+                }
                 onClick={() => setPage(p)}
                 aria-label={`Page ${p}`}
                 aria-current={p === page ? "page" : undefined}

@@ -32,7 +32,12 @@ function headerInitials(displayName: string | null, email: string): string {
 
 export function Dashboard() {
   const { data: user } = useCurrentUser();
-  const { data: metricsData, isPending, isError, error } = useDashboardMetrics();
+  const {
+    data: metricsData,
+    isPending,
+    isError,
+    error,
+  } = useDashboardMetrics();
   const { data: applicationsData } = useApplicationsList(1, 5);
   const { data: resumesData } = useResumesList(1, 1);
 
@@ -77,7 +82,8 @@ export function Dashboard() {
         <div>
           <h1 className={styles.pageTitle}>Dashboard</h1>
           <p className={styles.welcome}>
-            Welcome back, {user ? getWelcomeName(user.displayName, user.email) : "User"}!
+            Welcome back,{" "}
+            {user ? getWelcomeName(user.displayName, user.email) : "User"}!
           </p>
         </div>
         {user && (
@@ -106,15 +112,21 @@ export function Dashboard() {
           </h2>
           <div className={styles.overviewStats}>
             <div className={styles.overviewStat}>
-              <span className={styles.overviewStatValue}>{m.activeApplications}</span>
+              <span className={styles.overviewStatValue}>
+                {m.activeApplications}
+              </span>
               <span className={styles.overviewStatLabel}>Open Jobs</span>
             </div>
             <div className={styles.overviewStat}>
-              <span className={styles.overviewStatValue}>{m.totalApplications}</span>
+              <span className={styles.overviewStatValue}>
+                {m.totalApplications}
+              </span>
               <span className={styles.overviewStatLabel}>Applications</span>
             </div>
             <div className={styles.overviewStat}>
-              <span className={styles.overviewStatValue}>{m.applicationsByStatus.interviewing}</span>
+              <span className={styles.overviewStatValue}>
+                {m.applicationsByStatus.interviewing}
+              </span>
               <span className={styles.overviewStatLabel}>Interviewing</span>
             </div>
           </div>
@@ -142,10 +154,19 @@ export function Dashboard() {
             <ul className={styles.recentList}>
               {recentApps.map((app) => (
                 <li key={app.id} className={styles.recentItem}>
-                  <Link href={`/applications/${app.id}`} className={styles.recentLink}>
-                    <span className={styles.recentJobTitle}>{app.jobTitle}</span>
-                    <span className={styles.recentMeta}>{app.companyId ? "Company" : "—"}</span>
-                    <span className={`${styles.statusPill} ${getStatusPillClass(app.status)}`}>
+                  <Link
+                    href={`/applications/${app.id}`}
+                    className={styles.recentLink}
+                  >
+                    <span className={styles.recentJobTitle}>
+                      {app.jobTitle}
+                    </span>
+                    <span className={styles.recentMeta}>
+                      {app.companyId ? "Company" : "—"}
+                    </span>
+                    <span
+                      className={`${styles.statusPill} ${getStatusPillClass(app.status)}`}
+                    >
                       {app.status}
                     </span>
                   </Link>
@@ -162,7 +183,9 @@ export function Dashboard() {
           <div className={styles.progressList}>
             <div className={styles.progressRow}>
               <span className={styles.progressLabel}>Saved Jobs</span>
-              <span className={styles.progressValue}>{m.applicationsByStatus.saved}</span>
+              <span className={styles.progressValue}>
+                {m.applicationsByStatus.saved}
+              </span>
             </div>
             <div className={styles.progressRow}>
               <span className={styles.progressLabel}>Resumes Uploaded</span>

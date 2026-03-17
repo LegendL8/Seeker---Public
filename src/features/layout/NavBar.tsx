@@ -45,25 +45,41 @@ export function NavBar() {
           <>
             <Link
               href="/"
-              className={pathname === "/" ? `${styles.link} ${styles.linkActive}` : styles.link}
+              className={
+                pathname === "/"
+                  ? `${styles.link} ${styles.linkActive}`
+                  : styles.link
+              }
             >
               Dashboard
             </Link>
             <Link
               href="/applications"
-              className={pathname?.startsWith("/applications") ? `${styles.link} ${styles.linkActive}` : styles.link}
+              className={
+                pathname?.startsWith("/applications")
+                  ? `${styles.link} ${styles.linkActive}`
+                  : styles.link
+              }
             >
               Applications
             </Link>
             <Link
               href="/notes"
-              className={pathname?.startsWith("/notes") ? `${styles.link} ${styles.linkActive}` : styles.link}
+              className={
+                pathname?.startsWith("/notes")
+                  ? `${styles.link} ${styles.linkActive}`
+                  : styles.link
+              }
             >
               Notes
             </Link>
             <Link
               href="/resumes"
-              className={pathname?.startsWith("/resumes") ? `${styles.link} ${styles.linkActive}` : styles.link}
+              className={
+                pathname?.startsWith("/resumes")
+                  ? `${styles.link} ${styles.linkActive}`
+                  : styles.link
+              }
             >
               Resumes
             </Link>
@@ -82,7 +98,9 @@ export function NavBar() {
             <span className={styles.profileName}>
               {getDisplayName(user.displayName)}
             </span>
-            <span className={styles.profileEmail}>{getDisplayEmail(user.email)}</span>
+            <span className={styles.profileEmail}>
+              {getDisplayEmail(user.email)}
+            </span>
           </div>
         </div>
       )}

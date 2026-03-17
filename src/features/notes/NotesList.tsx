@@ -84,8 +84,7 @@ export function NotesList() {
     }
   }
 
-  const showEmptyState =
-    data != null && total === 0 && !showAddForm;
+  const showEmptyState = data != null && total === 0 && !showAddForm;
 
   if (isError) {
     return (
@@ -119,7 +118,9 @@ export function NotesList() {
 
       <div className={styles.toolbar}>
         <div className={styles.searchWrap}>
-          <span className={styles.searchIcon} aria-hidden>Q</span>
+          <span className={styles.searchIcon} aria-hidden>
+            Q
+          </span>
           <input
             type="search"
             className={styles.searchInput}
@@ -160,7 +161,11 @@ export function NotesList() {
             </option>
           ))}
         </select>
-        <div className={styles.viewToggles} role="tablist" aria-label="View mode">
+        <div
+          className={styles.viewToggles}
+          role="tablist"
+          aria-label="View mode"
+        >
           <button
             type="button"
             role="tab"
@@ -228,96 +233,93 @@ export function NotesList() {
           </button>
         </div>
       ) : (
-      <div className={styles.layout}>
-        <aside className={styles.sidebar}>
-          {isPending && !data ? (
-            <p className={styles.status}>Loading…</p>
-          ) : (
-            <ul
-              className={
-                viewMode === "grid"
-                  ? `${styles.notesList} ${styles.notesListGrid}`
-                  : styles.notesList
-              }
-            >
-              {items.map((note: Note) => (
-                <li key={note.id}>
-                  <button
-                    type="button"
-                    className={`${styles.noteItem} ${selectedId === note.id ? styles.noteItemActive : ""}`}
-                    onClick={() => {
-                      setSelectedId(note.id);
-                      setShowAddForm(false);
-                    }}
-                  >
-                    <span className={styles.noteItemMeta}>
-                      {formatDate(note.updatedAt)} · {note.typeTag}
-                    </span>
-                    <div className={styles.notePreview}>{note.content}</div>
-                  </button>
-                </li>
-              ))}
-            </ul>
-          )}
-          {data && items.length > 0 && (
-            <div className={styles.pagination}>
-              <button
-                type="button"
-                className={styles.pageBtn}
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                disabled={!hasPrev}
+        <div className={styles.layout}>
+          <aside className={styles.sidebar}>
+            {isPending && !data ? (
+              <p className={styles.status}>Loading…</p>
+            ) : (
+              <ul
+                className={
+                  viewMode === "grid"
+                    ? `${styles.notesList} ${styles.notesListGrid}`
+                    : styles.notesList
+                }
               >
-                Previous
-              </button>
-              <span className={styles.pageInfo}>
-                Page {page} of {totalPages}
-              </span>
-              <button
-                type="button"
-                className={styles.pageBtn}
-                onClick={() => setPage((p) => p + 1)}
-                disabled={!hasNext}
-              >
-                Next
-              </button>
-            </div>
-          )}
-        </aside>
-
-        <div className={styles.detail}>
-          {showAddForm ? (
-            <AddNoteForm
-              key={addFormInitialTypeTag ?? "default"}
-              applications={applications}
-              initialTypeTag={addFormInitialTypeTag}
-              onSuccess={() => {
-                setShowAddForm(false);
-              }}
-            />
-          ) : selectedId ? (
-            <>
-              <NoteEditor
-                noteId={selectedId}
-                applications={applications}
-              />
-              <div className={styles.detailActions}>
+                {items.map((note: Note) => (
+                  <li key={note.id}>
+                    <button
+                      type="button"
+                      className={`${styles.noteItem} ${selectedId === note.id ? styles.noteItemActive : ""}`}
+                      onClick={() => {
+                        setSelectedId(note.id);
+                        setShowAddForm(false);
+                      }}
+                    >
+                      <span className={styles.noteItemMeta}>
+                        {formatDate(note.updatedAt)} · {note.typeTag}
+                      </span>
+                      <div className={styles.notePreview}>{note.content}</div>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+            {data && items.length > 0 && (
+              <div className={styles.pagination}>
                 <button
                   type="button"
-                  className={styles.deleteBtn}
-                  onClick={() => handleDelete(selectedId)}
-                  disabled={deleteMutation.isPending}
+                  className={styles.pageBtn}
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  disabled={!hasPrev}
                 >
-                  Delete note
+                  Previous
+                </button>
+                <span className={styles.pageInfo}>
+                  Page {page} of {totalPages}
+                </span>
+                <button
+                  type="button"
+                  className={styles.pageBtn}
+                  onClick={() => setPage((p) => p + 1)}
+                  disabled={!hasNext}
+                >
+                  Next
                 </button>
               </div>
-            </>
-          ) : (
-            <p className={styles.detailEmpty}>
-              Select a note or add a new one.
-            </p>
-          )}
+            )}
+          </aside>
+
+          <div className={styles.detail}>
+            {showAddForm ? (
+              <AddNoteForm
+                key={addFormInitialTypeTag ?? "default"}
+                applications={applications}
+                initialTypeTag={addFormInitialTypeTag}
+                onSuccess={() => {
+                  setShowAddForm(false);
+                }}
+              />
+            ) : selectedId ? (
+              <>
+                <NoteEditor noteId={selectedId} applications={applications} />
+                <div className={styles.detailActions}>
+                  <button
+                    type="button"
+                    className={styles.deleteBtn}
+                    onClick={() => handleDelete(selectedId)}
+                    disabled={deleteMutation.isPending}
+                  >
+                    Delete note
+                  </button>
+                </div>
+              </>
+            ) : (
+              <p className={styles.detailEmpty}>
+                Select a note or add a new one.
+              </p>
+            )}
+          </div>
         </div>
-      </div>
       )}
     </div>
   );

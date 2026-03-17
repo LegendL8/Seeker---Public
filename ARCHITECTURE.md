@@ -50,12 +50,12 @@ giving job seekers their own dashboard to track applications, interviews, notes,
 
 ## Layer 2: Third-Party Services
 
-| Service     | Purpose                                  |
-| ----------- | ---------------------------------------- |
-| Auth0       | Authentication                           |
+| Service       | Purpose                                  |
+| ------------- | ---------------------------------------- |
+| Auth0         | Authentication                           |
 | Cloudflare R2 | File storage — PDF & DOCX resume uploads |
-| Redis Cloud | Caching                                  |
-| OpenAI      | AI integration (future — not in MVP)     |
+| Redis Cloud   | Caching                                  |
+| OpenAI        | AI integration (future — not in MVP)     |
 
 ### Future Considerations
 
@@ -185,8 +185,8 @@ _Updated 2026-03-17_
 Dashboard: `server/dashboard/` (types.ts, cache.ts, service.ts, routes.ts). GET `/api/v1/dashboard/metrics` returns totalApplications, applicationsByStatus (saved, applied, interviewing, offer, rejected), interviewRate, activeApplications, offersReceived, rejectionsReceived. Redis cache per user (60s TTL); invalidated on application or interview create/update/delete. Frontend: `src/features/dashboard/` (Dashboard at `/` when authenticated, useDashboardMetrics, fetchDashboardMetrics).
 _Added 2026-03-10_
 
-Resumes list: GET `/api/v1/resumes` accepts `?page=1&limit=20` (limit max 100), returns `{ items, page, limit, total }`. Frontend: `useResumesList(page, limit)`, ResumesList with pagination UI. List empty state is shown only after list data has loaded (`data != null && total === 0`) to avoid a flash on refresh. setActiveResume: one conditional update when setting active (SET is_active = (id = :id) WHERE user_id); one update when setting inactive; no separate read or bulk step.
-_Added 2026-03-13_
+Resumes list: GET `/api/v1/resumes` accepts `?page=1&limit=20` (limit max 100), returns `{ items, page, limit, total }`. Frontend: `useResumesList(page, limit)`, ResumesList with pagination UI. List empty state is shown only after list data has loaded (`data != null && total === 0`) to avoid a flash on refresh. setActiveResume: one conditional update when setting active (SET is*active = (id = :id) WHERE user_id); one update when setting inactive; no separate read or bulk step.
+\_Added 2026-03-13*
 _Updated 2026-03-17_
 
 ### Implementation Notes

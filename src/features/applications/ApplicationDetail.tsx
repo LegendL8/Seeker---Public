@@ -126,17 +126,17 @@ export function ApplicationDetail() {
             {formatSalary(application.salaryMin, application.salaryMax)}
           </dd>
 
-        <dt className={styles.dt}>Applied date</dt>
-        <dd className={styles.dd}>{formatDate(application.appliedAt)}</dd>
+          <dt className={styles.dt}>Applied date</dt>
+          <dd className={styles.dd}>{formatDate(application.appliedAt)}</dd>
 
-        <dt className={styles.dt}>Source</dt>
-        <dd className={styles.dd}>{application.source ?? "—"}</dd>
+          <dt className={styles.dt}>Source</dt>
+          <dd className={styles.dd}>{application.source ?? "—"}</dd>
 
-        <dt className={styles.dt}>Created</dt>
-        <dd className={styles.dd}>{formatDateTime(application.createdAt)}</dd>
+          <dt className={styles.dt}>Created</dt>
+          <dd className={styles.dd}>{formatDateTime(application.createdAt)}</dd>
 
-        <dt className={styles.dt}>Updated</dt>
-        <dd className={styles.dd}>{formatDateTime(application.updatedAt)}</dd>
+          <dt className={styles.dt}>Updated</dt>
+          <dd className={styles.dd}>{formatDateTime(application.updatedAt)}</dd>
         </dl>
       </div>
 

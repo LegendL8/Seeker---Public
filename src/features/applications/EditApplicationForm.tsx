@@ -112,213 +112,213 @@ export function EditApplicationForm({
       </div>
 
       <div className={styles.formCard}>
-      <form onSubmit={handleSubmit} className={styles.form}>
-        <div className={styles.field}>
-          <label htmlFor="jobTitle" className={styles.label}>
-            Job title
-          </label>
-          <input
-            id="jobTitle"
-            name="jobTitle"
-            type="text"
-            value={values.jobTitle ?? ""}
-            onChange={handleChange}
-            className={styles.input}
-            autoComplete="off"
-            disabled={isPending}
-          />
-          {fieldErrors.jobTitle && (
-            <span className={styles.error}>{fieldErrors.jobTitle}</span>
-          )}
-        </div>
-
-        <div className={styles.field}>
-          <label htmlFor="status" className={styles.label}>
-            Status
-          </label>
-          <select
-            id="status"
-            name="status"
-            value={values.status ?? "saved"}
-            onChange={handleChange}
-            className={styles.select}
-            disabled={isPending}
-          >
-            {STATUS_OPTIONS.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className={styles.field}>
-          <label htmlFor="jobPostingUrl" className={styles.label}>
-            Job posting URL
-          </label>
-          <input
-            id="jobPostingUrl"
-            name="jobPostingUrl"
-            type="url"
-            value={values.jobPostingUrl ?? ""}
-            onChange={handleChange}
-            className={styles.input}
-            placeholder="https://..."
-            disabled={isPending}
-          />
-          {fieldErrors.jobPostingUrl && (
-            <span className={styles.error}>{fieldErrors.jobPostingUrl}</span>
-          )}
-        </div>
-
-        <div className={styles.field}>
-          <label htmlFor="location" className={styles.label}>
-            Location
-          </label>
-          <input
-            id="location"
-            name="location"
-            type="text"
-            value={values.location ?? ""}
-            onChange={handleChange}
-            className={styles.input}
-            maxLength={255}
-            disabled={isPending}
-          />
-        </div>
-
-        <div className={styles.row}>
+        <form onSubmit={handleSubmit} className={styles.form}>
           <div className={styles.field}>
-            <label htmlFor="salaryMin" className={styles.label}>
-              Salary min
+            <label htmlFor="jobTitle" className={styles.label}>
+              Job title
             </label>
             <input
-              id="salaryMin"
-              name="salaryMin"
-              type="number"
-              min={0}
-              step={1}
-              value={
-                values.salaryMin === undefined || values.salaryMin === null
-                  ? ""
-                  : String(values.salaryMin)
-              }
+              id="jobTitle"
+              name="jobTitle"
+              type="text"
+              value={values.jobTitle ?? ""}
               onChange={handleChange}
               className={styles.input}
+              autoComplete="off"
               disabled={isPending}
             />
-            {fieldErrors.salaryMin && (
-              <span className={styles.error}>{fieldErrors.salaryMin}</span>
+            {fieldErrors.jobTitle && (
+              <span className={styles.error}>{fieldErrors.jobTitle}</span>
             )}
           </div>
+
           <div className={styles.field}>
-            <label htmlFor="salaryMax" className={styles.label}>
-              Salary max
-            </label>
-            <input
-              id="salaryMax"
-              name="salaryMax"
-              type="number"
-              min={0}
-              step={1}
-              value={
-                values.salaryMax === undefined || values.salaryMax === null
-                  ? ""
-                  : String(values.salaryMax)
-              }
-              onChange={handleChange}
-              className={styles.input}
-              disabled={isPending}
-            />
-            {fieldErrors.salaryMax && (
-              <span className={styles.error}>{fieldErrors.salaryMax}</span>
-            )}
-          </div>
-        </div>
-
-        <div className={styles.field}>
-          <label htmlFor="appliedAt" className={styles.label}>
-            Applied date
-          </label>
-          <input
-            id="appliedAt"
-            name="appliedAt"
-            type="date"
-            value={
-              values.appliedAt && values.appliedAt !== ""
-                ? String(values.appliedAt).slice(0, 10)
-                : ""
-            }
-            onChange={handleChange}
-            className={styles.input}
-            disabled={isPending}
-          />
-          {fieldErrors.appliedAt && (
-            <span className={styles.error}>{fieldErrors.appliedAt}</span>
-          )}
-        </div>
-
-        <div className={styles.field}>
-          <label htmlFor="source" className={styles.label}>
-            Source
-          </label>
-          <input
-            id="source"
-            name="source"
-            type="text"
-            value={values.source ?? ""}
-            onChange={handleChange}
-            className={styles.input}
-            maxLength={255}
-            placeholder="e.g. LinkedIn, company website"
-            disabled={isPending}
-          />
-        </div>
-
-        {resumes.length > 0 && (
-          <div className={styles.field}>
-            <label htmlFor="resumeId" className={styles.label}>
-              Attach resume
+            <label htmlFor="status" className={styles.label}>
+              Status
             </label>
             <select
-              id="resumeId"
-              name="resumeId"
-              value={values.resumeId ?? ""}
+              id="status"
+              name="status"
+              value={values.status ?? "saved"}
               onChange={handleChange}
               className={styles.select}
               disabled={isPending}
             >
-              <option value="">None</option>
-              {resumes.map((r) => (
-                <option key={r.id} value={r.id}>
-                  {r.fileName}
+              {STATUS_OPTIONS.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
                 </option>
               ))}
             </select>
           </div>
-        )}
 
-        {submitError && (
-          <p className={styles.submitError}>
-            {submitError instanceof Error
-              ? submitError.message
-              : "Failed to update application"}
-          </p>
-        )}
+          <div className={styles.field}>
+            <label htmlFor="jobPostingUrl" className={styles.label}>
+              Job posting URL
+            </label>
+            <input
+              id="jobPostingUrl"
+              name="jobPostingUrl"
+              type="url"
+              value={values.jobPostingUrl ?? ""}
+              onChange={handleChange}
+              className={styles.input}
+              placeholder="https://..."
+              disabled={isPending}
+            />
+            {fieldErrors.jobPostingUrl && (
+              <span className={styles.error}>{fieldErrors.jobPostingUrl}</span>
+            )}
+          </div>
 
-        <div className={styles.actions}>
-          <button
-            type="submit"
-            className={styles.submitBtn}
-            disabled={isPending}
-          >
-            {isPending ? "Saving…" : "Save changes"}
-          </button>
-          <Link href={`/applications/${id}`} className={styles.cancelLink}>
-            Cancel
-          </Link>
-        </div>
-      </form>
+          <div className={styles.field}>
+            <label htmlFor="location" className={styles.label}>
+              Location
+            </label>
+            <input
+              id="location"
+              name="location"
+              type="text"
+              value={values.location ?? ""}
+              onChange={handleChange}
+              className={styles.input}
+              maxLength={255}
+              disabled={isPending}
+            />
+          </div>
+
+          <div className={styles.row}>
+            <div className={styles.field}>
+              <label htmlFor="salaryMin" className={styles.label}>
+                Salary min
+              </label>
+              <input
+                id="salaryMin"
+                name="salaryMin"
+                type="number"
+                min={0}
+                step={1}
+                value={
+                  values.salaryMin === undefined || values.salaryMin === null
+                    ? ""
+                    : String(values.salaryMin)
+                }
+                onChange={handleChange}
+                className={styles.input}
+                disabled={isPending}
+              />
+              {fieldErrors.salaryMin && (
+                <span className={styles.error}>{fieldErrors.salaryMin}</span>
+              )}
+            </div>
+            <div className={styles.field}>
+              <label htmlFor="salaryMax" className={styles.label}>
+                Salary max
+              </label>
+              <input
+                id="salaryMax"
+                name="salaryMax"
+                type="number"
+                min={0}
+                step={1}
+                value={
+                  values.salaryMax === undefined || values.salaryMax === null
+                    ? ""
+                    : String(values.salaryMax)
+                }
+                onChange={handleChange}
+                className={styles.input}
+                disabled={isPending}
+              />
+              {fieldErrors.salaryMax && (
+                <span className={styles.error}>{fieldErrors.salaryMax}</span>
+              )}
+            </div>
+          </div>
+
+          <div className={styles.field}>
+            <label htmlFor="appliedAt" className={styles.label}>
+              Applied date
+            </label>
+            <input
+              id="appliedAt"
+              name="appliedAt"
+              type="date"
+              value={
+                values.appliedAt && values.appliedAt !== ""
+                  ? String(values.appliedAt).slice(0, 10)
+                  : ""
+              }
+              onChange={handleChange}
+              className={styles.input}
+              disabled={isPending}
+            />
+            {fieldErrors.appliedAt && (
+              <span className={styles.error}>{fieldErrors.appliedAt}</span>
+            )}
+          </div>
+
+          <div className={styles.field}>
+            <label htmlFor="source" className={styles.label}>
+              Source
+            </label>
+            <input
+              id="source"
+              name="source"
+              type="text"
+              value={values.source ?? ""}
+              onChange={handleChange}
+              className={styles.input}
+              maxLength={255}
+              placeholder="e.g. LinkedIn, company website"
+              disabled={isPending}
+            />
+          </div>
+
+          {resumes.length > 0 && (
+            <div className={styles.field}>
+              <label htmlFor="resumeId" className={styles.label}>
+                Attach resume
+              </label>
+              <select
+                id="resumeId"
+                name="resumeId"
+                value={values.resumeId ?? ""}
+                onChange={handleChange}
+                className={styles.select}
+                disabled={isPending}
+              >
+                <option value="">None</option>
+                {resumes.map((r) => (
+                  <option key={r.id} value={r.id}>
+                    {r.fileName}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          {submitError && (
+            <p className={styles.submitError}>
+              {submitError instanceof Error
+                ? submitError.message
+                : "Failed to update application"}
+            </p>
+          )}
+
+          <div className={styles.actions}>
+            <button
+              type="submit"
+              className={styles.submitBtn}
+              disabled={isPending}
+            >
+              {isPending ? "Saving…" : "Save changes"}
+            </button>
+            <Link href={`/applications/${id}`} className={styles.cancelLink}>
+              Cancel
+            </Link>
+          </div>
+        </form>
       </div>
     </div>
   );

@@ -182,7 +182,9 @@ export function ResumesList() {
 
       <div className={styles.toolbar}>
         <div className={styles.searchWrap}>
-          <span className={styles.searchIcon} aria-hidden>Q</span>
+          <span className={styles.searchIcon} aria-hidden>
+            Q
+          </span>
           <input
             type="search"
             className={styles.searchInput}

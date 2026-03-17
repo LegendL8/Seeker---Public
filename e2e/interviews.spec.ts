@@ -5,11 +5,17 @@ import { test, expect } from "@playwright/test";
  */
 test("list interviews on application detail", async ({ page }) => {
   await page.goto("/applications");
-  const appLink = page.getByRole("link", { name: "Senior Software Engineer" }).first();
+  const appLink = page
+    .getByRole("link", { name: "Senior Software Engineer" })
+    .first();
   await expect(appLink).toBeVisible({ timeout: 10000 });
   await appLink.click();
-  await expect(page.getByRole("heading", { name: "Interviews", level: 3 })).toBeVisible({ timeout: 10000 });
-  await expect(page.getByRole("button", { name: "Add interview" })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Interviews", level: 3 }),
+  ).toBeVisible({ timeout: 10000 });
+  await expect(
+    page.getByRole("button", { name: "Add interview" }),
+  ).toBeVisible();
 });
 
 /**
@@ -17,7 +23,9 @@ test("list interviews on application detail", async ({ page }) => {
  */
 test("add interview", async ({ page }) => {
   await page.goto("/applications");
-  const appLink = page.getByRole("link", { name: "Full Stack Developer" }).first();
+  const appLink = page
+    .getByRole("link", { name: "Full Stack Developer" })
+    .first();
   await expect(appLink).toBeVisible({ timeout: 10000 });
   await appLink.click();
   await page.getByRole("button", { name: "Add interview" }).click();
@@ -31,12 +39,16 @@ test("add interview", async ({ page }) => {
  */
 test("delete interview", async ({ page }) => {
   await page.goto("/applications");
-  const appLink = page.getByRole("link", { name: "Full Stack Developer" }).first();
+  const appLink = page
+    .getByRole("link", { name: "Full Stack Developer" })
+    .first();
   await expect(appLink).toBeVisible({ timeout: 10000 });
   await appLink.click();
   const deleteBtn = page.getByRole("button", { name: "Delete" }).first();
   await expect(deleteBtn).toBeVisible({ timeout: 10000 });
   page.on("dialog", (d) => d.accept());
   await deleteBtn.click();
-  await expect(page.getByRole("heading", { name: "Full Stack Developer", level: 2 })).toBeVisible({ timeout: 5000 });
+  await expect(
+    page.getByRole("heading", { name: "Full Stack Developer", level: 2 }),
+  ).toBeVisible({ timeout: 5000 });
 });

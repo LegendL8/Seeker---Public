@@ -92,9 +92,7 @@ export function AddNoteForm({
         <select
           id="note-applicationId"
           value={applicationId ?? ""}
-          onChange={(e) =>
-            setApplicationId(e.target.value || null)
-          }
+          onChange={(e) => setApplicationId(e.target.value || null)}
           className={styles.select}
           disabled={createMutation.isPending}
           aria-label="Link note to application"

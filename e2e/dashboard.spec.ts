@@ -9,6 +9,8 @@ test("dashboard load shows metrics or empty state", async ({ page }) => {
     page.getByRole("heading", { name: "Dashboard", level: 1 }),
   ).toBeVisible({ timeout: 10000 });
   await expect(
-    page.getByText(/Total applications|Loading metrics|No applications yet/).first(),
+    page
+      .getByText(/Total applications|Loading metrics|No applications yet/)
+      .first(),
   ).toBeVisible({ timeout: 5000 });
 });

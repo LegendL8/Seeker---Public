@@ -20,13 +20,15 @@ setup("sign in and save session", async ({ page }) => {
   await page.goto("/auth/login");
   await page.waitForURL(/auth0\.com/, { timeout: 15000 });
 
-  const usernameInput = page.locator(
-    'input[name="username"], input[name="email"], input[type="email"]',
-  ).first();
+  const usernameInput = page
+    .locator('input[name="username"], input[name="email"], input[type="email"]')
+    .first();
   await usernameInput.fill(email);
   await page.getByRole("button", { name: "Continue", exact: true }).click();
 
-  const passwordInput = page.locator('input[name="password"], input[type="password"]');
+  const passwordInput = page.locator(
+    'input[name="password"], input[type="password"]',
+  );
   await passwordInput.waitFor({ state: "visible", timeout: 10000 });
   await passwordInput.fill(password);
   await page.getByRole("button", { name: "Continue", exact: true }).click();
@@ -44,11 +46,15 @@ setup("sign in and save session", async ({ page }) => {
   try {
     await page.waitForURL(/(localhost|127\.0\.0\.1):3000/, { timeout: 20000 });
   } catch {
-    const errEl = page.getByText(/wrong email or password|invalid connection|access denied/i).first();
+    const errEl = page
+      .getByText(/wrong email or password|invalid connection|access denied/i)
+      .first();
     const hasError = await errEl.isVisible().catch(() => false);
     if (hasError) {
       const msg = await errEl.textContent();
-      throw new Error(`Auth0 error: ${msg ?? "unknown"}. Check E2E_AUTH_EMAIL and E2E_AUTH_PASSWORD.`);
+      throw new Error(
+        `Auth0 error: ${msg ?? "unknown"}. Check E2E_AUTH_EMAIL and E2E_AUTH_PASSWORD.`,
+      );
     }
     throw new Error(
       "No redirect to app after login. In Auth0: Application > Allowed Callback URLs must include http://localhost:3000/auth/callback. Run: npm run test:e2e -- --headed to watch the browser.",
@@ -56,7 +62,10 @@ setup("sign in and save session", async ({ page }) => {
   }
 
   await expect(
-    page.getByRole("heading", { name: /dashboard/i }).or(page.getByRole("link", { name: "Dashboard" })).first(),
+    page
+      .getByRole("heading", { name: /dashboard/i })
+      .or(page.getByRole("link", { name: "Dashboard" }))
+      .first(),
   ).toBeVisible({ timeout: 10000 });
 
   await page.context().storageState({ path: AUTH_FILE });

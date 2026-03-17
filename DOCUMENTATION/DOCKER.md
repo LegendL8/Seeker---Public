@@ -90,10 +90,10 @@ Copy `.env.example` to `.env` and fill in Auth0, etc. Set `POSTGRES_PASSWORD` (r
 
 When the app runs on the host and Postgres/Redis are in Docker, use the same user/password/database and ports as in your `.env` (POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_DB) and `docker-compose.yml` ports. Example shape:
 
-| Service    | Host      | Port | User / Password / Database      |
-| ---------- | --------- | ---- | ------------------------------- |
+| Service    | Host      | Port | User / Password / Database                                                             |
+| ---------- | --------- | ---- | -------------------------------------------------------------------------------------- |
 | PostgreSQL | localhost | 5432 | From .env: POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_DB (defaults: seeker, -, seeker) |
-| Redis      | localhost | 6379 | (none)                          |
+| Redis      | localhost | 6379 | (none)                                                                                 |
 
 `DATABASE_URL` format: `postgresql://USER:PASSWORD@localhost:PORT/DATABASE` — use the same USER, PASSWORD, DATABASE as in your `.env`.
 
