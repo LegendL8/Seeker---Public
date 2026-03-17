@@ -89,12 +89,15 @@ export function AddApplicationForm() {
   return (
     <div className={styles.wrapper}>
       <div className={styles.header}>
-        <h2 className={styles.title}>Add application</h2>
-        <Link href="/applications" className={styles.backLink}>
-          Back to applications
-        </Link>
+        <div>
+          <Link href="/applications" className={styles.backLink}>
+            Applications
+          </Link>
+          <h1 className={styles.title}>Add application</h1>
+        </div>
       </div>
 
+      <div className={styles.formCard}>
       <form onSubmit={handleSubmit} className={styles.form}>
         <div className={styles.field}>
           <label htmlFor="jobTitle" className={styles.label}>
@@ -294,6 +297,7 @@ export function AddApplicationForm() {
           </Link>
         </div>
       </form>
+      </div>
     </div>
   );
 }

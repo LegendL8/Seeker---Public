@@ -12,11 +12,14 @@ export const envSchema = z.object({
   AUTH0_AUDIENCE: z
     .string()
     .optional()
-    .refine((v) => v === undefined || v.length >= 1, {
+    .transform((v) => (v === "" ? undefined : v))
+    .refine((v) => v === undefined || (v !== undefined && v.length >= 1), {
       message: "AUTH0_AUDIENCE must be non-empty when set",
     }),
-  S3_BUCKET_RESUMES: z.string().min(1).optional(),
-  AWS_REGION: z.string().min(1).optional(),
+  R2_ACCOUNT_ID: z.string().min(1).optional(),
+  R2_ACCESS_KEY_ID: z.string().min(1).optional(),
+  R2_SECRET_ACCESS_KEY: z.string().min(1).optional(),
+  R2_BUCKET_RESUMES: z.string().min(1).optional(),
   MAX_RESUME_SIZE_BYTES: z.coerce
     .number()
     .optional()

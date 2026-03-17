@@ -1,30 +1,38 @@
+/* Add/Edit application form uses same light theme as Applications list. */
 .wrapper {
   width: 100%;
-  max-width: 560px;
+  max-width: 720px;
 }
 
 .header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
   margin-bottom: 24px;
 }
 
-.title {
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: var(--text-primary, #171717);
-  margin: 0;
-}
-
 .backLink {
-  color: var(--text-primary, #171717);
-  text-decoration: underline;
   font-size: 0.875rem;
+  color: #666;
+  text-decoration: none;
+  display: inline-block;
+  margin-bottom: 4px;
 }
 
 .backLink:hover {
-  opacity: 0.8;
+  color: var(--accent-blue);
+  text-decoration: underline;
+}
+
+.title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #171717;
+  margin: 0;
+}
+
+.formCard {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 24px;
 }
 
 .form {
@@ -51,41 +59,42 @@
 .label {
   font-size: 0.875rem;
   font-weight: 500;
-  color: var(--text-primary, #171717);
+  color: #171717;
 }
 
 .required {
-  color: var(--error, #b91c1c);
+  color: #c62828;
 }
 
 .input,
 .select {
   padding: 10px 12px;
   font-size: 1rem;
-  border: 1px solid var(--border, #d4d4d4);
-  background: var(--card-bg);
-  color: var(--foreground, #171717);
+  border: 1px solid #e0e0e0;
+  background: #fff;
+  color: #171717;
+  border-radius: 6px;
 }
 
 .input:focus,
 .select:focus {
-  outline: 2px solid var(--focus, #2563eb);
+  outline: 2px solid var(--accent-blue);
   outline-offset: 2px;
 }
 
 .input::placeholder {
-  color: var(--text-secondary, #737373);
+  color: #666;
 }
 
 .error {
   font-size: 0.8125rem;
-  color: var(--error, #b91c1c);
+  color: #c62828;
 }
 
 .submitError {
   margin: 0;
   font-size: 0.875rem;
-  color: var(--error, #b91c1c);
+  color: #c62828;
 }
 
 .actions {
@@ -100,9 +109,14 @@
   font-size: 1rem;
   font-weight: 500;
   cursor: pointer;
-  border: 1px solid var(--border);
-  background: var(--btn-primary);
-  color: var(--text-primary);
+  border: none;
+  background: var(--accent-blue);
+  color: #fff;
+  border-radius: 6px;
+}
+
+.submitBtn:hover:not(:disabled) {
+  opacity: 0.9;
 }
 
 .submitBtn:disabled {
@@ -112,10 +126,10 @@
 
 .cancelLink {
   font-size: 0.875rem;
-  color: var(--text-secondary, #666);
+  color: #666;
   text-decoration: underline;
 }
 
 .cancelLink:hover {
-  color: var(--text-primary, #171717);
+  color: #171717;
 }

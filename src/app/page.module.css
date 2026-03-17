@@ -3,8 +3,7 @@
   min-height: 100vh;
   align-items: center;
   justify-content: center;
-  font-family: var(--font-inter), system-ui, sans-serif;
-  background-color: var(--background);
+  background: transparent;
 }
 
 .main {
@@ -14,22 +13,23 @@
   justify-content: center;
   gap: 16px;
   padding: 48px 24px;
+  width: 100%;
 }
 
 .title {
-  font-size: 2rem;
-  font-weight: 600;
-  color: var(--text-primary);
+  font-size: 28px;
+  font-weight: 700;
+  color: #171717;
 }
 
 .intro {
   font-size: 1.125rem;
-  color: var(--text-secondary);
+  color: #666;
 }
 
 .link {
   display: inline-block;
   margin-left: 8px;
-  color: var(--text-primary);
+  color: #171717;
   text-decoration: underline;
 }

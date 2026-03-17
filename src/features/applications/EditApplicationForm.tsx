@@ -103,12 +103,15 @@ export function EditApplicationForm({
   return (
     <div className={styles.wrapper}>
       <div className={styles.header}>
-        <h2 className={styles.title}>Edit application</h2>
-        <Link href={`/applications/${id}`} className={styles.backLink}>
-          Back to application
-        </Link>
+        <div>
+          <Link href={`/applications/${id}`} className={styles.backLink}>
+            Application
+          </Link>
+          <h1 className={styles.title}>Edit application</h1>
+        </div>
       </div>
 
+      <div className={styles.formCard}>
       <form onSubmit={handleSubmit} className={styles.form}>
         <div className={styles.field}>
           <label htmlFor="jobTitle" className={styles.label}>
@@ -316,6 +319,7 @@ export function EditApplicationForm({
           </Link>
         </div>
       </form>
+      </div>
     </div>
   );
 }

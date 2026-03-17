@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { eq } from "drizzle-orm";
 import { applications, interviews, notes, preferences, users } from "../schema";
 import { db, pool } from "../index";

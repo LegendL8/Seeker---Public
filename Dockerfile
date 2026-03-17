@@ -1,5 +1,7 @@
 FROM node:20-alpine
 
+RUN apk add --no-cache ca-certificates
+
 WORKDIR /app
 
 COPY package.json package-lock.json ./

@@ -37,6 +37,18 @@ function formatDateTime(iso: string | null): string {
   }
 }
 
+/** API stores salary in cents. */
+function formatSalary(min: number | null, max: number | null): string {
+  if (min == null && max == null) return "—";
+  const fmt = (cents: number) =>
+    new Intl.NumberFormat("en-US", { style: "decimal" }).format(
+      Math.round(cents / 100),
+    );
+  if (min != null && max != null) return `$${fmt(min)} – $${fmt(max)}`;
+  if (min != null) return `$${fmt(min)}`;
+  return `$${fmt(max!)}`;
+}
+
 export function ApplicationDetail() {
   const params = useParams();
   const id = typeof params?.id === "string" ? params.id : null;
@@ -72,49 +84,47 @@ export function ApplicationDetail() {
   return (
     <div className={styles.wrapper}>
       <div className={styles.header}>
-        <h2 className={styles.title}>{application.jobTitle}</h2>
+        <div>
+          <Link href="/applications" className={styles.backLink}>
+            Applications
+          </Link>
+          <h1 className={styles.title}>{application.jobTitle}</h1>
+        </div>
         <div className={styles.actions}>
           <Link href={`/applications/${id}/edit`} className={styles.link}>
             Edit
           </Link>
-          <Link href="/applications" className={styles.link}>
-            Back to list
-          </Link>
         </div>
       </div>
 
-      <dl className={styles.dl}>
-        <dt className={styles.dt}>Status</dt>
-        <dd className={styles.dd}>{application.status}</dd>
+      <div className={styles.card}>
+        <dl className={styles.dl}>
+          <dt className={styles.dt}>Status</dt>
+          <dd className={styles.dd}>{application.status}</dd>
 
-        <dt className={styles.dt}>Location</dt>
-        <dd className={styles.dd}>{application.location ?? "—"}</dd>
+          <dt className={styles.dt}>Location</dt>
+          <dd className={styles.dd}>{application.location ?? "—"}</dd>
 
-        <dt className={styles.dt}>Job posting URL</dt>
-        <dd className={styles.dd}>
-          {application.jobPostingUrl ? (
-            <a
-              href={application.jobPostingUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={styles.externalLink}
-            >
-              {application.jobPostingUrl}
-            </a>
-          ) : (
-            "—"
-          )}
-        </dd>
+          <dt className={styles.dt}>Job posting URL</dt>
+          <dd className={styles.dd}>
+            {application.jobPostingUrl ? (
+              <a
+                href={application.jobPostingUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={styles.externalLink}
+              >
+                {application.jobPostingUrl}
+              </a>
+            ) : (
+              "—"
+            )}
+          </dd>
 
-        <dt className={styles.dt}>Salary</dt>
-        <dd className={styles.dd}>
-          {application.salaryMin != null || application.salaryMax != null
-            ? [application.salaryMin, application.salaryMax]
-                .filter((n) => n != null)
-                .map((n) => n?.toLocaleString())
-                .join(" – ")
-            : "—"}
-        </dd>
+          <dt className={styles.dt}>Salary</dt>
+          <dd className={styles.dd}>
+            {formatSalary(application.salaryMin, application.salaryMax)}
+          </dd>
 
         <dt className={styles.dt}>Applied date</dt>
         <dd className={styles.dd}>{formatDate(application.appliedAt)}</dd>
@@ -127,9 +137,12 @@ export function ApplicationDetail() {
 
         <dt className={styles.dt}>Updated</dt>
         <dd className={styles.dd}>{formatDateTime(application.updatedAt)}</dd>
-      </dl>
+        </dl>
+      </div>
 
-      <InterviewList applicationId={application.id} />
+      <div className={styles.card}>
+        <InterviewList applicationId={application.id} />
+      </div>
 
       <div className={styles.deleteSection}>
         {confirmDelete ? (

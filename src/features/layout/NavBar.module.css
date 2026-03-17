@@ -1,19 +1,18 @@
 .nav {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
+  align-items: flex-start;
+  min-height: 100vh;
   width: 100%;
-  min-height: 56px;
-  padding: 0 24px;
-  background-color: var(--background);
-  border-bottom: 1px solid var(--border);
-  font-family: var(--font-inter), system-ui, sans-serif;
+  padding: 24px 0;
 }
 
 .brand {
   font-size: 1.25rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: #e8eef4;
+  padding: 0 24px 24px;
+  text-decoration: none;
 }
 
 .brand:hover {
@@ -22,17 +21,67 @@
 
 .links {
   display: flex;
-  align-items: center;
-  gap: 24px;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 4px;
+  flex: 1;
 }
 
 .link {
   font-size: 0.9375rem;
-  color: var(--foreground);
+  color: #e8eef4;
   text-decoration: none;
+  padding: 12px 24px;
 }
 
 .link:hover {
-  text-decoration: underline;
-  opacity: 0.9;
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+.linkActive {
+  background-color: rgba(255, 255, 255, 0.12);
+}
+
+.profileBlock {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 24px 24px;
+  margin-top: auto;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.profileAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.2);
+  color: #e8eef4;
+  font-size: 0.875rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.profileInfo {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.profileName {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #e8eef4;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+.profileEmail {
+  font-size: 0.8125rem;
+  color: rgba(232, 238, 244, 0.8);
+  word-break: break-all;
+  overflow-wrap: break-word;
 }

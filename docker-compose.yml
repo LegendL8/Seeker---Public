@@ -29,8 +29,10 @@ services:
     environment:
       - NODE_ENV=development
       - PORT=3001
-      - DATABASE_URL=postgresql://seeker:seekerdev@postgres:5432/seeker
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-seeker}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-seeker}
       - REDIS_URL=redis://redis:6379
+      # Local dev only: allow JWKS fetch to Auth0 from inside container (Docker TLS quirk)
+      - NODE_TLS_REJECT_UNAUTHORIZED=0
     depends_on:
       postgres:
         condition: service_healthy
@@ -42,13 +44,13 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_USER: seeker
-      POSTGRES_PASSWORD: seekerdev
-      POSTGRES_DB: seeker
+      POSTGRES_USER: ${POSTGRES_USER:-seeker}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-seeker}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U seeker -d seeker"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-seeker} -d ${POSTGRES_DB:-seeker}"]
       interval: 2s
       timeout: 5s
       retries: 5

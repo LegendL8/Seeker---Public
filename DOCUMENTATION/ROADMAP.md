@@ -220,13 +220,13 @@ See ARCHITECTURE.md Layer 4 (Repository Strategy, Post-Milestone 4) for details.
 
 **Goal:** A user can upload a resume and attach it to their profile or an application.
 
-- [ ] AWS S3 bucket configured
+- [ ] Cloudflare R2 bucket configured
 - [ ] File upload endpoint — PDF and DOCX only
 - [ ] File size limit enforced
-- [ ] Resume stored in S3, reference in PostgreSQL
+- [ ] Resume stored in R2, reference in PostgreSQL
 - [ ] Resume attached to user profile
-- [ ] Resume preview with correct S3 headers (see ARCHITECTURE.md impl note)
-- [ ] Delete resume — removes from S3 and database
+- [ ] Resume preview with correct R2/object-store headers (see ARCHITECTURE.md impl note)
+- [ ] Delete resume — removes from R2 and database
 
 ---
 

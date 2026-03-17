@@ -53,7 +53,7 @@ giving job seekers their own dashboard to track applications, interviews, notes,
 | Service     | Purpose                                  |
 | ----------- | ---------------------------------------- |
 | Auth0       | Authentication                           |
-| AWS S3      | File storage — PDF & DOCX resume uploads |
+| Cloudflare R2 | File storage — PDF & DOCX resume uploads |
 | Redis Cloud | Caching                                  |
 | OpenAI      | AI integration (future — not in MVP)     |
 
@@ -123,7 +123,7 @@ giving job seekers their own dashboard to track applications, interviews, notes,
 
 - Zod for all form and API input validation (frontend + backend)
 - File type validation — PDF and DOCX only
-- Files stored securely in AWS S3
+- Files stored securely in Cloudflare R2
 
 ### Security Headers
 
@@ -178,20 +178,22 @@ Interviews: `server/interviews/` (types.ts, service.ts, routes.ts). Nested under
 _Added 2026-03-10_
 _Updated 2026-03-13_
 
-Notes: `server/notes/` (types.ts, service.ts, routes.ts). GET list (paginated, filter by typeTag, applicationId, interviewId, companyId), GET/POST/PATCH/DELETE `/api/v1/notes` and `/api/v1/notes/:id`. At most one relational tag per note (enforced in schema and service). PATCH no-op returns first-fetched row (one read). Frontend: `src/features/notes/` (NotesList at `/notes`, AddNoteForm, NoteEditor with debounced save).
+Notes: `server/notes/` (types.ts, service.ts, routes.ts). GET list (paginated, filter by typeTag, applicationId, interviewId, companyId), GET/POST/PATCH/DELETE `/api/v1/notes` and `/api/v1/notes/:id`. At most one relational tag per note (enforced in schema and service). PATCH no-op returns first-fetched row (one read). Frontend: `src/features/notes/` (NotesList at `/notes`, AddNoteForm, NoteEditor with debounced save). List empty state is shown only after list data has loaded (`data != null && total === 0`) to avoid a flash on refresh.
 _Added 2026-03-10_
+_Updated 2026-03-17_
 
 Dashboard: `server/dashboard/` (types.ts, cache.ts, service.ts, routes.ts). GET `/api/v1/dashboard/metrics` returns totalApplications, applicationsByStatus (saved, applied, interviewing, offer, rejected), interviewRate, activeApplications, offersReceived, rejectionsReceived. Redis cache per user (60s TTL); invalidated on application or interview create/update/delete. Frontend: `src/features/dashboard/` (Dashboard at `/` when authenticated, useDashboardMetrics, fetchDashboardMetrics).
 _Added 2026-03-10_
 
-Resumes list: GET `/api/v1/resumes` accepts `?page=1&limit=20` (limit max 100), returns `{ items, page, limit, total }`. Frontend: `useResumesList(page, limit)`, ResumesList with pagination UI. setActiveResume: one conditional update when setting active (SET is*active = (id = :id) WHERE user_id); one update when setting inactive; no separate read or bulk step.
-\_Added 2026-03-13*
+Resumes list: GET `/api/v1/resumes` accepts `?page=1&limit=20` (limit max 100), returns `{ items, page, limit, total }`. Frontend: `useResumesList(page, limit)`, ResumesList with pagination UI. List empty state is shown only after list data has loaded (`data != null && total === 0`) to avoid a flash on refresh. setActiveResume: one conditional update when setting active (SET is_active = (id = :id) WHERE user_id); one update when setting inactive; no separate read or bulk step.
+_Added 2026-03-13_
+_Updated 2026-03-17_
 
 ### Implementation Notes
 
 - `[IMPL]` Resolve remaining documentation inconsistencies. (1) Application status — API.md POST/PATCH body examples and SCHEMA.md applications table show "offered" and "withdrawn"; implementation uses "offer" and has no "withdrawn". Align docs to current behavior or implement missing values. (2) SCHEMA.md Seed Files — seed.active.ts inserts 6 applications and 4 interviews; SCHEMA.md says "10 applications" and "5 interviews". Correct counts.
-- `[IMPL]` PDF preview iframe issue — related to X-Frame-Options and S3 header
-  configuration. Previous ATS had this bug. S3 must serve PDFs with headers
+- `[IMPL]` PDF preview iframe issue — related to X-Frame-Options and object-store header
+  configuration. Previous ATS had this bug. R2 (or custom proxy) must serve PDFs with headers
   allowing embedding within own domain only. Do not repeat this mistake.
 
 ---
@@ -215,10 +217,11 @@ Each environment has its own `.env` file. Staging and production secrets managed
 | ------------------------- | ------------------------------ |
 | EC2                       | App hosting                    |
 | RDS                       | PostgreSQL database            |
-| S3                        | File storage                   |
 | Secrets Manager           | API keys & credentials         |
 | Application Load Balancer | Traffic distribution & scaling |
 | AWS Certificate Manager   | SSL certificates (auto-renews) |
+
+File storage is provided by Cloudflare R2 (not AWS).
 
 ### Containerization
 

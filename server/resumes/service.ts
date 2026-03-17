@@ -4,7 +4,7 @@ import { randomUUID } from "node:crypto";
 import { db } from "../db";
 import { resumes } from "../db/schema";
 import { ForbiddenError, NotFoundError } from "../errors";
-import { deleteResumeFromS3, getResumeSignedUrl, uploadResumeToS3 } from "./s3";
+import { deleteResumeFromR2, getResumeSignedUrl, uploadResumeToR2 } from "./r2";
 import type { ResumeFileType } from "./types";
 import { RESUME_CAP } from "./types";
 
@@ -71,7 +71,7 @@ export async function createResume(
       ? "application/pdf"
       : "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
 
-  await uploadResumeToS3(s3Key, buffer, contentType);
+  await uploadResumeToR2(s3Key, buffer, contentType);
 
   const now = new Date();
   const [row] = await db
@@ -131,7 +131,7 @@ export async function setActiveResume(
 
 export async function deleteResume(userId: string, id: string): Promise<void> {
   const row = await getResumeById(userId, id);
-  await deleteResumeFromS3(row.s3Key);
+  await deleteResumeFromR2(row.s3Key);
   await db
     .delete(resumes)
     .where(and(eq(resumes.id, id), eq(resumes.userId, userId)));
