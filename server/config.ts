@@ -12,8 +12,7 @@ export const envSchema = z.object({
   AUTH0_AUDIENCE: z
     .string()
     .optional()
-    .transform((v) => (v === "" ? undefined : v))
-    .refine((v) => v === undefined || (v !== undefined && v.length >= 1), {
+    .refine((v) => v === undefined || v !== "", {
       message: "AUTH0_AUDIENCE must be non-empty when set",
     }),
   R2_ACCOUNT_ID: z.string().min(1).optional(),
