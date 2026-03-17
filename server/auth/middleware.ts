@@ -5,7 +5,7 @@ import { eq } from "drizzle-orm";
 import { AppError, AuthError } from "../errors";
 import { env } from "../config";
 import { db } from "../db";
-import { users } from "../db/schema";
+import { preferences, users } from "../db/schema";
 import { logger } from "../logger";
 import type { User } from "./types";
 
@@ -213,5 +213,12 @@ async function ensureUserFromToken(
     })
     .returning();
 
-  return inserted ?? undefined;
+  if (!inserted) return undefined;
+
+  await db.insert(preferences).values({
+    userId: inserted.id,
+    postingCheckFrequency: "daily",
+  });
+
+  return inserted;
 }

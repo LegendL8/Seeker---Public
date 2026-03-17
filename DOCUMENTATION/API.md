@@ -56,24 +56,20 @@ All list endpoints accept `?page=1&limit=20` and return:
 | Endpoint Group                       | Limit               |
 | ------------------------------------ | ------------------- |
 | Global                               | 100 req/min per IP  |
-| POST /auth/refresh                   | 10 req/min per IP   |
-| POST /auth/callback                  | 10 req/min per IP   |
 | POST /resumes                        | 5 req/min per user  |
 | POST /applications/:id/check-posting | 10 req/min per user |
 | All other endpoints                  | 60 req/min per user |
 
-**Implemented:** Global 100 req/min per IP applied to all `/api` routes. Applications (GET/POST/PATCH/DELETE `/api/v1/applications`) limited to 60 req/min per authenticated user. 429 response: `{ "error": "RATE_LIMITED", "message": "Too many requests", "statusCode": 429 }`.
+**Implemented:** Global 100 req/min per IP applied to all `/api` routes. Applications (GET/POST/PATCH/DELETE `/api/v1/applications`) limited to 60 req/min per authenticated user. 429 response: `{ "error": "RATE_LIMITED", "message": "Too many requests", "statusCode": 429 }`. Login, callback, refresh, and logout are handled by the Next.js Auth0 SDK (not Express); no Express auth routes exist.
 _Added 2026-03-09_
 
 ---
 
 ## Auth
 
-| Method | Route                   | Description                                                  | Auth     |
-| ------ | ----------------------- | ------------------------------------------------------------ | -------- |
-| POST   | `/api/v1/auth/callback` | Auth0 callback — creates user and preferences on first login | PUBLIC   |
-| POST   | `/api/v1/auth/refresh`  | Refresh access token via httpOnly cookie                     | PUBLIC   |
-| POST   | `/api/v1/auth/logout`   | Clear refresh token cookie                                   | Required |
+Authentication is handled by the Next.js app using the Auth0 SDK. Login, logout, callback, and token refresh run on the frontend (Next.js) at `/auth/login`, `/auth/logout`, `/auth/callback`; the Express API does not expose auth endpoints.
+
+The API expects `Authorization: Bearer <access_token>` on every protected request. User provisioning happens on the first authenticated request: if the JWT is valid but no user row exists for the token's `sub`, Express creates the user (and optionally preferences) at that time. See ARCHITECTURE.md (Authentication Flow) and DOCUMENTATION/AUTH0.md.
 
 ---
 
