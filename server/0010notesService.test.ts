@@ -1,5 +1,10 @@
 import { NotFoundError } from "./errors";
-import { deleteNote, getNoteById, listNotes } from "./notes/service";
+import {
+  deleteNote,
+  getNoteById,
+  listNotes,
+  updateNote,
+} from "./notes/service";
 
 const mockUserId = "550e8400-e29b-41d4-a716-446655440001";
 const mockNoteId = "550e8400-e29b-41d4-a716-446655440004";
@@ -80,6 +85,27 @@ describe("listNotes", () => {
     expect(result.page).toBe(1);
     expect(result.limit).toBe(20);
     selectSpy.mockRestore();
+  });
+});
+
+describe("updateNote", () => {
+  it("returns existing row when no changes (no-op PATCH)", async () => {
+    const db = jest.requireActual("./db").db;
+    const selectSpy = jest.spyOn(db, "select").mockReturnValue({
+      from: jest.fn().mockReturnValue({
+        where: jest.fn().mockReturnValue({
+          limit: jest.fn().mockResolvedValue([mockRow]),
+        }),
+      }),
+    } as unknown as ReturnType<typeof db.select>);
+    const updateSpy = jest.spyOn(db, "update");
+
+    const result = await updateNote(mockUserId, mockNoteId, {});
+
+    expect(result).toEqual(mockRow);
+    expect(updateSpy).not.toHaveBeenCalled();
+    selectSpy.mockRestore();
+    updateSpy.mockRestore();
   });
 });
 

@@ -13,10 +13,11 @@ Short reference for how we work on this project. Details are in the project rule
 
 ## Tests
 
-- Tests are written only when explicitly requested (e.g. "Generate tests").
+- Tests are written or extended where coverage is needed.
 - Jest for unit and integration tests; Playwright for e2e. Tests live alongside the feature they cover.
-- Jest runs from both `server/` and `src/`. Frontend unit tests (e.g. API helper, form schemas, API client) live under `src/` with the same naming convention (`0001nameoffeature.test.ts`).
-  _Added 2026-03-09_
+- Jest runs from both `server/` and `src/`. Server test files: errors, asyncHandler, config, applications validation/service (including listApplicationsByCursor), interviews validation/service, notes validation/service, rate limit, dashboard service/cache/routes, resumes validation (0016)/service, security (0015). Frontend: getApiBaseUrl (src/lib), applications form schema and API client, interviews API client, notes API client, dashboard API client, resumes API client (0001resumesApi).
+- **Deferred:** Route-level tests for applications, interviews, notes, and resumes (beyond the single dashboard route test) and auth middleware (requireAuth) tests are deferred until refactor or pre-release need; service and validation coverage is in place.
+  _Updated 2026-03-13_
 
 ---
 

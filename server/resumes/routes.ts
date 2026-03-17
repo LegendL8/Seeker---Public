@@ -14,7 +14,7 @@ import {
   listResumes,
   setActiveResume,
 } from "./service";
-import { isS3Configured } from "./s3";
+import { isR2Configured } from "./r2";
 import { listResumesQuerySchema, mimeToFileType } from "./types";
 import { setActiveBodySchema } from "./types";
 
@@ -47,7 +47,7 @@ router.get(
       );
     }
     const { page, limit } = queryResult.data;
-    if (!isS3Configured()) {
+    if (!isR2Configured()) {
       return res.json({ items: [], page, limit, total: 0 });
     }
     const user = req.user!;
@@ -61,7 +61,7 @@ router.post(
   resumesUploadRateLimiter(),
   upload.single("file"),
   asyncHandler(async (req: Request, res: Response) => {
-    if (!isS3Configured()) {
+    if (!isR2Configured()) {
       return res.status(503).json({
         error: "SERVICE_UNAVAILABLE",
         message: "Resume storage is not configured",
@@ -107,7 +107,7 @@ router.post(
 router.get(
   "/:id",
   asyncHandler(async (req: Request, res: Response) => {
-    if (!isS3Configured()) {
+    if (!isR2Configured()) {
       return res.status(503).json({
         error: "SERVICE_UNAVAILABLE",
         message: "Resume storage is not configured",
@@ -135,7 +135,7 @@ router.get(
 router.patch(
   "/:id",
   asyncHandler(async (req: Request, res: Response) => {
-    if (!isS3Configured()) {
+    if (!isR2Configured()) {
       return res.status(503).json({
         error: "SERVICE_UNAVAILABLE",
         message: "Resume storage is not configured",
@@ -172,7 +172,7 @@ router.patch(
 router.delete(
   "/:id",
   asyncHandler(async (req: Request, res: Response) => {
-    if (!isS3Configured()) {
+    if (!isR2Configured()) {
       return res.status(503).json({
         error: "SERVICE_UNAVAILABLE",
         message: "Resume storage is not configured",

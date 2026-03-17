@@ -56,24 +56,20 @@ All list endpoints accept `?page=1&limit=20` and return:
 | Endpoint Group                       | Limit               |
 | ------------------------------------ | ------------------- |
 | Global                               | 100 req/min per IP  |
-| POST /auth/refresh                   | 10 req/min per IP   |
-| POST /auth/callback                  | 10 req/min per IP   |
 | POST /resumes                        | 5 req/min per user  |
 | POST /applications/:id/check-posting | 10 req/min per user |
 | All other endpoints                  | 60 req/min per user |
 
-**Implemented:** Global 100 req/min per IP applied to all `/api` routes. Applications (GET/POST/PATCH/DELETE `/api/v1/applications`) limited to 60 req/min per authenticated user. 429 response: `{ "error": "RATE_LIMITED", "message": "Too many requests", "statusCode": 429 }`.
+**Implemented:** Global 100 req/min per IP applied to all `/api` routes. Applications (GET/POST/PATCH/DELETE `/api/v1/applications`) limited to 60 req/min per authenticated user. 429 response: `{ "error": "RATE_LIMITED", "message": "Too many requests", "statusCode": 429 }`. Login, callback, refresh, and logout are handled by the Next.js Auth0 SDK (not Express); no Express auth routes exist.
 _Added 2026-03-09_
 
 ---
 
 ## Auth
 
-| Method | Route                   | Description                                                  | Auth     |
-| ------ | ----------------------- | ------------------------------------------------------------ | -------- |
-| POST   | `/api/v1/auth/callback` | Auth0 callback — creates user and preferences on first login | PUBLIC   |
-| POST   | `/api/v1/auth/refresh`  | Refresh access token via httpOnly cookie                     | PUBLIC   |
-| POST   | `/api/v1/auth/logout`   | Clear refresh token cookie                                   | Required |
+Authentication is handled by the Next.js app using the Auth0 SDK. Login, logout, callback, and token refresh run on the frontend (Next.js) at `/auth/login`, `/auth/logout`, `/auth/callback`; the Express API does not expose auth endpoints.
+
+The API expects `Authorization: Bearer <access_token>` on every protected request. User provisioning happens on the first authenticated request: if the JWT is valid but no user row exists for the token's `sub`, Express creates the user (and optionally preferences) at that time. See ARCHITECTURE.md (Authentication Flow) and DOCUMENTATION/AUTH0.md.
 
 ---
 
@@ -132,20 +128,20 @@ _Added 2026-03-09_
 
 ## Applications
 
-| Method | Route                                    | Description                                          |
-| ------ | ---------------------------------------- | ---------------------------------------------------- |
-| GET    | `/api/v1/applications`                   | List applications — paginated                        |
-| POST   | `/api/v1/applications`                   | Create an application                                |
-| GET    | `/api/v1/applications/:id`               | Get application with interviews                      |
-| PATCH  | `/api/v1/applications/:id`               | Update application                                   |
-| DELETE | `/api/v1/applications/:id`               | Delete application                                   |
-| POST   | `/api/v1/applications/:id/check-posting` | Trigger manual posting status check — paid tier only |
+| Method | Route                                    | Description                                                     |
+| ------ | ---------------------------------------- | --------------------------------------------------------------- |
+| GET    | `/api/v1/applications`                   | List applications — paginated                                   |
+| POST   | `/api/v1/applications`                   | Create an application                                           |
+| GET    | `/api/v1/applications/:id`               | Get application with interviews                                 |
+| PATCH  | `/api/v1/applications/:id`               | Update application                                              |
+| DELETE | `/api/v1/applications/:id`               | Delete application                                              |
+| POST   | `/api/v1/applications/:id/check-posting` | Trigger manual posting status check — reserved; not implemented |
 
-**Query params:** `?page=1&limit=20&status=applied&postingStatus=active&sortBy=appliedAt&order=desc`
+**Query params (list):** Offset mode: `?page=1&limit=20`. Cursor mode: `?cursor=<opaque>&limit=20` for next page (select O(k); no total). Response with offset: `{ items, page, limit, total }`. Response with cursor: `{ items, nextCursor }` (nextCursor null when no next page).
 
-**Note:** `companyId` and `resumeId` validated to belong to authenticated user before associating. Status changes trigger server-side notifications. Posting status check endpoint returns FORBIDDEN for free tier users.
+**Note:** `companyId` and `resumeId` validated to belong to authenticated user before associating. Status changes trigger server-side notifications. Check-posting endpoint not implemented.
 
-**Implemented (list, get, create, update, delete):** List returns `{ items, page, limit, total }`. GET :id returns full application row. Auth required (Bearer). Status union: `saved | applied | interviewing | offer | rejected`. Query params for list: `?page=1&limit=20` only (no status/sort filters yet).
+**Implemented (list, get, create, update, delete):** List supports both offset (`page`, `limit`) and cursor (`cursor`, `limit`). GET :id returns full application row. Auth required (Bearer). Status union: `saved | applied | interviewing | offer | rejected`.
 _Added 2026-03-09_
 
 ### POST Request
@@ -257,13 +253,13 @@ _Amended 2026-03-09_
 
 ## Resumes
 
-| Method | Route                 | Description                           |
-| ------ | --------------------- | ------------------------------------- |
-| GET    | `/api/v1/resumes`     | List resumes — paginated              |
-| POST   | `/api/v1/resumes`     | Upload resume — free tier capped at 1 |
-| GET    | `/api/v1/resumes/:id` | Get resume metadata and signed URL    |
-| PATCH  | `/api/v1/resumes/:id` | Set resume as active                  |
-| DELETE | `/api/v1/resumes/:id` | Delete from S3 and database           |
+| Method | Route                 | Description                        |
+| ------ | --------------------- | ---------------------------------- |
+| GET    | `/api/v1/resumes`     | List resumes — paginated           |
+| POST   | `/api/v1/resumes`     | Upload resume — limit 1 per user   |
+| GET    | `/api/v1/resumes/:id` | Get resume metadata and signed URL |
+| PATCH  | `/api/v1/resumes/:id` | Set resume as active               |
+| DELETE | `/api/v1/resumes/:id` | Delete from S3 and database        |
 
 **Query params (list):** `?page=1&limit=20` (limit max 100). Response: `{ items, page, limit, total }`.
 
@@ -341,7 +337,7 @@ Implemented. Status keys match current application status set (saved, applied, i
 
 ---
 
-## Webhooks (Paid Tier Only)
+## Webhooks (Reserved; not implemented)
 
 | Method | Route                           | Description            | Auth              |
 | ------ | ------------------------------- | ---------------------- | ----------------- |

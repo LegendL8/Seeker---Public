@@ -50,12 +50,12 @@ giving job seekers their own dashboard to track applications, interviews, notes,
 
 ## Layer 2: Third-Party Services
 
-| Service     | Purpose                                  |
-| ----------- | ---------------------------------------- |
-| Auth0       | Authentication                           |
-| AWS S3      | File storage — PDF & DOCX resume uploads |
-| Redis Cloud | Caching                                  |
-| OpenAI      | AI integration (future — not in MVP)     |
+| Service       | Purpose                                  |
+| ------------- | ---------------------------------------- |
+| Auth0         | Authentication                           |
+| Cloudflare R2 | File storage — PDF & DOCX resume uploads |
+| Redis Cloud   | Caching                                  |
+| OpenAI        | AI integration (future — not in MVP)     |
 
 ### Future Considerations
 
@@ -70,7 +70,7 @@ giving job seekers their own dashboard to track applications, interviews, notes,
 - REST APIs for all CRUD operations
 - Webhooks for incoming external data (job board integrations)
 - API versioning: all endpoints prefixed with `/api/v1/`
-- Pagination: offset-based — `?page=1&limit=20`
+- Pagination: offset-based — `?page=1&limit=20`. List endpoints may also support cursor-based pagination (`cursor` + `limit`, response includes `nextCursor`) for O(k) select cost; applications list supports both.
 
 ### Authentication Flow
 
@@ -79,6 +79,7 @@ giving job seekers their own dashboard to track applications, interviews, notes,
 - Refresh tokens stored in httpOnly cookies (XSS protection)
 - Frontend automatically refreshes access tokens before expiration
 - Backend verifies JWT signature only — no session storage
+- Optional in-process user cache: short-TTL cache keyed by JWT sub in requireAuth; cache hit avoids DB user lookup (O(1)). TTL e.g. 60s. On miss, DB lookup and cache set.
 
 ### Authorization
 
@@ -122,16 +123,16 @@ giving job seekers their own dashboard to track applications, interviews, notes,
 
 - Zod for all form and API input validation (frontend + backend)
 - File type validation — PDF and DOCX only
-- Files stored securely in AWS S3
+- Files stored securely in Cloudflare R2
 
 ### Security Headers
 
-- HSTS — HTTPS enforcement
-- X-Frame-Options: DENY
-- X-Content-Type-Options: nosniff
-- Referrer-Policy: no-referrer
-- `[IMPL]` Content Security Policy (CSP)
-- `[IMPL]` Permissions-Policy
+- HSTS — HTTPS enforcement (Express; production only)
+- X-Frame-Options: DENY (Express)
+- X-Content-Type-Options: nosniff (Express)
+- Referrer-Policy: no-referrer (Express)
+- Content Security Policy (CSP) — set in Next.js on document responses; allows 'self' and Auth0 (\*.auth0.com); script/style use 'unsafe-inline' for Next.js and Auth0 SDK; frame-ancestors 'none'. Source: next.config.ts headers.
+- Permissions-Policy — set in Next.js; camera, microphone, geolocation, payment, usb, magnetometer, gyroscope, accelerometer disabled.
 
 ### CORS
 
@@ -173,23 +174,26 @@ Applications feature implemented: `server/applications/` (types.ts, service.ts, 
 _Updated 2026-03-09_
 _Added 2026-03-09_
 
-Interviews: `server/interviews/` (types.ts, service.ts, routes.ts). Nested under applications: GET/POST `/api/v1/applications/:applicationId/interviews`. Standalone: GET/PATCH/DELETE `/api/v1/interviews/:id`. Frontend: `src/features/interviews/` (InterviewList, AddInterviewForm on application detail).
+Interviews: `server/interviews/` (types.ts, service.ts, routes.ts). Nested under applications: GET/POST `/api/v1/applications/:applicationId/interviews`. Standalone: GET/PATCH/DELETE `/api/v1/interviews/:id`. PATCH no-op returns first-fetched row (one read). Frontend: `src/features/interviews/` (InterviewList, AddInterviewForm on application detail). Application detail page prefetches interviews in parallel (ApplicationDetail calls useInterviewsForApplication(id) at top level with route id).
 _Added 2026-03-10_
+_Updated 2026-03-13_
 
-Notes: `server/notes/` (types.ts, service.ts, routes.ts). GET list (paginated, filter by typeTag, applicationId, interviewId, companyId), GET/POST/PATCH/DELETE `/api/v1/notes` and `/api/v1/notes/:id`. At most one relational tag per note (enforced in schema and service). Frontend: `src/features/notes/` (NotesList at `/notes`, AddNoteForm, NoteEditor with debounced save).
+Notes: `server/notes/` (types.ts, service.ts, routes.ts). GET list (paginated, filter by typeTag, applicationId, interviewId, companyId), GET/POST/PATCH/DELETE `/api/v1/notes` and `/api/v1/notes/:id`. At most one relational tag per note (enforced in schema and service). PATCH no-op returns first-fetched row (one read). Frontend: `src/features/notes/` (NotesList at `/notes`, AddNoteForm, NoteEditor with debounced save). List empty state is shown only after list data has loaded (`data != null && total === 0`) to avoid a flash on refresh.
 _Added 2026-03-10_
+_Updated 2026-03-17_
 
 Dashboard: `server/dashboard/` (types.ts, cache.ts, service.ts, routes.ts). GET `/api/v1/dashboard/metrics` returns totalApplications, applicationsByStatus (saved, applied, interviewing, offer, rejected), interviewRate, activeApplications, offersReceived, rejectionsReceived. Redis cache per user (60s TTL); invalidated on application or interview create/update/delete. Frontend: `src/features/dashboard/` (Dashboard at `/` when authenticated, useDashboardMetrics, fetchDashboardMetrics).
 _Added 2026-03-10_
 
-Resumes list: GET `/api/v1/resumes` accepts `?page=1&limit=20` (limit max 100), returns `{ items, page, limit, total }`. Frontend: `useResumesList(page, limit)`, ResumesList with pagination UI.
-_Added 2026-03-13_
+Resumes list: GET `/api/v1/resumes` accepts `?page=1&limit=20` (limit max 100), returns `{ items, page, limit, total }`. Frontend: `useResumesList(page, limit)`, ResumesList with pagination UI. List empty state is shown only after list data has loaded (`data != null && total === 0`) to avoid a flash on refresh. setActiveResume: one conditional update when setting active (SET is*active = (id = :id) WHERE user_id); one update when setting inactive; no separate read or bulk step.
+\_Added 2026-03-13*
+_Updated 2026-03-17_
 
 ### Implementation Notes
 
 - `[IMPL]` Resolve remaining documentation inconsistencies. (1) Application status — API.md POST/PATCH body examples and SCHEMA.md applications table show "offered" and "withdrawn"; implementation uses "offer" and has no "withdrawn". Align docs to current behavior or implement missing values. (2) SCHEMA.md Seed Files — seed.active.ts inserts 6 applications and 4 interviews; SCHEMA.md says "10 applications" and "5 interviews". Correct counts.
-- `[IMPL]` PDF preview iframe issue — related to X-Frame-Options and S3 header
-  configuration. Previous ATS had this bug. S3 must serve PDFs with headers
+- `[IMPL]` PDF preview iframe issue — related to X-Frame-Options and object-store header
+  configuration. Previous ATS had this bug. R2 (or custom proxy) must serve PDFs with headers
   allowing embedding within own domain only. Do not repeat this mistake.
 
 ---
@@ -213,10 +217,11 @@ Each environment has its own `.env` file. Staging and production secrets managed
 | ------------------------- | ------------------------------ |
 | EC2                       | App hosting                    |
 | RDS                       | PostgreSQL database            |
-| S3                        | File storage                   |
 | Secrets Manager           | API keys & credentials         |
 | Application Load Balancer | Traffic distribution & scaling |
 | AWS Certificate Manager   | SSL certificates (auto-renews) |
+
+File storage is provided by Cloudflare R2 (not AWS).
 
 ### Containerization
 
@@ -281,8 +286,8 @@ Each environment has its own `.env` file. Staging and production secrets managed
 - Integration tests — API and service layer
 - End-to-end tests — full user flows via Playwright
 - ~~Jest configured; server test files named `0001nameoffeature.test.ts` (see DOCUMENTATION/DEVELOPMENT.md). Tests: errors, asyncHandler, config schema, applications validation/service, rate limit handler.~~
-- Jest configured; roots: `server/` and `src/`. Server and frontend test files named `0001nameoffeature.test.ts` (see DOCUMENTATION/DEVELOPMENT.md). Server: errors, asyncHandler, config, applications validation/service, interviews validation/service, notes validation/service, rate limit, dashboard service (0011), dashboard cache (0012), dashboard routes (0013). Frontend: getApiBaseUrl (src/lib), applications form schema and API client, interviews API client, notes API client, dashboard API client (0001dashboardApi). Edge cases: cache hit/miss, empty data, invalid JSON in cache, 401 when unauthenticated, list empty results, validation bounds (limit, page, invalid UUIDs).
-  _Updated 2026-03-10_
+- Jest configured; roots: `server/` and `src/`. Server and frontend test files named `0001nameoffeature.test.ts` (see DOCUMENTATION/DEVELOPMENT.md). Server: errors, asyncHandler, config, applications validation/service (including listApplicationsByCursor and cursor in list query), interviews validation/service, notes validation/service, rate limit, dashboard service (0011)/cache (0012)/routes (0013), resumes validation (0016)/service (0014), security headers and CORS (0015). Frontend: getApiBaseUrl (src/lib), applications form schema and API client, interviews API client, notes API client, dashboard API client, resumes API client (0001resumesApi). Edge cases: cache hit/miss, empty data, invalid JSON in cache, 401 when unauthenticated, list empty results, validation bounds (limit, page, invalid UUIDs). Route-level tests for applications, interviews, notes, and resumes and auth middleware (requireAuth) tests are deferred until refactor or pre-release need.
+  _Updated 2026-03-13_
 
 ### Flagged for Implementation
 

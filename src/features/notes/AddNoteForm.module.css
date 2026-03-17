@@ -1,8 +1,8 @@
+/* Add note form: light theme to match Notes detail panel. */
 .form {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  margin-bottom: 24px;
 }
 
 .field {
@@ -14,17 +14,18 @@
 .label {
   font-size: 0.875rem;
   font-weight: 500;
-  color: var(--text-primary, #171717);
+  color: #171717;
 }
 
 .input,
 .select,
 .textarea {
-  padding: 8px 12px;
+  padding: 10px 12px;
   font-size: 0.875rem;
-  border: 1px solid var(--border, #d4d4d4);
-  background: var(--card-bg);
-  color: var(--foreground, #171717);
+  border: 1px solid #e0e0e0;
+  background: #fff;
+  color: #171717;
+  border-radius: 6px;
 }
 
 .textarea {
@@ -33,14 +34,27 @@
   font-family: inherit;
 }
 
+.input:focus,
+.select:focus,
+.textarea:focus {
+  outline: 2px solid var(--accent-blue);
+  outline-offset: 2px;
+}
+
 .submitBtn {
-  padding: 8px 16px;
+  padding: 10px 20px;
   font-size: 0.875rem;
+  font-weight: 500;
   cursor: pointer;
-  border: 1px solid var(--border);
-  background: var(--btn-primary);
-  color: var(--text-primary);
+  border: none;
+  background: var(--accent-blue);
+  color: #fff;
+  border-radius: 6px;
   align-self: flex-start;
+}
+
+.submitBtn:hover:not(:disabled) {
+  opacity: 0.9;
 }
 
 .submitBtn:disabled {
@@ -50,5 +64,6 @@
 
 .error {
   font-size: 0.875rem;
-  color: var(--error, #b91c1c);
+  color: #c62828;
+  margin: 0;
 }

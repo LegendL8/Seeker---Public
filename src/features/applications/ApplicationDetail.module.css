@@ -1,6 +1,7 @@
+/* Application detail uses same light theme as Applications list. */
 .wrapper {
   width: 100%;
-  max-width: 560px;
+  max-width: 720px;
 }
 
 .header {
@@ -11,10 +12,23 @@
   margin-bottom: 24px;
 }
 
+.backLink {
+  font-size: 0.875rem;
+  color: #666;
+  text-decoration: none;
+  display: inline-block;
+  margin-bottom: 4px;
+}
+
+.backLink:hover {
+  color: var(--accent-blue);
+  text-decoration: underline;
+}
+
 .title {
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: var(--text-primary, #171717);
+  font-size: 28px;
+  font-weight: 700;
+  color: #171717;
   margin: 0;
 }
 
@@ -26,16 +40,24 @@
 
 .link {
   font-size: 0.875rem;
-  color: var(--text-primary, #171717);
+  color: #171717;
   text-decoration: underline;
 }
 
 .link:hover {
-  opacity: 0.8;
+  color: var(--accent-blue);
+}
+
+.card {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 24px;
 }
 
 .dl {
-  margin: 0 0 32px;
+  margin: 0;
   display: grid;
   grid-template-columns: 140px 1fr;
   gap: 8px 24px;
@@ -44,39 +66,39 @@
 .dt {
   font-size: 0.875rem;
   font-weight: 500;
-  color: var(--text-secondary, #666);
+  color: #666;
   margin: 0;
 }
 
 .dd {
   font-size: 0.875rem;
-  color: var(--text-primary, #171717);
+  color: #171717;
   margin: 0;
 }
 
 .externalLink {
-  color: var(--text-primary, #171717);
+  color: var(--accent-blue);
   text-decoration: underline;
 }
 
 .externalLink:hover {
-  opacity: 0.8;
+  opacity: 0.9;
 }
 
 .status,
 .error {
   margin: 0;
-  color: var(--text-secondary, #666);
+  color: #666;
 }
 
 .error {
-  color: var(--error, #b91c1c);
+  color: #c62828;
 }
 
 .deleteSection {
-  margin-top: 32px;
+  margin-top: 24px;
   padding-top: 24px;
-  border-top: 1px solid var(--border, #e5e5e5);
+  border-top: 1px solid #e0e0e0;
 }
 
 .deleteConfirm {
@@ -86,7 +108,7 @@
 .deleteText {
   margin: 0 0 12px;
   font-size: 0.875rem;
-  color: var(--text-secondary, #666);
+  color: #666;
 }
 
 .deleteActions {
@@ -98,9 +120,14 @@
   padding: 8px 16px;
   font-size: 0.875rem;
   cursor: pointer;
-  border: 1px solid var(--border, #d4d4d4);
-  background: var(--error-bg, #fef2f2);
-  color: var(--error, #b91c1c);
+  border: 1px solid #e0e0e0;
+  background: #fef2f2;
+  color: #c62828;
+  border-radius: 6px;
+}
+
+.deleteBtn:hover:not(:disabled) {
+  background: #fee2e2;
 }
 
 .deleteBtn:disabled {
@@ -112,9 +139,14 @@
   padding: 8px 16px;
   font-size: 0.875rem;
   cursor: pointer;
-  border: 1px solid var(--border, #d4d4d4);
-  background: var(--card-bg);
-  color: var(--foreground, #171717);
+  border: 1px solid #e0e0e0;
+  background: #fff;
+  color: #171717;
+  border-radius: 6px;
+}
+
+.cancelBtn:hover:not(:disabled) {
+  background: #f5f5f5;
 }
 
 .cancelBtn:disabled {

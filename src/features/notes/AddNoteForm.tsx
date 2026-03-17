@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import type { Application } from "@/features/applications/types";
 import { useCreateNote } from "./hooks/useCreateNote";
 import type { CreateNoteInput } from "./types";
 import styles from "./AddNoteForm.module.css";
@@ -13,12 +14,21 @@ const TYPE_TAGS = [
 ];
 
 export interface AddNoteFormProps {
+  applications?: Application[];
+  initialTypeTag?: string;
   onSuccess?: () => void;
 }
 
-export function AddNoteForm({ onSuccess }: AddNoteFormProps) {
+export function AddNoteForm({
+  applications = [],
+  initialTypeTag,
+  onSuccess,
+}: AddNoteFormProps) {
   const [content, setContent] = useState("");
-  const [typeTag, setTypeTag] = useState<CreateNoteInput["typeTag"]>("general");
+  const [typeTag, setTypeTag] = useState<CreateNoteInput["typeTag"]>(
+    (initialTypeTag as CreateNoteInput["typeTag"]) ?? "general",
+  );
+  const [applicationId, setApplicationId] = useState<string | null>(null);
   const createMutation = useCreateNote();
 
   function handleSubmit(e: React.FormEvent) {
@@ -26,7 +36,11 @@ export function AddNoteForm({ onSuccess }: AddNoteFormProps) {
     const trimmed = content.trim();
     if (!trimmed) return;
     createMutation.mutate(
-      { content: trimmed, typeTag },
+      {
+        content: trimmed,
+        typeTag,
+        applicationId: applicationId || undefined,
+      },
       {
         onSuccess: () => {
           setContent("");
@@ -53,7 +67,7 @@ export function AddNoteForm({ onSuccess }: AddNoteFormProps) {
       </div>
       <div className={styles.field}>
         <label htmlFor="note-typeTag" className={styles.label}>
-          Type
+          Category
         </label>
         <select
           id="note-typeTag"
@@ -67,6 +81,26 @@ export function AddNoteForm({ onSuccess }: AddNoteFormProps) {
           {TYPE_TAGS.map((opt) => (
             <option key={opt.value} value={opt.value}>
               {opt.label}
+            </option>
+          ))}
+        </select>
+      </div>
+      <div className={styles.field}>
+        <label htmlFor="note-applicationId" className={styles.label}>
+          Link to application
+        </label>
+        <select
+          id="note-applicationId"
+          value={applicationId ?? ""}
+          onChange={(e) => setApplicationId(e.target.value || null)}
+          className={styles.select}
+          disabled={createMutation.isPending}
+          aria-label="Link note to application"
+        >
+          <option value="">None</option>
+          {applications.map((app) => (
+            <option key={app.id} value={app.id}>
+              {app.jobTitle}
             </option>
           ))}
         </select>

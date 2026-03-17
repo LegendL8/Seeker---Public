@@ -1,13 +1,35 @@
+/* Note editor: light theme to match Notes list and detail panel. */
 .wrapper {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 16px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .label {
   font-size: 0.875rem;
   font-weight: 500;
-  color: var(--text-primary, #171717);
+  color: #171717;
+}
+
+.select {
+  padding: 10px 12px;
+  font-size: 0.875rem;
+  border: 1px solid #e0e0e0;
+  background: #fff;
+  color: #171717;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.select:focus {
+  outline: 2px solid var(--accent-blue);
+  outline-offset: 2px;
 }
 
 .textarea {
@@ -15,23 +37,28 @@
   padding: 12px;
   font-size: 0.875rem;
   font-family: inherit;
-  border: 1px solid var(--border, #d4d4d4);
-  background: var(--card-bg);
-  color: var(--foreground, #171717);
+  border: 1px solid #e0e0e0;
+  background: #fff;
+  color: #171717;
   resize: vertical;
+  border-radius: 6px;
 }
 
 .textarea:focus {
-  outline: 2px solid var(--focus, #2563eb);
+  outline: 2px solid var(--accent-blue);
   outline-offset: 2px;
+}
+
+.textarea::placeholder {
+  color: #666;
 }
 
 .saveStatus {
   font-size: 0.75rem;
-  color: var(--text-secondary, #666);
+  color: #666;
 }
 
 .error {
   font-size: 0.875rem;
-  color: var(--error, #b91c1c);
+  color: #c62828;
 }

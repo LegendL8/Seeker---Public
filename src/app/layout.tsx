@@ -25,7 +25,9 @@ export default function RootLayout({
       <body className={inter.variable}>
         <Providers>
           <div className={styles.wrapper}>
-            <NavBar />
+            <aside className={styles.sidebar}>
+              <NavBar />
+            </aside>
             <main className={styles.main}>{children}</main>
           </div>
         </Providers>

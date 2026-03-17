@@ -17,6 +17,7 @@ import { AppError, errorHandler } from "./errors";
 import { logger } from "./logger";
 import { connectRedis } from "./redis";
 import { globalApiRateLimiter } from "./rateLimit";
+import { securityHeaders, cors } from "./security";
 
 const app = express();
 const port = env.PORT;
@@ -24,6 +25,8 @@ const port = env.PORT;
 app.set("trust proxy", 1);
 
 app.use(pinoHttp({ logger }));
+app.use(securityHeaders);
+app.use(cors);
 app.use(express.json());
 
 app.use("/api", globalApiRateLimiter);

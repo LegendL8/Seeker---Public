@@ -1,12 +1,12 @@
-import { and, count, desc, eq } from "drizzle-orm";
+import { and, count, desc, eq, sql } from "drizzle-orm";
 import { randomUUID } from "node:crypto";
 
 import { db } from "../db";
 import { resumes } from "../db/schema";
 import { ForbiddenError, NotFoundError } from "../errors";
-import { deleteResumeFromS3, getResumeSignedUrl, uploadResumeToS3 } from "./s3";
+import { deleteResumeFromR2, getResumeSignedUrl, uploadResumeToR2 } from "./r2";
 import type { ResumeFileType } from "./types";
-import { FREE_TIER_RESUME_CAP } from "./types";
+import { RESUME_CAP } from "./types";
 
 export type ResumeRow = typeof resumes.$inferSelect;
 
@@ -57,9 +57,9 @@ export async function createResume(
     .select({ count: count() })
     .from(resumes)
     .where(eq(resumes.userId, userId));
-  if (total >= FREE_TIER_RESUME_CAP) {
+  if (total >= RESUME_CAP) {
     throw new ForbiddenError(
-      `Free tier is limited to ${FREE_TIER_RESUME_CAP} resume. Delete an existing resume to upload another.`,
+      `Resume limit is ${RESUME_CAP} per user. Delete an existing resume to upload another.`,
     );
   }
 
@@ -71,7 +71,7 @@ export async function createResume(
       ? "application/pdf"
       : "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
 
-  await uploadResumeToS3(s3Key, buffer, contentType);
+  await uploadResumeToR2(s3Key, buffer, contentType);
 
   const now = new Date();
   const [row] = await db
@@ -106,16 +106,23 @@ export async function setActiveResume(
   id: string,
   isActive: boolean,
 ): Promise<ResumeRow> {
-  await getResumeById(userId, id);
+  const now = new Date();
   if (isActive) {
-    await db
+    const updated = await db
       .update(resumes)
-      .set({ isActive: false, updatedAt: new Date() })
-      .where(eq(resumes.userId, userId));
+      .set({
+        isActive: sql`(${resumes.id} = ${id})`,
+        updatedAt: now,
+      })
+      .where(eq(resumes.userId, userId))
+      .returning();
+    const row = updated.find((r) => r.id === id);
+    if (!row) throw new NotFoundError("Resume not found");
+    return row;
   }
   const [row] = await db
     .update(resumes)
-    .set({ isActive, updatedAt: new Date() })
+    .set({ isActive: false, updatedAt: now })
     .where(and(eq(resumes.id, id), eq(resumes.userId, userId)))
     .returning();
   if (!row) throw new NotFoundError("Resume not found");
@@ -124,7 +131,7 @@ export async function setActiveResume(
 
 export async function deleteResume(userId: string, id: string): Promise<void> {
   const row = await getResumeById(userId, id);
-  await deleteResumeFromS3(row.s3Key);
+  await deleteResumeFromR2(row.s3Key);
   await db
     .delete(resumes)
     .where(and(eq(resumes.id, id), eq(resumes.userId, userId)));

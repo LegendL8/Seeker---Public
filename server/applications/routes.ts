@@ -15,6 +15,7 @@ import {
   deleteApplication,
   getApplicationById,
   listApplications,
+  listApplicationsByCursor,
   updateApplication,
 } from "./service";
 import {
@@ -40,9 +41,18 @@ router.get(
         queryResult.error.errors.map((e) => e.message).join("; "),
       );
     }
-    const { page, limit } = queryResult.data;
-    const { items, total } = await listApplications(user.id, page, limit);
-    res.json({ items, page, limit, total });
+    const { page, limit, cursor } = queryResult.data;
+    if (cursor) {
+      const { items, nextCursor } = await listApplicationsByCursor(
+        user.id,
+        cursor,
+        limit,
+      );
+      res.json({ items, nextCursor });
+    } else {
+      const { items, total } = await listApplications(user.id, page, limit);
+      res.json({ items, page, limit, total });
+    }
   }),
 );
 

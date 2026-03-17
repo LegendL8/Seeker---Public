@@ -97,6 +97,25 @@ describe("createInterview", () => {
 });
 
 describe("updateInterview", () => {
+  it("returns existing row when no changes (no-op PATCH)", async () => {
+    const db = jest.requireActual("./db").db;
+    const selectSpy = jest.spyOn(db, "select").mockReturnValue({
+      from: jest.fn().mockReturnValue({
+        where: jest.fn().mockReturnValue({
+          limit: jest.fn().mockResolvedValue([mockRow]),
+        }),
+      }),
+    } as unknown as ReturnType<typeof db.select>);
+    const updateSpy = jest.spyOn(db, "update");
+
+    const result = await updateInterview(mockUserId, mockInterviewId, {});
+
+    expect(result).toEqual(mockRow);
+    expect(updateSpy).not.toHaveBeenCalled();
+    selectSpy.mockRestore();
+    updateSpy.mockRestore();
+  });
+
   it("throws NotFoundError when interview does not exist", async () => {
     const db = jest.requireActual("./db").db;
     const selectSpy = jest.spyOn(db, "select").mockReturnValue({

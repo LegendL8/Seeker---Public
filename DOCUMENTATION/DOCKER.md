@@ -82,20 +82,20 @@ docker compose run --rm server npm run db:migrate
 
 ## Environment variables
 
-Copy `.env.example` to `.env` and fill in Auth0, etc. Next and server services use `env_file: .env`; the compose `environment` block overrides `PORT`, `DATABASE_URL`, `REDIS_URL`, and `EXPRESS_API_URL` so the stack works inside the network. Do not commit `.env`.
+Copy `.env.example` to `.env` and fill in Auth0, etc. Set `POSTGRES_PASSWORD` (required for Docker Compose; no default is committed). Optionally set `POSTGRES_USER` and `POSTGRES_DB` (defaults: seeker). Next and server services use `env_file: .env`; the compose `environment` block overrides `PORT`, `DATABASE_URL`, `REDIS_URL`, and `EXPRESS_API_URL` so the stack works inside the network. Do not commit `.env`.
 
 ---
 
 ## Connection details (host → Docker)
 
-When the app runs on the host and Postgres/Redis are in Docker, use the same user/password/database and ports as in `docker-compose.yml` (postgres service `environment`, and `ports`). Example shape:
+When the app runs on the host and Postgres/Redis are in Docker, use the same user/password/database and ports as in your `.env` (POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_DB) and `docker-compose.yml` ports. Example shape:
 
-| Service    | Host      | Port | User          | Password      | Database      |
-| ---------- | --------- | ---- | ------------- | ------------- | ------------- |
-| PostgreSQL | localhost | 5432 | (see compose) | (see compose) | (see compose) |
-| Redis      | localhost | 6379 | (none)        | (none)        | (none)        |
+| Service    | Host      | Port | User / Password / Database                                                             |
+| ---------- | --------- | ---- | -------------------------------------------------------------------------------------- |
+| PostgreSQL | localhost | 5432 | From .env: POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_DB (defaults: seeker, -, seeker) |
+| Redis      | localhost | 6379 | (none)                                                                                 |
 
-`DATABASE_URL` format: `postgresql://USER:PASSWORD@localhost:PORT/DATABASE` — get USER, PASSWORD, DATABASE from the postgres service in `docker-compose.yml`.
+`DATABASE_URL` format: `postgresql://USER:PASSWORD@localhost:PORT/DATABASE` — use the same USER, PASSWORD, DATABASE as in your `.env`.
 
 ---
 

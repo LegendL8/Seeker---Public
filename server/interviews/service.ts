@@ -65,7 +65,7 @@ export async function updateInterview(
   id: string,
   body: UpdateInterviewBody,
 ): Promise<InterviewRow> {
-  await getInterviewById(userId, id);
+  const existing = await getInterviewById(userId, id);
   const update: Record<string, unknown> = {};
   if (body.interviewType !== undefined)
     update.interviewType = body.interviewType;
@@ -77,7 +77,7 @@ export async function updateInterview(
     update.interviewerTitle = body.interviewerTitle;
   if (body.outcome !== undefined) update.outcome = body.outcome;
   if (Object.keys(update).length === 0) {
-    return getInterviewById(userId, id);
+    return existing;
   }
   update.updatedAt = new Date();
   const [row] = await db

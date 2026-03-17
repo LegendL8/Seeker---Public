@@ -161,20 +161,25 @@ _Milestone 4 complete 2026-03-10_
 
 - [x] Resumes list: add offset pagination (server: `?page=1&limit=20`, max limit 100, return `{ items, page, limit, total }`; frontend: useResumesList with page/limit, ResumesList UI)
       _Updated 2026-03-13_
-- [ ] Application detail: parallel prefetch (frontend only: pass route `id` into both useApplication(id) and useInterviewsForApplication(id) so both requests run in parallel; no API change)
-- [ ] Application detail (optional alternative): combined endpoint e.g. `GET /api/v1/applications/:id?include=interviews` returning `{ application, interviews }`; frontend single fetch (update DOCUMENTATION/API.md; no ARCHITECTURE change)
+- [x] Application detail: parallel prefetch (frontend only: pass route `id` into both useApplication(id) and useInterviewsForApplication(id) so both requests run in parallel; no API change)
+      _Updated 2026-03-13_
+- [ ] Application detail (optional alternative): combined endpoint e.g. `GET /api/v1/applications/:id?include=interviews` returning `{ application, interviews }`; frontend single fetch (update DOCUMENTATION/API.md; no ARCHITECTURE change). _Deferred; parallel prefetch is sufficient for now._
 
 **Medium priority**
 
-- [ ] Notes: no-op PATCH returns first-fetched row (server: in updateNote, when no changes, return the row from the initial getNoteById instead of calling getNoteById again)
-- [ ] Interviews: no-op PATCH returns first-fetched row (server: in updateInterview, when no changes, return the row from the initial getInterviewById instead of calling getInterviewById again)
-- [ ] Resumes: setActive in two writes (server: replace read + bulk update + single update with one or two writes; e.g. conditional update so “clear others” is O(1))
-- [ ] Auth: optional in-process user cache — **ARCHITECTURE** (server: short-TTL in-memory cache keyed by JWT sub in requireAuth; reduces DB user lookup per request. ARCHITECTURE.md currently: “Backend verifies JWT signature only — no session storage.” Decide whether to document “optional in-process user cache by sub, TTL e.g. 60s” as an allowed optimization; update ARCHITECTURE.md before or when implementing.)
+- [x] Notes: no-op PATCH returns first-fetched row (server: in updateNote, when no changes, return the row from the initial getNoteById instead of calling getNoteById again)
+      _Updated 2026-03-13_
+- [x] Interviews: no-op PATCH returns first-fetched row (server: in updateInterview, when no changes, return the row from the initial getInterviewById instead of calling getInterviewById again)
+      _Updated 2026-03-13_
+- [x] Resumes: setActive in two writes (server: replace read + bulk update + single update with one or two writes; e.g. conditional update so “clear others” is O(1))
+      _Updated 2026-03-13_
+- [x] Auth: optional in-process user cache — **ARCHITECTURE** (server: short-TTL in-memory cache keyed by JWT sub in requireAuth; reduces DB user lookup per request. ARCHITECTURE.md currently: “Backend verifies JWT signature only — no session storage.” Decide whether to document “optional in-process user cache by sub, TTL e.g. 60s” as an allowed optimization; update ARCHITECTURE.md before or when implementing.)
 
 **Low priority**
 
 - [ ] Notes create: parallelize ownership check with insert (server: run 0 or 1 ownership check in Promise.all before insert; O unchanged, code structure)
-- [ ] Applications list: cursor-based pagination — **ARCHITECTURE** (server: accept `cursor` + `limit`, return `nextCursor`; select O(k) per page. ARCHITECTURE.md currently: “Pagination: offset-based — ?page=1&limit=20”. Adding cursor changes that decision; update ARCHITECTURE.md to allow cursor and/or document both; update API if both styles coexist.)
+- [x] Applications list: cursor-based pagination — **ARCHITECTURE** (server: accept `cursor` + `limit`, return `nextCursor`; select O(k) per page. ARCHITECTURE.md currently: “Pagination: offset-based — ?page=1&limit=20”. Adding cursor changes that decision; update ARCHITECTURE.md to allow cursor and/or document both; update API if both styles coexist.)
+      _Updated 2026-03-13_
 - [ ] Dashboard: optional cache TTL increase (server: e.g. 60s to 120s in dashboard/cache.ts; implementation detail, no ARCHITECTURE change)
 
 ---
@@ -183,14 +188,18 @@ _Milestone 4 complete 2026-03-10_
 
 **Goal:** Implement the security, audit, and deployment controls that ARCHITECTURE.md documents and that arch_assessment.md identifies as gaps. Driven by architectural and operational needs: headers and CORS as specified, traceability for requests and sensitive actions, recoverability via backups, and repeatable deployments via CI/CD. No change to product intent.
 
-- [ ] Security headers implemented in code (HSTS, X-Frame-Options, X-Content-Type-Options, Referrer-Policy; then CSP and Permissions-Policy per ARCHITECTURE) — in Express or at the edge
-- [ ] Explicit CORS middleware on Express (strict, own domain per ARCHITECTURE; required if API is ever called from another origin)
+- [x] Security headers implemented in code (HSTS, X-Frame-Options, X-Content-Type-Options, Referrer-Policy; then CSP and Permissions-Policy per ARCHITECTURE) — in Express or at the edge
+      _Express: HSTS (prod only), X-Frame-Options, X-Content-Type-Options, Referrer-Policy. Next.js: CSP and Permissions-Policy on document responses (next.config.ts). Added 2026-03-13._
+- [x] Explicit CORS middleware on Express (strict, own domain per ARCHITECTURE; required if API is ever called from another origin)
+      _ALLOWED_ORIGIN env, default http://localhost:3000; server/security.ts. Added 2026-03-13._
 - [ ] Request-id (or correlation-id) in pino-http; logged on every request and error for traceability
 - [ ] Audit log: table or equivalent for sensitive mutations (e.g. delete user, delete application, change application status); who did what, when — at least for compliance-sensitive actions
 - [ ] Backup/restore: document and implement strategy for DB and config (replace ARCHITECTURE [IMPL] with concrete steps)
 - [ ] CI/CD: implement pipeline (e.g. GitHub Actions per ARCHITECTURE [IMPL]); automated, repeatable deployments
 
 When the above are done, update arch_assessment.md to reflect current state and any remaining gaps.
+
+**Testing (deferred):** Route-level tests for applications, interviews, notes, and resumes (beyond the existing dashboard route test) and auth middleware (requireAuth) tests are deferred until refactor or pre-release need; see DOCUMENTATION/DEVELOPMENT.md and ARCHITECTURE.md Testing Strategy.
 
 ---
 
@@ -211,13 +220,13 @@ See ARCHITECTURE.md Layer 4 (Repository Strategy, Post-Milestone 4) for details.
 
 **Goal:** A user can upload a resume and attach it to their profile or an application.
 
-- [ ] AWS S3 bucket configured
+- [ ] Cloudflare R2 bucket configured
 - [ ] File upload endpoint — PDF and DOCX only
 - [ ] File size limit enforced
-- [ ] Resume stored in S3, reference in PostgreSQL
+- [ ] Resume stored in R2, reference in PostgreSQL
 - [ ] Resume attached to user profile
-- [ ] Resume preview with correct S3 headers (see ARCHITECTURE.md impl note)
-- [ ] Delete resume — removes from S3 and database
+- [ ] Resume preview with correct R2/object-store headers (see ARCHITECTURE.md impl note)
+- [ ] Delete resume — removes from R2 and database
 
 ---
 

@@ -138,4 +138,15 @@ describe("listApplicationsQuerySchema", () => {
   it("rejects page less than 1", () => {
     expect(() => listApplicationsQuerySchema.parse({ page: 0 })).toThrow();
   });
+
+  it("accepts optional cursor", () => {
+    const withCursor = listApplicationsQuerySchema.parse({
+      cursor: "v1:abc123",
+    });
+    expect(withCursor.cursor).toBe("v1:abc123");
+    expect(withCursor.page).toBe(1);
+    expect(withCursor.limit).toBe(20);
+    const empty = listApplicationsQuerySchema.parse({});
+    expect(empty.cursor).toBeUndefined();
+  });
 });
