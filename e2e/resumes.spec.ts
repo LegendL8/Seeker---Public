@@ -6,7 +6,7 @@ import { test, expect } from "@playwright/test";
 test("resumes list loads", async ({ page }) => {
   await page.goto("/resumes");
   await expect(
-    page.getByRole("heading", { name: "Resumes", level: 2 }),
+    page.getByRole("heading", { name: "Resume Management", level: 1 }),
   ).toBeVisible({ timeout: 10000 });
 });
 
@@ -16,7 +16,7 @@ test("resumes list loads", async ({ page }) => {
 test("set active resume when inactive resume exists", async ({ page }) => {
   await page.goto("/resumes");
   await expect(
-    page.getByRole("heading", { name: "Resumes", level: 2 }),
+    page.getByRole("heading", { name: "Resume Management", level: 1 }),
   ).toBeVisible({ timeout: 10000 });
   const setActiveBtn = page.getByRole("button", { name: "Set active" }).first();
   const visible = await setActiveBtn.isVisible().catch(() => false);
@@ -26,7 +26,7 @@ test("set active resume when inactive resume exists", async ({ page }) => {
   }
   await setActiveBtn.click();
   await expect(
-    page.getByRole("heading", { name: "Resumes", level: 2 }),
+    page.getByRole("heading", { name: "Resume Management", level: 1 }),
   ).toBeVisible({ timeout: 5000 });
 });
 
@@ -39,11 +39,10 @@ test("set active resume when inactive resume exists", async ({ page }) => {
 test("resumes page has upload form", async ({ page }) => {
   await page.goto("/resumes");
   await expect(
-    page.getByRole("heading", { name: "Resumes", level: 2 }),
+    page.getByRole("heading", { name: "Resume Management", level: 1 }),
   ).toBeVisible({ timeout: 10000 });
-  await expect(page.getByLabel(/Upload PDF or DOCX/i)).toBeVisible();
   await expect(
-    page.getByRole("button", { name: "Upload", exact: true }),
+    page.getByRole("button", { name: /Upload resume/i }),
   ).toBeVisible();
 });
 
@@ -55,7 +54,7 @@ test("resumes page has upload form", async ({ page }) => {
 test("delete resume when resume exists", async ({ page }) => {
   await page.goto("/resumes");
   await expect(
-    page.getByRole("heading", { name: "Resumes", level: 2 }),
+    page.getByRole("heading", { name: "Resume Management", level: 1 }),
   ).toBeVisible({ timeout: 10000 });
   const deleteBtn = page.getByRole("button", { name: "Delete" }).first();
   const deleteVisible = await deleteBtn.isVisible().catch(() => false);
@@ -66,6 +65,6 @@ test("delete resume when resume exists", async ({ page }) => {
   page.on("dialog", (d) => d.accept());
   await deleteBtn.click();
   await expect(
-    page.getByRole("heading", { name: "Resumes", level: 2 }),
+    page.getByRole("heading", { name: "Resume Management", level: 1 }),
   ).toBeVisible({ timeout: 5000 });
 });

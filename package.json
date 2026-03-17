@@ -18,7 +18,8 @@
     "db:seed:active": "tsx server/db/seeds/seed.active.ts",
     "db:seed:demo": "tsx server/db/seeds/seed.demo.ts",
     "test": "jest",
-    "test:e2e": "node -r dotenv/config ./node_modules/.bin/playwright test"
+    "test:e2e": "node -r dotenv/config ./node_modules/.bin/playwright test",
+    "perf:api": "node -r dotenv/config ./node_modules/.bin/tsx scripts/measure-api.ts"
   },
   "dependencies": {
     "@auth0/nextjs-auth0": "^4.16.0",
