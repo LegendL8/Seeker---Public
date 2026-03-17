@@ -79,9 +79,9 @@ function ResumeItem({ resume }: { resume: Resume }) {
           type="button"
           className={styles.btn}
           onClick={handlePreview}
-          disabled={urlPending}
+          disabled={previewing && urlPending}
         >
-          {urlPending ? "Loading…" : "Preview"}
+          {previewing && urlPending ? "Loading…" : "Preview"}
         </button>
         {!resume.isActive && (
           <button
