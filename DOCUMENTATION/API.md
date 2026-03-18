@@ -155,7 +155,7 @@ _Added 2026-03-09_
   "location": "string | null",
   "salaryMin": "integer | null",
   "salaryMax": "integer | null",
-  "status": "saved | applied | interviewing | offered | rejected | withdrawn",
+  "status": "saved | applied | interviewing | offered | rejected",
   "appliedAt": "timestamptz | null",
   "source": "string | null",
   "resumeId": "uuid | null"
@@ -163,7 +163,7 @@ _Added 2026-03-09_
 ```
 
 ~~**status**: "saved | applied | interviewing | offered | rejected | withdrawn"~~
-**status** (implemented): `saved | applied | interviewing | offer | rejected` (no "offered" or "withdrawn" yet).
+**status** (implemented): `saved | applied | interviewing | offer | rejected.
 _Amended 2026-03-09_
 
 ### PATCH Request
@@ -175,13 +175,13 @@ All fields optional — only send what is changing:
   "jobTitle": "string",
   "jobPostingUrl": "string | null",
   "postingStatus": "active | closed | filled | unknown",
-  "status": "saved | applied | interviewing | offered | rejected | withdrawn",
+  "status": "saved | applied | interviewing | offered | rejected",
   "salaryMin": "integer | null",
   "salaryMax": "integer | null"
 }
 ```
 
-**Implemented:** Same status union as POST. All fields optional including null to clear.
+**Implemented:** Same status union as POST. All fields optional — only send what is changing. Status union same as POST.
 _Amended 2026-03-09_
 
 ### POST /applications/:id/check-posting Response
