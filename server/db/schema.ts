@@ -2,6 +2,7 @@ import {
   boolean,
   index,
   integer,
+  jsonb,
   pgTable,
   text,
   timestamp,
@@ -180,5 +181,25 @@ export const notifications = pgTable(
   (t) => [
     index("idx_notifications_user_id").on(t.userId),
     index("idx_notifications_is_read").on(t.userId, t.isRead),
+  ],
+);
+
+/** Append-only compliance-oriented trail for sensitive mutations (no public API yet). */
+export const auditLogs = pgTable(
+  "audit_logs",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    actorUserId: uuid("actor_user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "restrict" }),
+    action: varchar("action", { length: 64 }).notNull(),
+    entityType: varchar("entity_type", { length: 32 }).notNull(),
+    entityId: uuid("entity_id").notNull(),
+    details: jsonb("details").$type<Record<string, unknown> | null>(),
+    createdAt: timestamptz("created_at"),
+  },
+  (t) => [
+    index("idx_audit_logs_actor_created").on(t.actorUserId, t.createdAt),
+    index("idx_audit_logs_entity").on(t.entityType, t.entityId),
   ],
 );

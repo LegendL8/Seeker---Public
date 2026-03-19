@@ -195,12 +195,14 @@ _Milestone 4 complete 2026-03-10_
       _Express: HSTS (prod only), X-Frame-Options, X-Content-Type-Options, Referrer-Policy. Next.js: CSP and Permissions-Policy on document responses (next.config.ts). Added 2026-03-13._
 - [x] Explicit CORS middleware on Express (strict, own domain per ARCHITECTURE; required if API is ever called from another origin)
       _ALLOWED_ORIGIN env, default http://localhost:3000; server/security.ts. Added 2026-03-13._
-- [ ] Request-id (or correlation-id) in pino-http; logged on every request and error for traceability
-- [ ] Audit log: table or equivalent for sensitive mutations (e.g. delete user, delete application, change application status); who did what, when — at least for compliance-sensitive actions
+- [x] Request-id (or correlation-id) in pino-http; logged on every request and error for traceability
+      _Express: `server/requestId.ts` + `genReqId` on pino-http; inbound `X-Request-Id` / `X-Correlation-Id` with validation; echo `X-Request-Id`; `errorHandler` uses `req.log`. Added 2026-03-19._
+- [x] Audit log: table or equivalent for sensitive mutations (e.g. delete user, delete application, change application status); who did what, when — at least for compliance-sensitive actions
+      _`audit_logs` table + `server/audit/`; transactional writes for application delete/status change, interview/note/resume delete. No delete-user API yet. No public read API yet. Added 2026-03-19._
 - [ ] Backup/restore: document and implement strategy for DB and config (replace ARCHITECTURE [IMPL] with concrete steps)
 - [ ] CI/CD: implement pipeline (e.g. GitHub Actions per ARCHITECTURE [IMPL]); automated, repeatable deployments
 
-When the above are done, update arch_assessment.md to reflect current state and any remaining gaps.
+When the above are done, update **DOCUMENTATION/arch_assessment.md** (file may be gitignored locally) to reflect current state and any remaining gaps.
 
 **Testing (deferred):** Route-level tests for applications, interviews, notes, and resumes (beyond the existing dashboard route test) and auth middleware (requireAuth) tests are deferred until refactor or pre-release need; see DOCUMENTATION/DEVELOPMENT.md and ARCHITECTURE.md Testing Strategy.
 

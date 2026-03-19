@@ -132,25 +132,51 @@ describe("getNoteById", () => {
 describe("deleteNote", () => {
   it("succeeds when row exists", async () => {
     const db = jest.requireActual("./db").db;
-    const deleteSpy = jest.spyOn(db, "delete").mockReturnValue({
+    const deleteFn = jest.fn().mockReturnValue({
       where: jest.fn().mockReturnValue({
-        returning: jest.fn().mockResolvedValue([{ id: mockNoteId }]),
+        returning: jest.fn().mockResolvedValue([
+          {
+            id: mockNoteId,
+            typeTag: mockRow.typeTag,
+            applicationId: mockRow.applicationId,
+            interviewId: mockRow.interviewId,
+            companyId: mockRow.companyId,
+          },
+        ]),
       }),
-    } as unknown as ReturnType<typeof db.delete>);
+    });
+    const insertFn = jest.fn().mockReturnValue({
+      values: jest.fn().mockResolvedValue(undefined),
+    });
+    const transactionSpy = jest
+      .spyOn(db, "transaction")
+      .mockImplementation(async (...args: unknown[]) => {
+        const fn = args[0] as (tx: never) => Promise<void>;
+        await fn({ delete: deleteFn, insert: insertFn } as never);
+      });
     await expect(deleteNote(mockUserId, mockNoteId)).resolves.toBeUndefined();
-    deleteSpy.mockRestore();
+    transactionSpy.mockRestore();
   });
 
   it("throws NotFoundError when note does not exist", async () => {
     const db = jest.requireActual("./db").db;
-    const deleteSpy = jest.spyOn(db, "delete").mockReturnValue({
+    const deleteFn = jest.fn().mockReturnValue({
       where: jest.fn().mockReturnValue({
         returning: jest.fn().mockResolvedValue([]),
       }),
-    } as unknown as ReturnType<typeof db.delete>);
+    });
+    const insertFn = jest.fn().mockReturnValue({
+      values: jest.fn().mockResolvedValue(undefined),
+    });
+    const transactionSpy = jest
+      .spyOn(db, "transaction")
+      .mockImplementation(async (...args: unknown[]) => {
+        const fn = args[0] as (tx: never) => Promise<void>;
+        await fn({ delete: deleteFn, insert: insertFn } as never);
+      });
     await expect(deleteNote(mockUserId, mockNoteId)).rejects.toThrow(
       NotFoundError,
     );
-    deleteSpy.mockRestore();
+    transactionSpy.mockRestore();
   });
 });

@@ -1,5 +1,6 @@
 import { and, desc, eq } from "drizzle-orm";
 
+import { insertAuditLog } from "../audit/service";
 import { invalidateDashboardCache } from "../dashboard/cache";
 import { db } from "../db";
 import { interviews } from "../db/schema";
@@ -94,10 +95,27 @@ export async function deleteInterview(
   userId: string,
   id: string,
 ): Promise<void> {
-  const result = await db
-    .delete(interviews)
-    .where(and(eq(interviews.id, id), eq(interviews.userId, userId)))
-    .returning({ id: interviews.id });
-  if (result.length === 0) throw new NotFoundError("Interview not found");
+  await db.transaction(async (tx) => {
+    const result = await tx
+      .delete(interviews)
+      .where(and(eq(interviews.id, id), eq(interviews.userId, userId)))
+      .returning({
+        id: interviews.id,
+        applicationId: interviews.applicationId,
+        interviewType: interviews.interviewType,
+      });
+    if (result.length === 0) throw new NotFoundError("Interview not found");
+    const row = result[0]!;
+    await insertAuditLog(tx, {
+      actorUserId: userId,
+      action: "interview.deleted",
+      entityType: "interview",
+      entityId: row.id,
+      details: {
+        applicationId: row.applicationId,
+        interviewType: row.interviewType,
+      },
+    });
+  });
   await invalidateDashboardCache(userId);
 }

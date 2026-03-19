@@ -16,7 +16,8 @@ function requiresAuth(pathname: string): boolean {
   return true;
 }
 
-export async function middleware(request: NextRequest) {
+/** Next.js 16+ proxy convention (replaces root `middleware.ts`). */
+export async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
   if (requiresAuth(pathname)) {

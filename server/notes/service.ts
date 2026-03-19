@@ -1,5 +1,6 @@
 import { and, count, desc, eq } from "drizzle-orm";
 
+import { insertAuditLog } from "../audit/service";
 import { db } from "../db";
 import { companies, notes as notesTable } from "../db/schema";
 import { NotFoundError, ValidationError } from "../errors";
@@ -145,9 +146,30 @@ export async function updateNote(
 }
 
 export async function deleteNote(userId: string, id: string): Promise<void> {
-  const result = await db
-    .delete(notesTable)
-    .where(and(eq(notesTable.id, id), eq(notesTable.userId, userId)))
-    .returning({ id: notesTable.id });
-  if (result.length === 0) throw new NotFoundError("Note not found");
+  await db.transaction(async (tx) => {
+    const result = await tx
+      .delete(notesTable)
+      .where(and(eq(notesTable.id, id), eq(notesTable.userId, userId)))
+      .returning({
+        id: notesTable.id,
+        typeTag: notesTable.typeTag,
+        applicationId: notesTable.applicationId,
+        interviewId: notesTable.interviewId,
+        companyId: notesTable.companyId,
+      });
+    if (result.length === 0) throw new NotFoundError("Note not found");
+    const row = result[0]!;
+    await insertAuditLog(tx, {
+      actorUserId: userId,
+      action: "note.deleted",
+      entityType: "note",
+      entityId: row.id,
+      details: {
+        typeTag: row.typeTag,
+        applicationId: row.applicationId,
+        interviewId: row.interviewId,
+        companyId: row.companyId,
+      },
+    });
+  });
 }

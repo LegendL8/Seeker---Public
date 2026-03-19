@@ -1,5 +1,14 @@
-import type { ErrorRequestHandler } from "express";
+import type { ErrorRequestHandler, Request } from "express";
+import type { Logger } from "pino";
+
 import { logger } from "./logger";
+
+function logForRequest(req: Request): Logger {
+  if (req.log !== undefined) {
+    return req.log;
+  }
+  return logger;
+}
 
 export class AppError extends Error {
   readonly code: string;
@@ -50,14 +59,16 @@ export function isAppError(err: unknown): err is AppError {
   return err instanceof AppError;
 }
 
-export const errorHandler: ErrorRequestHandler = (err, _req, res, next) => {
+export const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
   if (res.headersSent) {
     next(err);
     return;
   }
 
+  const reqLog = logForRequest(req);
+
   if (isAppError(err)) {
-    logger.warn(
+    reqLog.warn(
       { err, code: err.code, statusCode: err.statusCode },
       err.message,
     );
@@ -71,6 +82,7 @@ export const errorHandler: ErrorRequestHandler = (err, _req, res, next) => {
 
   const multerErr = err as { code?: string; message?: string };
   if (multerErr.code === "LIMIT_FILE_SIZE") {
+    reqLog.warn({ code: multerErr.code }, "Upload rejected: file too large");
     res.status(400).json({
       error: "VALIDATION_ERROR",
       message: "File too large. Maximum size is 5MB.",
@@ -79,6 +91,10 @@ export const errorHandler: ErrorRequestHandler = (err, _req, res, next) => {
     return;
   }
   if (multerErr.code === "LIMIT_UNEXPECTED_FILE") {
+    reqLog.warn(
+      { code: multerErr.code },
+      "Upload rejected: unexpected file field",
+    );
     res.status(400).json({
       error: "VALIDATION_ERROR",
       message: 'Unexpected file field. Use "file" for the upload.',
@@ -87,7 +103,7 @@ export const errorHandler: ErrorRequestHandler = (err, _req, res, next) => {
     return;
   }
 
-  logger.error({ err }, "Unhandled error");
+  reqLog.error({ err }, "Unhandled error");
   res.status(500).json({
     error: "INTERNAL_ERROR",
     message: "An unexpected error occurred",

@@ -15,6 +15,13 @@
       "when": 1773883728132,
       "tag": "0001_clear_bastion",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1773903161397,
+      "tag": "0002_kind_queen_noir",
+      "breakpoints": true
     }
   ]
 }

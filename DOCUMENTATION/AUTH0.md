@@ -56,7 +56,7 @@ When the Next.js app calls the Express API (e.g. GET /api/v1/me), it must send a
 
 ## Sign-in UX and `returnTo`
 
-1. **Middleware** (`src/middleware.ts`): If there is no session and the path is not public, redirect to **`/auth/sign-in?returnTo=<path+search>`**. Public routes: **`/`** and anything under **`/auth/`**.
+1. **Proxy** (`src/proxy.ts`, Next.js 16+ session gate; deprecated name was `middleware.ts`): If there is no session and the path is not public, redirect to **`/auth/sign-in?returnTo=<path+search>`**. Public routes: **`/`** and anything under **`/auth/`**. The Auth0 SDK is still invoked as **`auth0.middleware(request)`** inside that file.
 2. **`/auth/sign-in`**: App page with short copy (“You need to sign in…”, “Signing you in…”) and an automatic forward to **`/auth/login?returnTo=...`** (Auth0 SDK route), which stores `returnTo` in the OAuth transaction and redirects to Auth0.
 3. **After callback:** On success, custom **`onCallback`** in `src/lib/auth0.ts` redirects to the stored `returnTo` (defaults to `/` if missing). Values are constrained to same-origin relative paths (aligned with SDK `toSafeRedirect`); shared helpers: `src/lib/authReturnTo.ts` (`sanitizeReturnTo`, `createAppPathRedirectUrl`).
 4. **Callback errors:** Failed exchanges redirect to **`/auth/error?code=<sdk_error_code>`** (optional `returnTo`) with clear copy and links (Try again / Home). If `APP_BASE_URL` is unavailable for an absolute redirect, a small HTML fallback is returned.

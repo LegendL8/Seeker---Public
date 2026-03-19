@@ -135,27 +135,51 @@ describe("updateInterview", () => {
 describe("deleteInterview", () => {
   it("succeeds when row exists", async () => {
     const db = jest.requireActual("./db").db;
-    const deleteSpy = jest.spyOn(db, "delete").mockReturnValue({
+    const deleteFn = jest.fn().mockReturnValue({
       where: jest.fn().mockReturnValue({
-        returning: jest.fn().mockResolvedValue([{ id: mockInterviewId }]),
+        returning: jest.fn().mockResolvedValue([
+          {
+            id: mockInterviewId,
+            applicationId: mockAppId,
+            interviewType: mockRow.interviewType,
+          },
+        ]),
       }),
-    } as unknown as ReturnType<typeof db.delete>);
+    });
+    const insertFn = jest.fn().mockReturnValue({
+      values: jest.fn().mockResolvedValue(undefined),
+    });
+    const transactionSpy = jest
+      .spyOn(db, "transaction")
+      .mockImplementation(async (...args: unknown[]) => {
+        const fn = args[0] as (tx: never) => Promise<void>;
+        await fn({ delete: deleteFn, insert: insertFn } as never);
+      });
     await expect(
       deleteInterview(mockUserId, mockInterviewId),
     ).resolves.toBeUndefined();
-    deleteSpy.mockRestore();
+    transactionSpy.mockRestore();
   });
 
   it("throws NotFoundError when interview does not exist", async () => {
     const db = jest.requireActual("./db").db;
-    const deleteSpy = jest.spyOn(db, "delete").mockReturnValue({
+    const deleteFn = jest.fn().mockReturnValue({
       where: jest.fn().mockReturnValue({
         returning: jest.fn().mockResolvedValue([]),
       }),
-    } as unknown as ReturnType<typeof db.delete>);
+    });
+    const insertFn = jest.fn().mockReturnValue({
+      values: jest.fn().mockResolvedValue(undefined),
+    });
+    const transactionSpy = jest
+      .spyOn(db, "transaction")
+      .mockImplementation(async (...args: unknown[]) => {
+        const fn = args[0] as (tx: never) => Promise<void>;
+        await fn({ delete: deleteFn, insert: insertFn } as never);
+      });
     await expect(deleteInterview(mockUserId, mockInterviewId)).rejects.toThrow(
       NotFoundError,
     );
-    deleteSpy.mockRestore();
+    transactionSpy.mockRestore();
   });
 });

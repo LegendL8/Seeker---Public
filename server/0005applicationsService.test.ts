@@ -26,6 +26,7 @@ const mockRow = {
   location: null,
   salaryMin: null,
   salaryMax: null,
+  salaryPeriod: "yearly",
   status: "saved",
   appliedAt: null,
   source: null,
@@ -211,11 +212,51 @@ describe("createApplication", () => {
 });
 
 describe("updateApplication", () => {
-  it("returns updated row when body has changes", async () => {
+  it("returns updated row when status changes (transaction + audit)", async () => {
     const updatedRow = {
       ...mockRow,
       jobTitle: "Senior Engineer",
       status: "interviewing",
+    };
+    const db = jest.requireActual("./db").db;
+    const getByIdSpy = jest.spyOn(db, "select").mockReturnValue({
+      from: jest.fn().mockReturnValue({
+        where: jest.fn().mockReturnValue({
+          limit: jest.fn().mockResolvedValue([mockRow]),
+        }),
+      }),
+    } as unknown as ReturnType<typeof db.select>);
+    const returningFn = jest.fn().mockResolvedValue([updatedRow]);
+    const updateFn = jest.fn().mockReturnValue({
+      set: jest.fn().mockReturnValue({
+        where: jest.fn().mockReturnValue({
+          returning: returningFn,
+        }),
+      }),
+    });
+    const insertFn = jest.fn().mockReturnValue({
+      values: jest.fn().mockResolvedValue(undefined),
+    });
+    const transactionSpy = jest
+      .spyOn(db, "transaction")
+      .mockImplementation(async (...args: unknown[]) => {
+        const fn = args[0] as (tx: never) => Promise<void>;
+        await fn({ update: updateFn, insert: insertFn } as never);
+      });
+    const result = await updateApplication(mockUserId, mockAppId, {
+      jobTitle: "Senior Engineer",
+      status: "interviewing",
+    });
+    expect(result.jobTitle).toBe("Senior Engineer");
+    expect(result.status).toBe("interviewing");
+    getByIdSpy.mockRestore();
+    transactionSpy.mockRestore();
+  });
+
+  it("returns updated row when body has changes without status change", async () => {
+    const updatedRow = {
+      ...mockRow,
+      jobTitle: "Senior Engineer",
     };
     const db = jest.requireActual("./db").db;
     const getByIdSpy = jest.spyOn(db, "select").mockReturnValue({
@@ -234,10 +275,9 @@ describe("updateApplication", () => {
     } as unknown as ReturnType<typeof db.update>);
     const result = await updateApplication(mockUserId, mockAppId, {
       jobTitle: "Senior Engineer",
-      status: "interviewing",
     });
     expect(result.jobTitle).toBe("Senior Engineer");
-    expect(result.status).toBe("interviewing");
+    expect(result.status).toBe("saved");
     getByIdSpy.mockRestore();
     updateSpy.mockRestore();
   });
@@ -264,30 +304,54 @@ describe("updateApplication", () => {
 describe("deleteApplication", () => {
   it("succeeds when row exists", async () => {
     const db = jest.requireActual("./db").db;
-    const deleteSpy = jest.spyOn(db, "delete").mockReturnValue({
+    const deleteFn = jest.fn().mockReturnValue({
       where: jest.fn().mockReturnValue({
-        returning: jest.fn().mockResolvedValue([{ id: mockAppId }]),
+        returning: jest.fn().mockResolvedValue([
+          {
+            id: mockAppId,
+            jobTitle: mockRow.jobTitle,
+            status: mockRow.status,
+          },
+        ]),
       }),
-    } as unknown as ReturnType<typeof db.delete>);
+    });
+    const insertFn = jest.fn().mockReturnValue({
+      values: jest.fn().mockResolvedValue(undefined),
+    });
+    const transactionSpy = jest
+      .spyOn(db, "transaction")
+      .mockImplementation(async (...args: unknown[]) => {
+        const fn = args[0] as (tx: never) => Promise<void>;
+        await fn({ delete: deleteFn, insert: insertFn } as never);
+      });
     await expect(
       deleteApplication(mockUserId, mockAppId),
     ).resolves.toBeUndefined();
-    deleteSpy.mockRestore();
+    transactionSpy.mockRestore();
   });
 
   it("throws NotFoundError when application does not exist", async () => {
     const db = jest.requireActual("./db").db;
-    const deleteSpy = jest.spyOn(db, "delete").mockReturnValue({
+    const deleteFn = jest.fn().mockReturnValue({
       where: jest.fn().mockReturnValue({
         returning: jest.fn().mockResolvedValue([]),
       }),
-    } as unknown as ReturnType<typeof db.delete>);
+    });
+    const insertFn = jest.fn().mockReturnValue({
+      values: jest.fn().mockResolvedValue(undefined),
+    });
+    const transactionSpy = jest
+      .spyOn(db, "transaction")
+      .mockImplementation(async (...args: unknown[]) => {
+        const fn = args[0] as (tx: never) => Promise<void>;
+        await fn({ delete: deleteFn, insert: insertFn } as never);
+      });
     await expect(deleteApplication(mockUserId, mockAppId)).rejects.toThrow(
       NotFoundError,
     );
     await expect(deleteApplication(mockUserId, mockAppId)).rejects.toThrow(
       "Application not found",
     );
-    deleteSpy.mockRestore();
+    transactionSpy.mockRestore();
   });
 });

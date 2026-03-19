@@ -1,5 +1,6 @@
 import { and, count, desc, eq, lt, or } from "drizzle-orm";
 
+import { insertAuditLog } from "../audit/service";
 import { invalidateDashboardCache } from "../dashboard/cache";
 import { db } from "../db";
 import { applications } from "../db/schema";
@@ -155,6 +156,35 @@ export async function updateApplication(
   if (body.resumeId !== undefined) update.resumeId = body.resumeId;
   if (Object.keys(update).length === 0) return existing;
   update.updatedAt = new Date();
+
+  const statusChanged =
+    body.status !== undefined && body.status !== existing.status;
+
+  if (statusChanged) {
+    let row: ApplicationRow;
+    await db.transaction(async (tx) => {
+      const [updated] = await tx
+        .update(applications)
+        .set(update)
+        .where(and(eq(applications.id, id), eq(applications.userId, userId)))
+        .returning();
+      if (!updated) throw new NotFoundError("Application not found");
+      await insertAuditLog(tx, {
+        actorUserId: userId,
+        action: "application.status_changed",
+        entityType: "application",
+        entityId: id,
+        details: {
+          fromStatus: existing.status,
+          toStatus: updated.status,
+        },
+      });
+      row = updated;
+    });
+    await invalidateDashboardCache(userId);
+    return row!;
+  }
+
   const [row] = await db
     .update(applications)
     .set(update)
@@ -169,10 +199,27 @@ export async function deleteApplication(
   userId: string,
   id: string,
 ): Promise<void> {
-  const result = await db
-    .delete(applications)
-    .where(and(eq(applications.id, id), eq(applications.userId, userId)))
-    .returning({ id: applications.id });
-  if (result.length === 0) throw new NotFoundError("Application not found");
+  await db.transaction(async (tx) => {
+    const removed = await tx
+      .delete(applications)
+      .where(and(eq(applications.id, id), eq(applications.userId, userId)))
+      .returning({
+        id: applications.id,
+        jobTitle: applications.jobTitle,
+        status: applications.status,
+      });
+    if (removed.length === 0) throw new NotFoundError("Application not found");
+    const row = removed[0]!;
+    await insertAuditLog(tx, {
+      actorUserId: userId,
+      action: "application.deleted",
+      entityType: "application",
+      entityId: row.id,
+      details: {
+        jobTitle: row.jobTitle,
+        status: row.status,
+      },
+    });
+  });
   await invalidateDashboardCache(userId);
 }

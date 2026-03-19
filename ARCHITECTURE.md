@@ -81,7 +81,7 @@ giving job seekers their own dashboard to track applications, interviews, notes,
 - Backend verifies JWT signature only — no session storage
 - Optional in-process user cache: short-TTL cache keyed by JWT sub in requireAuth; cache hit avoids DB user lookup (O(1)). TTL e.g. 60s. On miss, DB lookup and cache set.
 
-**Next.js (App Router) session gate:** `src/middleware.ts` requires a session for all routes except **`/`** (logged-out entry) and **`/auth/*`** (Auth0 SDK routes plus app-owned auth pages). Unauthenticated visitors to a protected URL are redirected to **`/auth/sign-in?returnTo=<path+search>`** (`returnTo` preserves query string). That page shows short copy and sends the user to **`/auth/login?returnTo=...`** (SDK), which starts the Auth0 authorize redirect. After a successful OAuth callback, **`Auth0Client` `onCallback`** in `src/lib/auth0.ts` redirects to the transaction’s `returnTo` using the same URL resolution rules as the SDK (including `NEXT_PUBLIC_BASE_PATH` when set); helpers live in `src/lib/authReturnTo.ts` (`sanitizeReturnTo`, `createAppPathRedirectUrl`). On callback **failure**, `onCallback` redirects to **`/auth/error?code=...`** (optional `returnTo` for “Try again”) with user-facing copy; if **`APP_BASE_URL`** cannot be resolved, a minimal HTML response with relative links is returned instead of a bare 500. Logout remains **`/auth/logout`** (SDK); post-logout landing is governed by Auth0 **Allowed Logout URLs** (typically the app origin).
+**Next.js (App Router) session gate:** `src/proxy.ts` (Next.js 16+ proxy convention; replaces deprecated root `middleware.ts`) requires a session for all routes except **`/`** (logged-out entry) and **`/auth/*`** (Auth0 SDK routes plus app-owned auth pages). Unauthenticated visitors to a protected URL are redirected to **`/auth/sign-in?returnTo=<path+search>`** (`returnTo` preserves query string). That page shows short copy and sends the user to **`/auth/login?returnTo=...`** (SDK), which starts the Auth0 authorize redirect. After a successful OAuth callback, **`Auth0Client` `onCallback`** in `src/lib/auth0.ts` redirects to the transaction’s `returnTo` using the same URL resolution rules as the SDK (including `NEXT_PUBLIC_BASE_PATH` when set); helpers live in `src/lib/authReturnTo.ts` (`sanitizeReturnTo`, `createAppPathRedirectUrl`). On callback **failure**, `onCallback` redirects to **`/auth/error?code=...`** (optional `returnTo` for “Try again”) with user-facing copy; if **`APP_BASE_URL`** cannot be resolved, a minimal HTML response with relative links is returned instead of a bare 500. Logout remains **`/auth/logout`** (SDK); post-logout landing is governed by Auth0 **Allowed Logout URLs** (typically the app origin).
 _Added 2026-03-19_
 
 ### Authorization
@@ -112,8 +112,21 @@ _Added 2026-03-19_
 ```
 
 - All errors logged via Pino
-- Implemented: `server/errors.ts` (classes + central errorHandler), `server/asyncHandler.ts`; Express `Request` extended with optional `user` via `server/express.d.ts`; server loads `.env` via dotenv at startup.
+- Implemented: `server/errors.ts` (classes + central errorHandler), `server/asyncHandler.ts`; Express `Request` extended with optional `user`, optional `id` and `log` (pino-http request id / child logger) via `server/express.d.ts`; server loads `.env` via dotenv at startup.
   _Added 2026-03-09_
+  _Updated 2026-03-19_
+
+### Logging and request traceability
+
+- **Request id:** `pino-http` uses `genReqId` from `server/requestId.ts` (`createPinoHttpGenReqId`). Inbound headers: use validated **`X-Request-Id`** if present, else validated **`X-Correlation-Id`**, else `crypto.randomUUID()`. Validation: trim, length 1–128, charset `[0-9A-Za-z._:-]+`. Response always includes **`X-Request-Id`** (canonical id). Access logs carry the id via pino-http.
+- **Errors:** `errorHandler` logs with **`req.log`** when defined so AppError and unhandled errors include the same request context; falls back to root logger if absent (e.g. tests). Multer upload limit responses also log at `warn` on the request logger.
+  _Added 2026-03-19_
+
+### Audit log (compliance-oriented)
+
+- **Table** `audit_logs` (Drizzle `auditLogs` in `server/db/schema.ts`): `actor_user_id` → `users.id` (**ON DELETE restrict**), `action`, `entity_type`, `entity_id`, `details` (jsonb, nullable), `created_at`. Indexes: `(actor_user_id, created_at)`, `(entity_type, entity_id)`. Append-only from application code; **no public read API** yet.
+- **Writes:** `server/audit/service.ts` (`insertAuditLog`); same **DB transaction** as the mutation. **Actions:** `application.deleted`, `application.status_changed`, `interview.deleted`, `note.deleted`, `resume.deleted`. **Resume delete:** DB row + audit committed before R2 object removal (R2 delete after transaction).
+  _Added 2026-03-19_
 
 ### Rate Limiting
 
@@ -144,7 +157,7 @@ _Added 2026-03-19_
 ### Database
 
 - PostgreSQL with normalized schema
-- Core entities: Users, Applications, Companies, Interviews, Notes
+- Core entities: Users, Applications, Companies, Interviews, Notes; **audit_logs** (append-only mutation trail); plus preferences, resumes, notifications per schema
 - Relational foreign keys between entities
 - Drizzle Kit for migration generation — migrations run manually as deliberate deployment step
 
@@ -191,6 +204,9 @@ _Added 2026-03-10_
 Resumes list: GET `/api/v1/resumes` accepts `?page=1&limit=20` (limit max 100), returns `{ items, page, limit, total }`. GET `/api/v1/resumes/:id/preview` streams PDF for inline preview (PDF only; 400 for DOCX). Upload limit: RESUME*CAP per user (server/resumes/types.ts; frontend matches). Frontend: `useResumesList(page, limit)`, ResumesList with pagination UI; PDF preview in modal iframe, DOCX via signed URL in new tab. setActiveResume: one conditional update when setting active (SET is_active = (id = :id) WHERE user_id); one update when inactive; no separate read or bulk step.
 \_Added 2026-03-13\*
 \_Updated 2026-03-19*
+
+Audit trail: `server/audit/types.ts`, `server/audit/service.ts`; Drizzle migration **`0002_*`** creates **`audit_logs`**. See **Audit log (compliance-oriented)** above.
+_Added 2026-03-19_
 
 ### Frontend styling (authenticated light content area)
 

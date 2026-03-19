@@ -1,6 +1,7 @@
 import { and, count, desc, eq, sql } from "drizzle-orm";
 import { randomUUID } from "node:crypto";
 
+import { insertAuditLog } from "../audit/service";
 import { db } from "../db";
 import { resumes } from "../db/schema";
 import { ForbiddenError, NotFoundError } from "../errors";
@@ -130,9 +131,30 @@ export async function setActiveResume(
 }
 
 export async function deleteResume(userId: string, id: string): Promise<void> {
-  const row = await getResumeById(userId, id);
-  await deleteResumeFromR2(row.s3Key);
-  await db
-    .delete(resumes)
-    .where(and(eq(resumes.id, id), eq(resumes.userId, userId)));
+  let s3Key: string;
+  await db.transaction(async (tx) => {
+    const [row] = await tx
+      .select()
+      .from(resumes)
+      .where(and(eq(resumes.id, id), eq(resumes.userId, userId)))
+      .limit(1);
+    if (!row) throw new NotFoundError("Resume not found");
+    const removed = await tx
+      .delete(resumes)
+      .where(and(eq(resumes.id, id), eq(resumes.userId, userId)))
+      .returning({ id: resumes.id });
+    if (removed.length === 0) throw new NotFoundError("Resume not found");
+    await insertAuditLog(tx, {
+      actorUserId: userId,
+      action: "resume.deleted",
+      entityType: "resume",
+      entityId: id,
+      details: {
+        fileName: row.fileName,
+        fileType: row.fileType,
+      },
+    });
+    s3Key = row.s3Key;
+  });
+  await deleteResumeFromR2(s3Key!);
 }
