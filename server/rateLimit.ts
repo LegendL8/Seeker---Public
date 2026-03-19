@@ -60,3 +60,17 @@ export function resumesUploadRateLimiter(): ReturnType<typeof rateLimit> {
     handler: rateLimitHandler,
   });
 }
+
+export function userSettingsWriteRateLimiter(): ReturnType<typeof rateLimit> {
+  return rateLimit({
+    windowMs: RATE_LIMIT_WINDOW_MS,
+    max: 20,
+    keyGenerator: (req) => {
+      const r = req as Request & { user?: { id: string } };
+      return r.user?.id ?? r.ip ?? "unknown";
+    },
+    standardHeaders: true,
+    legacyHeaders: false,
+    handler: rateLimitHandler,
+  });
+}

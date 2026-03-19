@@ -1,0 +1,112 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  /* Space after last section when main column scrolls */
+  margin-bottom: 0.5rem;
+}
+
+.title {
+  margin: 0;
+  color: var(--light-text);
+  font-size: 1.5rem;
+}
+
+.card {
+  background: var(--light-surface);
+  border: 1px solid var(--light-border);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cardTitle {
+  margin: 0;
+  color: var(--light-text);
+  font-size: 1.05rem;
+}
+
+.label {
+  color: var(--light-text);
+  font-size: 0.9rem;
+}
+
+.input,
+.select {
+  border: 1px solid var(--light-border);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  font-size: 0.95rem;
+  color: var(--light-text);
+  background: #fff;
+}
+
+.input:disabled {
+  background: var(--light-bg);
+  color: var(--light-text-muted);
+}
+
+.helpText {
+  margin: 0;
+  color: var(--light-text-muted);
+  font-size: 0.9rem;
+}
+
+.status {
+  margin: 0;
+  color: var(--light-text-muted);
+}
+
+.error {
+  margin: 0;
+  color: var(--light-error);
+  font-size: 0.9rem;
+}
+
+.primaryButton,
+.linkButton,
+.disabledButton,
+.dangerButton {
+  border: 1px solid var(--light-border);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  font-size: 0.9rem;
+  width: fit-content;
+  text-decoration: none;
+}
+
+.primaryButton {
+  background: #fff;
+  color: var(--light-text);
+}
+
+.linkButton {
+  background: #fff;
+  color: var(--light-text);
+}
+
+.dangerCard {
+  border-color: #f2c7cc;
+}
+
+.dangerButton {
+  background: #fff5f6;
+  color: var(--light-error);
+  border-color: #f2c7cc;
+}
+
+.disabledButton {
+  background: var(--light-bg);
+  color: var(--light-text-muted);
+}
+
+@media (max-width: 768px) {
+  .primaryButton,
+  .linkButton,
+  .disabledButton,
+  .dangerButton {
+    width: 100%;
+  }
+}

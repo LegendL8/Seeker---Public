@@ -1,0 +1,28 @@
+/* Settings is tall; extra bottom padding so scroll end does not clip the danger zone. */
+.page {
+  min-height: 100vh;
+  padding: 32px;
+  padding-bottom: max(4.5rem, calc(env(safe-area-inset-bottom, 0px) + 3rem));
+  background: transparent;
+  color: var(--light-text);
+  box-sizing: border-box;
+}
+
+.main {
+  width: 100%;
+  max-width: 1100px;
+  margin-left: auto;
+  margin-right: auto;
+  box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  .page {
+    padding: 20px 16px;
+    padding-bottom: max(4rem, calc(env(safe-area-inset-bottom, 0px) + 2.5rem));
+  }
+
+  .main {
+    max-width: 100%;
+  }
+}

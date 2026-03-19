@@ -9,6 +9,7 @@ import dashboardRouter from "./dashboard/routes";
 import interviewsRouter from "./interviews/routes";
 import notesRouter from "./notes/routes";
 import resumesRouter from "./resumes/routes";
+import usersRouter from "./users/routes";
 import { asyncHandler } from "./asyncHandler";
 import { requireAuth } from "./auth/middleware";
 import { env } from "./config";
@@ -68,6 +69,7 @@ app.use("/api/v1/dashboard", dashboardRouter);
 app.use("/api/v1/interviews", interviewsRouter);
 app.use("/api/v1/notes", notesRouter);
 app.use("/api/v1/resumes", resumesRouter);
+app.use("/api/v1/users", usersRouter);
 
 app.use(errorHandler);
 

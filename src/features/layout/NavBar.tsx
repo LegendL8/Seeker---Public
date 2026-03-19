@@ -83,6 +83,16 @@ export function NavBar() {
             >
               Resumes
             </Link>
+            <Link
+              href="/settings"
+              className={
+                pathname?.startsWith("/settings")
+                  ? `${styles.link} ${styles.linkActive}`
+                  : styles.link
+              }
+            >
+              Settings
+            </Link>
             <Link href="/auth/logout" className={styles.link}>
               Log out
             </Link>
