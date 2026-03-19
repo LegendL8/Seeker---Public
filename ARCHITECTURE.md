@@ -13,30 +13,30 @@ giving job seekers their own dashboard to track applications, interviews, notes,
 
 ## Layer 1: Core Tech Stack
 
-| Category         | Decision                                           |
-| ---------------- | -------------------------------------------------- |
-| Framework        | Next.js (full-stack)                               |
-| Language         | TypeScript (all layers)                            |
-| Runtime          | Node.js 20 LTS                                     |
-| Backend          | Express.js                                         |
-| Database         | PostgreSQL (normalized schema)                     |
-| Caching          | Redis                                              |
-| Package Manager  | NPM                                                |
-| Module System    | ES Modules (`"type": "module"` in package.json)    |
-| TS Module Target | `"module": "ESNext"`, `"target": "ES2022"`         |
-| Strict Mode      | TypeScript strict mode ON                          |
-| Enums            | No TypeScript enums — use union types instead      |
-| Any Types        | Strictly forbidden — no `any`                      |
-| API Typing       | Manual TypeScript interfaces                       |
-| Build Tool       | Turbopack (built into Next.js)                     |
-| UI State         | Zustand                                            |
-| Server State     | TanStack Query                                     |
-| ORM              | Drizzle                                            |
-| Validation       | Zod (forms, API input, and env vars)               |
-| Logging          | Pino + pino-http                                   |
-| Error Structure  | Custom error classes (extend native Error)         |
+| Category         | Decision                                                                                                        |
+| ---------------- | --------------------------------------------------------------------------------------------------------------- |
+| Framework        | Next.js (full-stack)                                                                                            |
+| Language         | TypeScript (all layers)                                                                                         |
+| Runtime          | Node.js 20 LTS                                                                                                  |
+| Backend          | Express.js                                                                                                      |
+| Database         | PostgreSQL (normalized schema)                                                                                  |
+| Caching          | Redis                                                                                                           |
+| Package Manager  | NPM                                                                                                             |
+| Module System    | ES Modules (`"type": "module"` in package.json)                                                                 |
+| TS Module Target | `"module": "ESNext"`, `"target": "ES2022"`                                                                      |
+| Strict Mode      | TypeScript strict mode ON                                                                                       |
+| Enums            | No TypeScript enums — use union types instead                                                                   |
+| Any Types        | Strictly forbidden — no `any`                                                                                   |
+| API Typing       | Manual TypeScript interfaces                                                                                    |
+| Build Tool       | Turbopack (built into Next.js)                                                                                  |
+| UI State         | Zustand                                                                                                         |
+| Server State     | TanStack Query                                                                                                  |
+| ORM              | Drizzle                                                                                                         |
+| Validation       | Zod (forms, API input, and env vars)                                                                            |
+| Logging          | Pino + pino-http                                                                                                |
+| Error Structure  | Custom error classes (extend native Error)                                                                      |
 | Styling          | Pure CSS — CSS Modules, BEM, CSS Custom Properties (shared tokens in `globals.css`; see Frontend styling below) |
-| Dependencies     | Minimal — prefer built-ins over libraries          |
+| Dependencies     | Minimal — prefer built-ins over libraries                                                                       |
 
 ### Flagged for Implementation
 
@@ -82,7 +82,7 @@ giving job seekers their own dashboard to track applications, interviews, notes,
 - Optional in-process user cache: short-TTL cache keyed by JWT sub in requireAuth; cache hit avoids DB user lookup (O(1)). TTL e.g. 60s. On miss, DB lookup and cache set.
 
 **Next.js (App Router) session gate:** `src/middleware.ts` requires a session for all routes except **`/`** (logged-out entry) and **`/auth/*`** (Auth0 SDK routes plus app-owned auth pages). Unauthenticated visitors to a protected URL are redirected to **`/auth/sign-in?returnTo=<path+search>`** (`returnTo` preserves query string). That page shows short copy and sends the user to **`/auth/login?returnTo=...`** (SDK), which starts the Auth0 authorize redirect. After a successful OAuth callback, **`Auth0Client` `onCallback`** in `src/lib/auth0.ts` redirects to the transaction’s `returnTo` using the same URL resolution rules as the SDK (including `NEXT_PUBLIC_BASE_PATH` when set); helpers live in `src/lib/authReturnTo.ts` (`sanitizeReturnTo`, `createAppPathRedirectUrl`). On callback **failure**, `onCallback` redirects to **`/auth/error?code=...`** (optional `returnTo` for “Try again”) with user-facing copy; if **`APP_BASE_URL`** cannot be resolved, a minimal HTML response with relative links is returned instead of a bare 500. Logout remains **`/auth/logout`** (SDK); post-logout landing is governed by Auth0 **Allowed Logout URLs** (typically the app origin).
-  _Added 2026-03-19_
+_Added 2026-03-19_
 
 ### Authorization
 

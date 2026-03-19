@@ -11,9 +11,9 @@ function ensureTrailingSlash(value: string): string {
   return value.endsWith("/") ? value : `${value}/`;
 }
 
-function resolveAppBaseUrlForCallback(
-  ctx: { appBaseUrl?: string }
-): string | undefined {
+function resolveAppBaseUrlForCallback(ctx: {
+  appBaseUrl?: string;
+}): string | undefined {
   if (ctx.appBaseUrl) {
     return ctx.appBaseUrl;
   }
@@ -44,24 +44,23 @@ function callbackErrorHtml(code: string): string {
 const onCallback: NonNullable<Auth0ClientOptions["onCallback"]> = async (
   error,
   ctx,
-  session
+  session,
 ) => {
   void session;
   if (!error) {
     const appBaseUrl = resolveAppBaseUrlForCallback(ctx);
     if (!appBaseUrl) {
       throw new Error(
-        "appBaseUrl could not be resolved for the callback redirect."
+        "appBaseUrl could not be resolved for the callback redirect.",
       );
     }
     return NextResponse.redirect(
-      createAppPathRedirectUrl(ctx.returnTo, appBaseUrl)
+      createAppPathRedirectUrl(ctx.returnTo, appBaseUrl),
     );
   }
 
   const appBaseUrl = resolveAppBaseUrlForCallback(ctx);
-  const code =
-    error instanceof SdkError ? error.code : "unknown";
+  const code = error instanceof SdkError ? error.code : "unknown";
 
   if (!appBaseUrl) {
     return new NextResponse(callbackErrorHtml(code), {

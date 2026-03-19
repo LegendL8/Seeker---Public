@@ -34,7 +34,7 @@ function ensureNoLeadingSlash(value: string): string {
  */
 export function createAppPathRedirectUrl(
   returnPath: string | undefined,
-  appBaseUrl: string
+  appBaseUrl: string,
 ): URL {
   const path = returnPath ?? "/";
   const basePath = process.env.NEXT_PUBLIC_BASE_PATH;
@@ -46,6 +46,6 @@ export function createAppPathRedirectUrl(
 
   return new URL(
     ensureNoLeadingSlash(normalizedRelative),
-    ensureTrailingSlash(appBaseUrl)
+    ensureTrailingSlash(appBaseUrl),
   );
 }
