@@ -8,9 +8,7 @@ test("notes list loads", async ({ page }) => {
   await expect(
     page.getByRole("heading", { name: "Notes", level: 1 }),
   ).toBeVisible({ timeout: 10000 });
-  await expect(
-    page.getByRole("button", { name: /Add note/i }),
-  ).toBeVisible();
+  await expect(page.getByRole("button", { name: /Add note/i })).toBeVisible();
 });
 
 /**
@@ -44,7 +42,10 @@ test("note detail and edit with debounced save", async ({ page }) => {
  */
 test("add note", async ({ page }) => {
   await page.goto("/notes");
-  await page.getByRole("button", { name: /Add note/i }).first().click();
+  await page
+    .getByRole("button", { name: /Add note/i })
+    .first()
+    .click();
   await page
     .getByRole("textbox", { name: "Content" })
     .fill("E2E new note " + Date.now());
@@ -57,7 +58,10 @@ test("add note", async ({ page }) => {
  */
 test("delete note", async ({ page }) => {
   await page.goto("/notes");
-  await page.getByRole("button", { name: /Add note/i }).first().click();
+  await page
+    .getByRole("button", { name: /Add note/i })
+    .first()
+    .click();
   await page
     .getByRole("textbox", { name: "Content" })
     .fill("E2E note to delete");

@@ -189,9 +189,7 @@ describe("parsePostingBodySchema", () => {
   });
 
   it("rejects invalid URL", () => {
-    expect(() =>
-      parsePostingBodySchema.parse({ url: "not-a-url" }),
-    ).toThrow();
+    expect(() => parsePostingBodySchema.parse({ url: "not-a-url" })).toThrow();
   });
 
   it("rejects empty string", () => {

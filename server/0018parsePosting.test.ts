@@ -43,9 +43,9 @@ describe("parseJobPostingUrl", () => {
   });
 
   it("returns normalized URL and nulls when guest API fails", async () => {
-    global.fetch = jest.fn().mockResolvedValue(
-      new Response("", { status: 404 }),
-    );
+    global.fetch = jest
+      .fn()
+      .mockResolvedValue(new Response("", { status: 404 }));
 
     const url = "https://www.linkedin.com/jobs/view/456";
     const result = await parseJobPostingUrl(url);
@@ -94,9 +94,9 @@ describe("parseJobPostingUrl", () => {
   });
 
   it("returns normalized URL only when page fetch fails", async () => {
-    global.fetch = jest.fn().mockResolvedValue(
-      new Response("", { status: 404 }),
-    );
+    global.fetch = jest
+      .fn()
+      .mockResolvedValue(new Response("", { status: 404 }));
 
     const url = "https://other-site.com/job/999";
     const result = await parseJobPostingUrl(url);
@@ -124,7 +124,9 @@ describe("parseJobPostingUrl", () => {
     expect(result.jobTitle).toBeNull();
     expect(result.companyName).toBeNull();
     expect(result.location).toBeNull();
-    expect(result.jobPostingUrl).toBe("http://169.254.169.254/latest/meta-data");
+    expect(result.jobPostingUrl).toBe(
+      "http://169.254.169.254/latest/meta-data",
+    );
   });
 
   it("trims input URL", async () => {

@@ -177,9 +177,7 @@ describe("POST /api/v1/applications/parse-posting", () => {
     expect(body.jobTitle).toBe("Engineer");
     expect(body.companyName).toBe("Acme");
     expect(body.location).toBe("Remote");
-    expect(body.jobPostingUrl).toBe(
-      "https://www.linkedin.com/jobs/view/123",
-    );
+    expect(body.jobPostingUrl).toBe("https://www.linkedin.com/jobs/view/123");
     expect(parseJobPostingUrl).toHaveBeenCalledWith(
       "https://www.linkedin.com/jobs/view/123",
     );

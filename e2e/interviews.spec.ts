@@ -47,7 +47,10 @@ test("add interview", async ({ page }) => {
   ).toBeVisible({ timeout: 10000 });
   await page.getByRole("button", { name: "Add interview" }).click();
   await page.getByLabel("Type").selectOption("technical");
-  await page.locator("form").getByRole("button", { name: "Add interview" }).click();
+  await page
+    .locator("form")
+    .getByRole("button", { name: "Add interview" })
+    .click();
   await expect(page.getByText("technical")).toBeVisible({ timeout: 5000 });
 });
 

@@ -63,8 +63,7 @@ export function AddApplicationForm() {
         jobTitle: result.jobTitle ?? prev.jobTitle,
         jobPostingUrl: result.jobPostingUrl,
         location: result.location ?? prev.location,
-        source:
-          result.companyName && !prev.source ? "LinkedIn" : prev.source,
+        source: result.companyName && !prev.source ? "LinkedIn" : prev.source,
       }));
       setParseUrl("");
     } catch (err) {

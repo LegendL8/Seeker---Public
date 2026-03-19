@@ -30,8 +30,7 @@ function filterBySearch(items: Resume[], search: string): Resume[] {
 function ResumeItem({ resume }: { resume: Resume }) {
   const [previewing, setPreviewing] = useState(false);
   const [pdfPreviewOpen, setPdfPreviewOpen] = useState(false);
-  const needSignedUrl =
-    previewing && resume.fileType !== "pdf";
+  const needSignedUrl = previewing && resume.fileType !== "pdf";
   const { data: withUrl, isPending: urlPending } = useResumeWithUrl(
     needSignedUrl ? resume.id : null,
   );
@@ -47,11 +46,7 @@ function ResumeItem({ resume }: { resume: Resume }) {
   }
 
   useEffect(() => {
-    if (
-      resume.fileType !== "pdf" &&
-      previewing &&
-      withUrl?.signedUrl
-    ) {
+    if (resume.fileType !== "pdf" && previewing && withUrl?.signedUrl) {
       window.open(withUrl.signedUrl, "_blank", "noopener,noreferrer");
       const t = setTimeout(() => setPreviewing(false), 0);
       return () => clearTimeout(t);
@@ -72,9 +67,7 @@ function ResumeItem({ resume }: { resume: Resume }) {
   }
 
   const previewButtonDisabled =
-    resume.fileType === "pdf"
-      ? false
-      : previewing && urlPending;
+    resume.fileType === "pdf" ? false : previewing && urlPending;
 
   return (
     <div className={styles.item}>
@@ -85,7 +78,10 @@ function ResumeItem({ resume }: { resume: Resume }) {
           aria-modal="true"
           aria-label="Resume preview"
         >
-          <div className={styles.previewBackdrop} onClick={() => setPdfPreviewOpen(false)} />
+          <div
+            className={styles.previewBackdrop}
+            onClick={() => setPdfPreviewOpen(false)}
+          />
           <div className={styles.previewContent}>
             <button
               type="button"

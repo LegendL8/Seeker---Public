@@ -117,7 +117,9 @@ export interface ParsePostingResult {
   jobPostingUrl: string;
 }
 
-export async function parseJobPosting(url: string): Promise<ParsePostingResult> {
+export async function parseJobPosting(
+  url: string,
+): Promise<ParsePostingResult> {
   const base = getApiBaseUrl();
   const res = await fetch(`${base}/v1/applications/parse-posting`, {
     method: "POST",

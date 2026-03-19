@@ -5,8 +5,7 @@
  * Run: node -r dotenv/config node_modules/.bin/tsx scripts/measure-api.ts
  */
 
-const EXPRESS_API_URL =
-  process.env.EXPRESS_API_URL ?? "http://localhost:3001";
+const EXPRESS_API_URL = process.env.EXPRESS_API_URL ?? "http://localhost:3001";
 const JWT = process.env.PERF_JWT ?? "";
 const N = 30;
 const TARGET_P95_MS = 500;
@@ -71,7 +70,10 @@ async function main(): Promise<void> {
 
   const base = EXPRESS_API_URL.replace(/\/$/, "");
   const endpoints: Endpoint[] = [
-    { name: "GET /api/v1/dashboard/metrics", url: `${base}/api/v1/dashboard/metrics` },
+    {
+      name: "GET /api/v1/dashboard/metrics",
+      url: `${base}/api/v1/dashboard/metrics`,
+    },
     {
       name: "GET /api/v1/applications (list)",
       url: `${base}/api/v1/applications?page=1&limit=20`,
@@ -105,7 +107,13 @@ async function main(): Promise<void> {
 
   console.log(`Measuring ${N} requests per endpoint against ${base}\n`);
 
-  const results: { name: string; p50: number; p95: number; p99: number; ok: boolean }[] = [];
+  const results: {
+    name: string;
+    p50: number;
+    p95: number;
+    p99: number;
+    ok: boolean;
+  }[] = [];
 
   for (const ep of endpoints) {
     process.stdout.write(`${ep.name} ... `);
@@ -121,7 +129,9 @@ async function main(): Promise<void> {
         `p50=${p50.toFixed(0)}ms p95=${p95.toFixed(0)}ms p99=${p99.toFixed(0)}ms ${ok ? "OK" : "OVER TARGET"}`,
       );
     } catch (err) {
-      console.log(`FAILED: ${err instanceof Error ? err.message : String(err)}`);
+      console.log(
+        `FAILED: ${err instanceof Error ? err.message : String(err)}`,
+      );
       results.push({
         name: ep.name,
         p50: 0,

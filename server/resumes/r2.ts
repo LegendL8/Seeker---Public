@@ -107,8 +107,7 @@ export async function getResumeStream(
   );
   const body = response.Body;
   if (!body) throw new Error("Empty body from R2");
-  const contentType =
-    response.ContentType ?? "application/octet-stream";
+  const contentType = response.ContentType ?? "application/octet-stream";
   return { stream: body as Readable, contentType };
 }
 

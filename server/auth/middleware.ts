@@ -136,10 +136,7 @@ export async function requireAuth(
       setCachedUser(sub, user);
     }
 
-    if (
-      isPlaceholderIdentity(user) &&
-      !env.AUTH0_AUDIENCE
-    ) {
+    if (isPlaceholderIdentity(user) && !env.AUTH0_AUDIENCE) {
       const fresh = await fetchAuth0Userinfo(token, sub, issuerBase);
       if (
         fresh &&

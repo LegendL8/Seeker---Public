@@ -48,10 +48,7 @@ router.post(
     const result = await parseJobPostingUrl(url);
     const host = new URL(url).hostname;
     const success = !!(result.jobTitle || result.companyName);
-    logger.info(
-      { userId: req.user!.id, host, success },
-      "parse-posting",
-    );
+    logger.info({ userId: req.user!.id, host, success }, "parse-posting");
     res.json(result);
   }),
 );

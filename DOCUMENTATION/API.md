@@ -253,14 +253,14 @@ _Amended 2026-03-09_
 
 ## Resumes
 
-| Method | Route                      | Description                              |
-| ------ | -------------------------- | ---------------------------------------- |
-| GET    | `/api/v1/resumes`          | List resumes — paginated                 |
-| POST   | `/api/v1/resumes`         | Upload resume — limit 5 per user        |
-| GET    | `/api/v1/resumes/:id`      | Get resume metadata and signed URL       |
+| Method | Route                         | Description                              |
+| ------ | ----------------------------- | ---------------------------------------- |
+| GET    | `/api/v1/resumes`             | List resumes — paginated                 |
+| POST   | `/api/v1/resumes`             | Upload resume — limit 5 per user         |
+| GET    | `/api/v1/resumes/:id`         | Get resume metadata and signed URL       |
 | GET    | `/api/v1/resumes/:id/preview` | Stream PDF for inline preview (PDF only) |
-| PATCH  | `/api/v1/resumes/:id`      | Set resume as active                     |
-| DELETE | `/api/v1/resumes/:id`      | Delete from R2 and database              |
+| PATCH  | `/api/v1/resumes/:id`         | Set resume as active                     |
+| DELETE | `/api/v1/resumes/:id`         | Delete from R2 and database              |
 
 **Query params (list):** `?page=1&limit=20` (limit max 100). Response: `{ items, page, limit, total }`.
 

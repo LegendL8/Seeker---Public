@@ -185,8 +185,8 @@ _Updated 2026-03-17_
 Dashboard: `server/dashboard/` (types.ts, cache.ts, service.ts, routes.ts). GET `/api/v1/dashboard/metrics` returns totalApplications, applicationsByStatus (saved, applied, interviewing, offer, rejected), interviewRate, activeApplications, offersReceived, rejectionsReceived. Redis cache per user (60s TTL); invalidated on application or interview create/update/delete. Frontend: `src/features/dashboard/` (Dashboard at `/` when authenticated, useDashboardMetrics, fetchDashboardMetrics).
 _Added 2026-03-10_
 
-Resumes list: GET `/api/v1/resumes` accepts `?page=1&limit=20` (limit max 100), returns `{ items, page, limit, total }`. GET `/api/v1/resumes/:id/preview` streams PDF for inline preview (PDF only; 400 for DOCX). Upload limit: RESUME_CAP per user (server/resumes/types.ts; frontend matches). Frontend: `useResumesList(page, limit)`, ResumesList with pagination UI; PDF preview in modal iframe, DOCX via signed URL in new tab. setActiveResume: one conditional update when setting active (SET is_active = (id = :id) WHERE user_id); one update when inactive; no separate read or bulk step.
-_Added 2026-03-13_
+Resumes list: GET `/api/v1/resumes` accepts `?page=1&limit=20` (limit max 100), returns `{ items, page, limit, total }`. GET `/api/v1/resumes/:id/preview` streams PDF for inline preview (PDF only; 400 for DOCX). Upload limit: RESUME*CAP per user (server/resumes/types.ts; frontend matches). Frontend: `useResumesList(page, limit)`, ResumesList with pagination UI; PDF preview in modal iframe, DOCX via signed URL in new tab. setActiveResume: one conditional update when setting active (SET is_active = (id = :id) WHERE user_id); one update when inactive; no separate read or bulk step.
+\_Added 2026-03-13*
 _Updated 2026-03-19_
 
 ### Implementation Notes

@@ -108,7 +108,8 @@ function isUrlAllowed(url: string): boolean {
 function normalizeJobPostingUrl(url: string): string {
   try {
     const u = new URL(url);
-    const canonical = `${u.origin}${u.pathname}`.replace(/\/+$/, "") || `${u.origin}/`;
+    const canonical =
+      `${u.origin}${u.pathname}`.replace(/\/+$/, "") || `${u.origin}/`;
     return canonical.length > MAX_JOB_POSTING_URL_LENGTH
       ? canonical.slice(0, MAX_JOB_POSTING_URL_LENGTH)
       : canonical;
@@ -188,8 +189,7 @@ function mapLinkedInGuestToResult(
   data: LinkedInGuestResponse,
   postingUrl: string,
 ): ParsePostingResult {
-  const location =
-    data.formattedLocation ?? data.location ?? null;
+  const location = data.formattedLocation ?? data.location ?? null;
   return {
     jobTitle: data.title ?? null,
     companyName: data.companyName ?? null,

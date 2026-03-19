@@ -102,8 +102,8 @@ Deliver a functional product as fast as possible. Every milestone builds toward 
 - ~~[ ] Seed file updated with sample applications~~
 - [x] Seed file updated with sample applications (seed.active.ts: user + 6 applications; npm run db:seed:active)
       _Updated 2026-03-09_
-- [x] Parse job posting URL: POST /api/v1/applications/parse-posting (LinkedIn guest API + page title fallback); Add Application form "Fill from job link"; URL normalized for DB (max 2048 input, origin+pathname max 500); SSRF protection (block private/metadata hosts, validate redirects), optional ALLOWED_JOB_POSTING_HOSTS, 15/min rate limit, audit log (userId, host, success)
-      _Added 2026-03-18_
+- [x] Parse job posting URL: POST /api/v1/applications/parse-posting (LinkedIn guest API + page title fallback); Add Application form "Fill from job link"; URL normalized for DB (max 2048 input, origin+pathname max 500); SSRF protection (block private/metadata hosts, validate redirects), optional ALLOWED*JOB_POSTING_HOSTS, 15/min rate limit, audit log (userId, host, success)
+      \_Added 2026-03-18*
 
 ---
 
