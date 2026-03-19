@@ -42,8 +42,7 @@ function formatSalary(
   if (period === "hourly") {
     const fmt = (c: number) => `$${dollars(c).toFixed(2)}`;
     const suffix = " /hr";
-    if (min != null && max != null)
-      return `${fmt(min)} – ${fmt(max)}${suffix}`;
+    if (min != null && max != null) return `${fmt(min)} – ${fmt(max)}${suffix}`;
     if (min != null) return `${fmt(min)}${suffix}`;
     return `${fmt(max!)}${suffix}`;
   }

@@ -34,10 +34,12 @@ const salaryStringSchema = z
   .pipe(
     z.union([
       z.undefined(),
-      z.string().refine(
-        (s) => parseSalaryString(s ?? "") !== null,
-        "Enter a valid amount (e.g. 150,000 or $75.00)",
-      ),
+      z
+        .string()
+        .refine(
+          (s) => parseSalaryString(s ?? "") !== null,
+          "Enter a valid amount (e.g. 150,000 or $75.00)",
+        ),
     ]),
   );
 
@@ -82,10 +84,12 @@ const salaryStringOptionalSchema = z
     z.union([
       z.null(),
       z.undefined(),
-      z.string().refine(
-        (s) => parseSalaryString(s ?? "") !== null,
-        "Enter a valid amount (e.g. 150,000 or $75.00)",
-      ),
+      z
+        .string()
+        .refine(
+          (s) => parseSalaryString(s ?? "") !== null,
+          "Enter a valid amount (e.g. 150,000 or $75.00)",
+        ),
     ]),
   );
 

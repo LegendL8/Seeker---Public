@@ -84,25 +84,25 @@ Stores company information referenced by applications and notes.
 
 Tracks job applications submitted by the user.
 
-| Column                    | Type         | Constraints                                      | Notes                            |
-| ------------------------- | ------------ | ------------------------------------------------ | -------------------------------- | --------- | -------------- | ---------- | ---------- | ------------ |
-| id                        | uuid         | PRIMARY KEY, DEFAULT gen_random_uuid()           |                                  |
-| user_id                   | uuid         | NOT NULL, REFERENCES users(id) ON DELETE CASCADE |                                  |
-| company_id                | uuid         | REFERENCES companies(id) ON DELETE SET NULL      |                                  |
-| job_title                 | varchar(255) | NOT NULL                                         |                                  |
-| job_posting_url           | varchar(500) |                                                  |                                  |
-| posting_status            | varchar(20)  | NOT NULL, DEFAULT 'unknown'                      | `"active"                        | "closed"  | "filled"       | "unknown"` |
-| posting_status_checked_at | timestamptz  |                                                  | Null until first automated check |
-| location                  | varchar(255) |                                                  |                                  |
-| salary_min                | integer      |                                                  | Cents (per year or per hour)     |
-| salary_max                | integer      |                                                  | Cents (per year or per hour)     |
-| salary_period             | varchar(20)  | NOT NULL, DEFAULT 'yearly'                       | `"yearly"` \| `"hourly"`         |
+| Column                    | Type         | Constraints                                      | Notes                                                                     |
+| ------------------------- | ------------ | ------------------------------------------------ | ------------------------------------------------------------------------- | -------- | -------- | ---------- |
+| id                        | uuid         | PRIMARY KEY, DEFAULT gen_random_uuid()           |                                                                           |
+| user_id                   | uuid         | NOT NULL, REFERENCES users(id) ON DELETE CASCADE |                                                                           |
+| company_id                | uuid         | REFERENCES companies(id) ON DELETE SET NULL      |                                                                           |
+| job_title                 | varchar(255) | NOT NULL                                         |                                                                           |
+| job_posting_url           | varchar(500) |                                                  |                                                                           |
+| posting_status            | varchar(20)  | NOT NULL, DEFAULT 'unknown'                      | `"active"                                                                 | "closed" | "filled" | "unknown"` |
+| posting_status_checked_at | timestamptz  |                                                  | Null until first automated check                                          |
+| location                  | varchar(255) |                                                  |                                                                           |
+| salary_min                | integer      |                                                  | Cents (per year or per hour)                                              |
+| salary_max                | integer      |                                                  | Cents (per year or per hour)                                              |
+| salary_period             | varchar(20)  | NOT NULL, DEFAULT 'yearly'                       | `"yearly"` \| `"hourly"`                                                  |
 | status                    | varchar(20)  | NOT NULL, DEFAULT 'saved'                        | `"saved"` \| `"applied"` \| `"interviewing"` \| `"offer"` \| `"rejected"` |
-| applied_at                | timestamptz  |                                                  |                                  |
-| source                    | varchar(255) |                                                  |                                  |
-| resume_id                 | uuid         | REFERENCES resumes(id) ON DELETE SET NULL        |                                  |
-| created_at                | timestamptz  | NOT NULL, DEFAULT now()                          |                                  |
-| updated_at                | timestamptz  | NOT NULL, DEFAULT now()                          |                                  |
+| applied_at                | timestamptz  |                                                  |                                                                           |
+| source                    | varchar(255) |                                                  |                                                                           |
+| resume_id                 | uuid         | REFERENCES resumes(id) ON DELETE SET NULL        |                                                                           |
+| created_at                | timestamptz  | NOT NULL, DEFAULT now()                          |                                                                           |
+| updated_at                | timestamptz  | NOT NULL, DEFAULT now()                          |                                                                           |
 
 ---
 
