@@ -1,0 +1,74 @@
+.page {
+  max-width: 28rem;
+  margin: 0 auto;
+  padding: var(--space-lg, 1.5rem);
+}
+
+.title {
+  margin: 0 0 var(--space-sm, 0.75rem);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--light-text, #0f172a);
+}
+
+.message {
+  margin: 0 0 var(--space-lg, 1.5rem);
+  color: var(--light-text-muted, #475569);
+  line-height: 1.5;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-md, 1rem);
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1rem;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--light-text, #0f172a);
+  text-decoration: none;
+  background: var(--light-surface, #fff);
+  border: 1px solid var(--light-border, #cbd5e1);
+  border-radius: var(--radius-md, 8px);
+}
+
+.button:focus-visible {
+  outline: 2px solid var(--light-border, #cbd5e1);
+  outline-offset: 2px;
+}
+
+.buttonPrimary {
+  composes: button;
+  background: var(--light-text, #0f172a);
+  color: var(--light-surface, #fff);
+  border-color: var(--light-text, #0f172a);
+}
+
+@media (max-width: 768px) {
+  .page {
+    max-width: none;
+    padding: 1rem;
+    box-sizing: border-box;
+  }
+
+  .title {
+    font-size: 1.125rem;
+  }
+
+  .actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .actions .button,
+  .actions .buttonPrimary {
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 44px;
+  }
+}

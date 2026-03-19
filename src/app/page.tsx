@@ -14,7 +14,7 @@ export default async function Home() {
           <>
             <h1 className={styles.title}>Seeker</h1>
             <p className={styles.intro}>Applicant tracking for job seekers.</p>
-            <a href="/auth/login" className={styles.link}>
+            <a href="/auth/sign-in?returnTo=/" className={styles.link}>
               Log in
             </a>
           </>

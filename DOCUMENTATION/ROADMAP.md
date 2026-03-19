@@ -51,8 +51,9 @@ Deliver a functional product as fast as possible. Every milestone builds toward 
 - [x] Backend JWT verification middleware on Express (`server/auth/middleware.ts` requireAuth)
       _Updated 2026-03-09_
 - ~~[ ] Protected routes — unauthenticated users redirected to login~~
-- [x] Protected routes — unauthenticated users redirected to login (all routes except `/auth/*`; landing/login to be exposed later)
+- [x] Protected routes — unauthenticated users redirected through sign-in (`/` and `/auth/*` public; others require session; deep-link `returnTo` preserves path + query). See ARCHITECTURE.md Authentication Flow and DOCUMENTATION/AUTH0.md.
       _Updated 2026-03-09_
+      _Updated 2026-03-19_
 - ~~[ ] Basic user profile stored in PostgreSQL on first login~~
 - [x] Basic user profile stored in PostgreSQL on first login (ensureUserFromToken in auth middleware; GET /api/v1/me)
       _Updated 2026-03-09_
@@ -237,14 +238,17 @@ See ARCHITECTURE.md Layer 4 (Repository Strategy, Post-Milestone 4) for details.
 
 **Goal:** App looks and feels professional and ready for use.
 
-- [ ] CSS polish across all views
+- [x] CSS polish across all views — shared light-theme CSS custom properties in `src/app/globals.css` (`--light-bg`, `--light-text`, `--light-surface`, `--light-border`, `--light-error`, radii, etc.); feature views’ `*.module.css` refactored to use those tokens (dashboard, applications list/detail/forms, interviews add form, notes list/editor/add form, resumes list, app layout main + page shells). Status-pill / semantic colors unchanged where intentional.
+      _Updated 2026-03-18_
 - [x] Loading states on all data fetches (isPending/isLoading in lists and forms; "Loading…" where relevant)
 - [x] Error states on all failed requests (submitError, mutation errors shown in forms and lists)
 - [x] Empty states on all list views (applications, notes, resumes, dashboard; shown when data loaded and total === 0)
 - [x] Form validation error messages visible (fieldErrors in AddApplicationForm, EditApplicationForm, etc.)
-- [ ] Responsive layout on common screen sizes
+- [x] Responsive layout on common screen sizes — shell/nav at 900px; lists/dashboard/page shells at 768px (applications list also 769–1024px tablet); forms/detail at 640px; notes add/editor forms at 640px (touch-friendly inputs + full-width primary actions); auth sign-in/error at 768px (edge padding, stacked full-width actions on error).
+      _Updated 2026-03-19_
 - [x] Seed file with realistic sample data (seed.active.ts, seed.demo.ts; npm run db:seed:active, db:seed:demo)
-- [ ] Auth0 login flow smooth and professional
+- [x] Auth0 login flow smooth and professional — `/auth/sign-in` interstitial + deep-link `returnTo` (path + search); `/auth/error` for callback failures; custom `onCallback` in `src/lib/auth0.ts`; public `/` for logged-out home.
+      _Updated 2026-03-19_
 - [ ] No console errors in browser dev tools
 - [ ] No broken UI states during typical flows
 

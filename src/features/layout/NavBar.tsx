@@ -38,7 +38,7 @@ export function NavBar() {
       </Link>
       <div className={styles.links}>
         {isAuthRoute ? (
-          <Link href="/auth/login" className={styles.link}>
+          <Link href="/auth/sign-in?returnTo=/" className={styles.link}>
             Log in
           </Link>
         ) : (

@@ -3,7 +3,7 @@
   min-height: 100vh;
   padding: 32px;
   background: transparent;
-  color: #171717;
+  color: var(--light-text);
 }
 
 /* Page header: title, welcome, avatar */
@@ -18,13 +18,13 @@
 .pageTitle {
   font-size: 28px;
   font-weight: 700;
-  color: #171717;
+  color: var(--light-text);
   margin: 0 0 4px 0;
 }
 
 .welcome {
   font-size: 1rem;
-  color: #666;
+  color: var(--light-text-muted);
   margin: 0;
 }
 
@@ -33,14 +33,14 @@
   height: 40px;
   border-radius: 50%;
   background-color: #e8e8e8;
-  color: #171717;
+  color: var(--light-text);
   font-size: 0.875rem;
   font-weight: 600;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  border: 1px solid #e0e0e0;
+  border: 1px solid var(--light-border);
 }
 
 /* Four-card grid: 2 columns, Overview + Recent left, Stats + Progress right */
@@ -50,23 +50,17 @@
   gap: 20px;
 }
 
-@media (max-width: 768px) {
-  .cardsGrid {
-    grid-template-columns: 1fr;
-  }
-}
-
 .card {
-  background: #fff;
-  border: 1px solid #e0e0e0;
-  border-radius: 10px;
+  background: var(--light-surface);
+  border: 1px solid var(--light-border);
+  border-radius: var(--radius-md);
   padding: 20px;
 }
 
 .cardTitle {
   font-size: 1rem;
   font-weight: 600;
-  color: #171717;
+  color: var(--light-text);
   margin: 0 0 16px 0;
 }
 
@@ -108,12 +102,12 @@
 .overviewStatValue {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #171717;
+  color: var(--light-text);
 }
 
 .overviewStatLabel {
   font-size: 0.8125rem;
-  color: #666;
+  color: var(--light-text-muted);
 }
 
 /* Recent Applications list */
@@ -139,7 +133,7 @@
   text-decoration: none;
   color: inherit;
   padding: 8px 0;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid var(--light-border);
 }
 
 .recentLink:hover {
@@ -149,13 +143,13 @@
 .recentJobTitle {
   font-size: 0.9375rem;
   font-weight: 600;
-  color: #171717;
+  color: var(--light-text);
   width: 100%;
 }
 
 .recentMeta {
   font-size: 0.8125rem;
-  color: #666;
+  color: var(--light-text-muted);
 }
 
 .statusPill {
@@ -208,20 +202,20 @@
 
 .progressLabel {
   font-size: 0.9375rem;
-  color: #171717;
+  color: var(--light-text);
 }
 
 .progressValue {
   font-size: 0.9375rem;
   font-weight: 600;
-  color: #171717;
+  color: var(--light-text);
   min-width: 24px;
   text-align: right;
 }
 
 .placeholder {
   font-size: 0.9375rem;
-  color: #666;
+  color: var(--light-text-muted);
   margin: 0;
   padding: 8px 0;
 }
@@ -234,7 +228,7 @@
 .title {
   font-size: 28px;
   font-weight: 700;
-  color: #171717;
+  color: var(--light-text);
   margin: 0;
 }
 
@@ -242,32 +236,32 @@
 .status,
 .error {
   margin: 0;
-  color: #666;
+  color: var(--light-text-muted);
 }
 
 .error {
-  color: #c62828;
+  color: var(--light-error);
 }
 
 .emptyState {
   margin-top: 24px;
   padding: 24px;
   text-align: center;
-  background: #fff;
-  border: 1px solid #e0e0e0;
-  border-radius: 10px;
+  background: var(--light-surface);
+  border: 1px solid var(--light-border);
+  border-radius: var(--radius-md);
 }
 
 .emptyTitle {
   font-size: 1.125rem;
   font-weight: 600;
-  color: #171717;
+  color: var(--light-text);
   margin: 0 0 8px 0;
 }
 
 .emptyText {
   font-size: 0.9375rem;
-  color: #666;
+  color: var(--light-text-muted);
   margin: 0 0 16px 0;
 }
 
@@ -278,4 +272,28 @@
 
 .emptyLink:hover {
   text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .cardsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .wrapper {
+    padding: 20px 16px;
+    box-sizing: border-box;
+  }
+
+  .pageHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .overviewStats {
+    grid-template-columns: 1fr;
+  }
+
+  .emptyState {
+    padding: 20px 16px;
+  }
 }

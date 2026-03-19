@@ -1,11 +1,19 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { auth0 } from "@/lib/auth0";
 
-/** Paths that do not require auth. Will later include landing and login page. */
+/** Paths that do not require auth. */
 const PUBLIC_PATH_PREFIX = "/auth";
 
+const PUBLIC_PATHS = new Set<string>(["/"]);
+
 function requiresAuth(pathname: string): boolean {
-  return !pathname.startsWith(PUBLIC_PATH_PREFIX);
+  if (pathname.startsWith(PUBLIC_PATH_PREFIX)) {
+    return false;
+  }
+  if (PUBLIC_PATHS.has(pathname)) {
+    return false;
+  }
+  return true;
 }
 
 export async function middleware(request: NextRequest) {
@@ -14,9 +22,10 @@ export async function middleware(request: NextRequest) {
   if (requiresAuth(pathname)) {
     const session = await auth0.getSession(request);
     if (!session) {
-      const loginUrl = new URL("/auth/login", request.url);
-      loginUrl.searchParams.set("returnTo", pathname);
-      return NextResponse.redirect(loginUrl);
+      const destination = `${pathname}${request.nextUrl.search}`;
+      const signInUrl = new URL("/auth/sign-in", request.url);
+      signInUrl.searchParams.set("returnTo", destination);
+      return NextResponse.redirect(signInUrl);
     }
   }
 

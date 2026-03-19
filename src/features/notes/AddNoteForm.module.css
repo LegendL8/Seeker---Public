@@ -14,7 +14,7 @@
 .label {
   font-size: 0.875rem;
   font-weight: 500;
-  color: #171717;
+  color: var(--light-text);
 }
 
 .input,
@@ -22,10 +22,10 @@
 .textarea {
   padding: 10px 12px;
   font-size: 0.875rem;
-  border: 1px solid #e0e0e0;
-  background: #fff;
-  color: #171717;
-  border-radius: 6px;
+  border: 1px solid var(--light-border);
+  background: var(--light-surface);
+  color: var(--light-text);
+  border-radius: var(--radius-sm);
 }
 
 .textarea {
@@ -49,7 +49,7 @@
   border: none;
   background: var(--accent-blue);
   color: #fff;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   align-self: flex-start;
 }
 
@@ -64,6 +64,28 @@
 
 .error {
   font-size: 0.875rem;
-  color: #c62828;
+  color: var(--light-error);
   margin: 0;
+}
+
+@media (max-width: 640px) {
+  .form {
+    gap: 14px;
+  }
+
+  .input,
+  .select,
+  .textarea {
+    font-size: 1rem;
+    padding: 12px 14px;
+  }
+
+  .submitBtn {
+    align-self: stretch;
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 44px;
+    padding: 12px 20px;
+    font-size: 1rem;
+  }
 }

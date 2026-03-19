@@ -20,8 +20,3 @@ Short reference for how we work on this project. Details are in the project rule
   _Updated 2026-03-13_
 
 ---
-
-## Documentation
-
-- ARCHITECTURE.md, ROADMAP.md, and API docs are updated only after the user says "Update the docs" and only for completed, tested work.
-- Do not update documentation during active development. When a feature is done and tests pass, suggest what to update and then update only after the user confirms.

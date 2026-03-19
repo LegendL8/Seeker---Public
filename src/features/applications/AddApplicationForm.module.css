@@ -10,7 +10,7 @@
 
 .backLink {
   font-size: 0.875rem;
-  color: #666;
+  color: var(--light-text-muted);
   text-decoration: none;
   display: inline-block;
   margin-bottom: 4px;
@@ -24,21 +24,21 @@
 .title {
   font-size: 28px;
   font-weight: 700;
-  color: #171717;
+  color: var(--light-text);
   margin: 0;
 }
 
 .formCard {
-  background: #fff;
-  border: 1px solid #e0e0e0;
-  border-radius: 10px;
+  background: var(--light-surface);
+  border: 1px solid var(--light-border);
+  border-radius: var(--radius-md);
   padding: 24px;
 }
 
 .fillFromLink {
   margin-bottom: 20px;
   padding-bottom: 20px;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid var(--light-border);
 }
 
 .fillFromLink .row .input {
@@ -70,21 +70,21 @@
 .label {
   font-size: 0.875rem;
   font-weight: 500;
-  color: #171717;
+  color: var(--light-text);
 }
 
 .required {
-  color: #c62828;
+  color: var(--light-error);
 }
 
 .input,
 .select {
   padding: 10px 12px;
   font-size: 1rem;
-  border: 1px solid #e0e0e0;
-  background: #fff;
-  color: #171717;
-  border-radius: 6px;
+  border: 1px solid var(--light-border);
+  background: var(--light-surface);
+  color: var(--light-text);
+  border-radius: var(--radius-sm);
 }
 
 .input:focus,
@@ -94,18 +94,18 @@
 }
 
 .input::placeholder {
-  color: #666;
+  color: var(--light-text-muted);
 }
 
 .error {
   font-size: 0.8125rem;
-  color: #c62828;
+  color: var(--light-error);
 }
 
 .submitError {
   margin: 0;
   font-size: 0.875rem;
-  color: #c62828;
+  color: var(--light-error);
 }
 
 .actions {
@@ -123,7 +123,7 @@
   border: none;
   background: var(--accent-blue);
   color: #fff;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
 }
 
 .submitBtn:hover:not(:disabled) {
@@ -137,10 +137,26 @@
 
 .cancelLink {
   font-size: 0.875rem;
-  color: #666;
+  color: var(--light-text-muted);
   text-decoration: underline;
 }
 
 .cancelLink:hover {
-  color: #171717;
+  color: var(--light-text);
+}
+
+@media (max-width: 640px) {
+  .row {
+    flex-direction: column;
+  }
+
+  .actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .submitBtn {
+    width: 100%;
+    box-sizing: border-box;
+  }
 }

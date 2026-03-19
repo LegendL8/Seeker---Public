@@ -54,6 +54,13 @@ When the Next.js app calls the Express API (e.g. GET /api/v1/me), it must send a
 
 ---
 
-## returnTo after login
+## Sign-in UX and `returnTo`
 
-When an unauthenticated user hits a protected path, we redirect to `/auth/login?returnTo=<path>`. The Auth0 SDK currently redirects back to `/` after login; it does not yet read `returnTo` to send the user to the original path. This will be addressed when we add the landing page and make the post-login redirect configurable.
+1. **Middleware** (`src/middleware.ts`): If there is no session and the path is not public, redirect to **`/auth/sign-in?returnTo=<path+search>`**. Public routes: **`/`** and anything under **`/auth/`**.
+2. **`/auth/sign-in`**: App page with short copy (“You need to sign in…”, “Signing you in…”) and an automatic forward to **`/auth/login?returnTo=...`** (Auth0 SDK route), which stores `returnTo` in the OAuth transaction and redirects to Auth0.
+3. **After callback:** On success, custom **`onCallback`** in `src/lib/auth0.ts` redirects to the stored `returnTo` (defaults to `/` if missing). Values are constrained to same-origin relative paths (aligned with SDK `toSafeRedirect`); shared helpers: `src/lib/authReturnTo.ts` (`sanitizeReturnTo`, `createAppPathRedirectUrl`).
+4. **Callback errors:** Failed exchanges redirect to **`/auth/error?code=<sdk_error_code>`** (optional `returnTo`) with clear copy and links (Try again / Home). If `APP_BASE_URL` is unavailable for an absolute redirect, a small HTML fallback is returned.
+
+**Direct `/auth/login`:** Still valid (e.g. deep links from docs); prefer user-facing links through **`/auth/sign-in`** so the interstitial runs first.
+
+**Logout:** **`/auth/logout`** (SDK). Ensure **Allowed Logout URLs** in Auth0 includes your app origin (e.g. `http://localhost:3000` and production URL) so users return to the app after Auth0 logout.

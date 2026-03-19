@@ -14,7 +14,7 @@
 .title {
   font-size: 28px;
   font-weight: 700;
-  color: #171717;
+  color: var(--light-text);
   margin: 0;
 }
 
@@ -24,7 +24,7 @@
   padding: 8px 12px;
   background: var(--accent-blue);
   color: #fff;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   text-decoration: none;
 }
 
@@ -44,15 +44,15 @@
   align-items: center;
   flex: 1;
   max-width: 280px;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  background: #fff;
+  border: 1px solid var(--light-border);
+  border-radius: var(--radius-xs);
+  background: var(--light-surface);
   padding: 0 12px;
 }
 
 .searchIcon {
   font-size: 0.875rem;
-  color: #666;
+  color: var(--light-text-muted);
   margin-right: 8px;
 }
 
@@ -60,23 +60,23 @@
   flex: 1;
   padding: 10px 0;
   font-size: 0.9375rem;
-  color: #171717;
+  color: var(--light-text);
   background: transparent;
   border: none;
   outline: none;
 }
 
 .searchInput::placeholder {
-  color: #666;
+  color: var(--light-text-muted);
 }
 
 .stageSelect {
   font-size: 0.875rem;
   padding: 8px 12px;
-  border: 1px solid #e0e0e0;
-  border-radius: 6px;
-  background: #fff;
-  color: #171717;
+  border: 1px solid var(--light-border);
+  border-radius: var(--radius-sm);
+  background: var(--light-surface);
+  color: var(--light-text);
   cursor: pointer;
 }
 
@@ -90,15 +90,15 @@
 .tab {
   font-size: 0.875rem;
   padding: 8px 14px;
-  border: 1px solid #e0e0e0;
-  background: #fff;
-  color: #171717;
+  border: 1px solid var(--light-border);
+  background: var(--light-surface);
+  color: var(--light-text);
   cursor: pointer;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
 }
 
 .tab:hover {
-  background: #f5f5f5;
+  background: var(--light-surface-hover);
 }
 
 .tabActive {
@@ -108,9 +108,9 @@
 }
 
 .tableCard {
-  background: #fff;
-  border: 1px solid #e0e0e0;
-  border-radius: 10px;
+  background: var(--light-surface);
+  border: 1px solid var(--light-border);
+  border-radius: var(--radius-md);
   padding: 16px;
   margin-bottom: 16px;
 }
@@ -121,19 +121,19 @@
   gap: 12px;
   padding-bottom: 12px;
   margin-bottom: 12px;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid var(--light-border);
   flex-wrap: wrap;
 }
 
 .tableHeaderTitle {
   font-size: 0.875rem;
   font-weight: 600;
-  color: #171717;
+  color: var(--light-text);
 }
 
 .tableHeaderRange {
   font-size: 0.8125rem;
-  color: #666;
+  color: var(--light-text-muted);
   margin-left: auto;
 }
 
@@ -153,8 +153,8 @@
   appearance: none;
   width: 18px;
   height: 18px;
-  border: 1px solid #e0e0e0;
-  background: #fff;
+  border: 1px solid var(--light-border);
+  background: var(--light-surface);
   border-radius: 4px;
   cursor: pointer;
   flex-shrink: 0;
@@ -177,30 +177,30 @@
   width: 32px;
   height: 32px;
   padding: 0;
-  border: 1px solid #e0e0e0;
-  background: #fff;
-  color: #171717;
+  border: 1px solid var(--light-border);
+  background: var(--light-surface);
+  color: var(--light-text);
   cursor: pointer;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   font-size: 0.875rem;
 }
 
 .iconBtn:hover {
-  background: #f5f5f5;
+  background: var(--light-surface-hover);
 }
 
 .archivedBtn {
   font-size: 0.8125rem;
   padding: 6px 10px;
-  border: 1px solid #e0e0e0;
-  background: #fff;
-  color: #171717;
+  border: 1px solid var(--light-border);
+  background: var(--light-surface);
+  color: var(--light-text);
   cursor: pointer;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
 }
 
 .archivedBtn:hover {
-  background: #f5f5f5;
+  background: var(--light-surface-hover);
 }
 
 .rowList {
@@ -215,7 +215,7 @@
   align-items: center;
   gap: 12px 16px;
   padding: 14px 0;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid var(--light-border);
   font-size: 0.875rem;
 }
 
@@ -233,9 +233,9 @@
 .logoPlaceholder {
   width: 40px;
   height: 40px;
-  border-radius: 8px;
+  border-radius: var(--radius-xs);
   background: #e8e8e8;
-  color: #666;
+  color: var(--light-text-muted);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -253,7 +253,7 @@
 
 .jobTitleLink {
   font-weight: 600;
-  color: #171717;
+  color: var(--light-text);
   text-decoration: none;
 }
 
@@ -264,7 +264,7 @@
 
 .companyLine {
   font-size: 0.8125rem;
-  color: #666;
+  color: var(--light-text-muted);
 }
 
 .pill {
@@ -272,7 +272,7 @@
   font-size: 0.75rem;
   font-weight: 500;
   padding: 4px 10px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   white-space: nowrap;
 }
 
@@ -298,16 +298,16 @@
 
 .pillRejected {
   background: #ffebee;
-  color: #c62828;
+  color: var(--light-error);
 }
 
 .dateCell {
-  color: #666;
+  color: var(--light-text-muted);
   white-space: nowrap;
 }
 
 .salaryCell {
-  color: #171717;
+  color: var(--light-text);
   white-space: nowrap;
 }
 
@@ -317,7 +317,7 @@
   background: var(--accent-blue);
   color: #fff;
   border: none;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   text-decoration: none;
   cursor: pointer;
   white-space: nowrap;
@@ -335,17 +335,17 @@
   width: 32px;
   height: 32px;
   padding: 0;
-  border: 1px solid #e0e0e0;
-  background: #fff;
-  color: #171717;
+  border: 1px solid var(--light-border);
+  background: var(--light-surface);
+  color: var(--light-text);
   cursor: pointer;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   font-size: 1.125rem;
   line-height: 1;
 }
 
 .menuBtn:hover {
-  background: #f5f5f5;
+  background: var(--light-surface-hover);
 }
 
 .menuDropdown {
@@ -354,9 +354,9 @@
   top: 100%;
   margin-top: 4px;
   min-width: 120px;
-  background: #fff;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
+  background: var(--light-surface);
+  border: 1px solid var(--light-border);
+  border-radius: var(--radius-xs);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   z-index: 10;
   padding: 4px 0;
@@ -366,12 +366,12 @@
   display: block;
   padding: 8px 12px;
   font-size: 0.875rem;
-  color: #171717;
+  color: var(--light-text);
   text-decoration: none;
 }
 
 .menuItem:hover {
-  background: #f5f5f5;
+  background: var(--light-surface-hover);
 }
 
 .pagination {
@@ -386,15 +386,15 @@
   height: 36px;
   padding: 0 8px;
   font-size: 0.875rem;
-  border: 1px solid #e0e0e0;
-  background: #fff;
-  color: #171717;
+  border: 1px solid var(--light-border);
+  background: var(--light-surface);
+  color: var(--light-text);
   cursor: pointer;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
 }
 
 .pageBtn:hover:not(:disabled) {
-  background: #f5f5f5;
+  background: var(--light-surface-hover);
 }
 
 .pageBtn:disabled {
@@ -410,7 +410,7 @@
 
 .pageInfo {
   font-size: 0.875rem;
-  color: #666;
+  color: var(--light-text-muted);
   margin-left: 12px;
 }
 
@@ -418,11 +418,11 @@
 .empty,
 .error {
   margin: 0;
-  color: #666;
+  color: var(--light-text-muted);
 }
 
 .error {
-  color: #c62828;
+  color: var(--light-error);
 }
 
 .emptyLink {
@@ -432,4 +432,116 @@
 
 .emptyLink:hover {
   opacity: 0.9;
+}
+
+/* Tablet: keep row layout but allow horizontal scroll inside the card */
+@media (max-width: 1024px) and (min-width: 769px) {
+  .tableCard {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .row {
+    min-width: 720px;
+  }
+}
+
+/* Phone: stack each application as a card */
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .addLink {
+    text-align: center;
+  }
+
+  .toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .searchWrap {
+    max-width: none;
+  }
+
+  .tableHeaderRange {
+    margin-left: 0;
+    flex-basis: 100%;
+    width: 100%;
+  }
+
+  .tableHeaderActions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .tableCard {
+    overflow-x: visible;
+  }
+
+  .row {
+    min-width: 0;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: start;
+    gap: 10px 12px;
+    padding: 16px 0;
+  }
+
+  .row > .checkboxLabel {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .row > .menuWrap {
+    grid-column: 3;
+    grid-row: 1;
+    justify-self: end;
+  }
+
+  .row > .jobCell {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+
+  .row > .pill {
+    grid-column: 1 / -1;
+    grid-row: 3;
+    justify-self: start;
+  }
+
+  .row > .dateCell {
+    grid-column: 1 / -1;
+    grid-row: 4;
+  }
+
+  .row > .salaryCell {
+    grid-column: 1 / -1;
+    grid-row: 5;
+    white-space: normal;
+  }
+
+  .row > .viewBtn {
+    grid-column: 1 / -1;
+    grid-row: 6;
+    display: block;
+    text-align: center;
+    box-sizing: border-box;
+  }
+
+  .pagination {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .pageInfo {
+    flex: 0 0 auto;
+    margin-left: 8px;
+    white-space: nowrap;
+  }
 }

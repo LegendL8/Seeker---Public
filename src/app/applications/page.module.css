@@ -2,7 +2,7 @@
   min-height: 100vh;
   padding: 32px;
   background: transparent;
-  color: #171717;
+  color: var(--light-text);
 }
 
 .main {
@@ -11,4 +11,14 @@
   margin-left: auto;
   margin-right: auto;
   box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  .page {
+    padding: 20px 16px;
+  }
+
+  .main {
+    max-width: 100%;
+  }
 }

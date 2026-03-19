@@ -35,7 +35,7 @@ giving job seekers their own dashboard to track applications, interviews, notes,
 | Validation       | Zod (forms, API input, and env vars)               |
 | Logging          | Pino + pino-http                                   |
 | Error Structure  | Custom error classes (extend native Error)         |
-| Styling          | Pure CSS — CSS Modules, BEM, CSS Custom Properties |
+| Styling          | Pure CSS — CSS Modules, BEM, CSS Custom Properties (shared tokens in `globals.css`; see Frontend styling below) |
 | Dependencies     | Minimal — prefer built-ins over libraries          |
 
 ### Flagged for Implementation
@@ -80,6 +80,9 @@ giving job seekers their own dashboard to track applications, interviews, notes,
 - Frontend automatically refreshes access tokens before expiration
 - Backend verifies JWT signature only — no session storage
 - Optional in-process user cache: short-TTL cache keyed by JWT sub in requireAuth; cache hit avoids DB user lookup (O(1)). TTL e.g. 60s. On miss, DB lookup and cache set.
+
+**Next.js (App Router) session gate:** `src/middleware.ts` requires a session for all routes except **`/`** (logged-out entry) and **`/auth/*`** (Auth0 SDK routes plus app-owned auth pages). Unauthenticated visitors to a protected URL are redirected to **`/auth/sign-in?returnTo=<path+search>`** (`returnTo` preserves query string). That page shows short copy and sends the user to **`/auth/login?returnTo=...`** (SDK), which starts the Auth0 authorize redirect. After a successful OAuth callback, **`Auth0Client` `onCallback`** in `src/lib/auth0.ts` redirects to the transaction’s `returnTo` using the same URL resolution rules as the SDK (including `NEXT_PUBLIC_BASE_PATH` when set); helpers live in `src/lib/authReturnTo.ts` (`sanitizeReturnTo`, `createAppPathRedirectUrl`). On callback **failure**, `onCallback` redirects to **`/auth/error?code=...`** (optional `returnTo` for “Try again”) with user-facing copy; if **`APP_BASE_URL`** cannot be resolved, a minimal HTML response with relative links is returned instead of a bare 500. Logout remains **`/auth/logout`** (SDK); post-logout landing is governed by Auth0 **Allowed Logout URLs** (typically the app origin).
+  _Added 2026-03-19_
 
 ### Authorization
 
@@ -188,6 +191,13 @@ _Added 2026-03-10_
 Resumes list: GET `/api/v1/resumes` accepts `?page=1&limit=20` (limit max 100), returns `{ items, page, limit, total }`. GET `/api/v1/resumes/:id/preview` streams PDF for inline preview (PDF only; 400 for DOCX). Upload limit: RESUME*CAP per user (server/resumes/types.ts; frontend matches). Frontend: `useResumesList(page, limit)`, ResumesList with pagination UI; PDF preview in modal iframe, DOCX via signed URL in new tab. setActiveResume: one conditional update when setting active (SET is_active = (id = :id) WHERE user_id); one update when inactive; no separate read or bulk step.
 \_Added 2026-03-13\*
 \_Updated 2026-03-19*
+
+### Frontend styling (authenticated light content area)
+
+- Main column background uses `var(--light-bg)` (`src/app/layout.module.css`). Shared light-surface tokens are defined on `:root` in `src/app/globals.css` (e.g. `--light-text`, `--light-text-muted`, `--light-surface`, `--light-surface-hover`, `--light-border`, `--light-error`, `--light-shadow-card`, `--radius-sm` / `--radius-md` / `--radius-xs` / `--radius-pill`). Feature `*.module.css` files reference these for borders, text, inputs, cards, and controls in the light main area. Earlier `:root` entries (dark background/foreground) remain for document-level defaults; the sidebar (NavBar) keeps its own module styles.
+  _Added 2026-03-18_
+- Responsive layout: CSS Modules use `@media` at **900px** (app shell + NavBar), **768px** (main list views, dashboard, page shells, auth sign-in/error), **769–1024px** (applications list tablet row scroll), and **640px** (several forms and application detail). Notes add form and note editor use **640px** for larger tap targets and full-width primary actions where relevant; auth error page stacks action links full width at **768px**.
+  _Added 2026-03-19_
 
 ### Implementation Notes
 
