@@ -41,7 +41,7 @@ export function AddInterviewForm({
 
   const createMutation = useCreateInterview(applicationId);
 
-  function handleSubmit(e: React.FormEvent) {
+  function handleSubmit(e: React.SyntheticEvent) {
     e.preventDefault();
     const body: CreateInterviewInput = {
       interviewType,

@@ -10,6 +10,7 @@ export interface Application {
   location: string | null;
   salaryMin: number | null;
   salaryMax: number | null;
+  salaryPeriod?: "yearly" | "hourly";
   status: string;
   appliedAt: string | null;
   source: string | null;

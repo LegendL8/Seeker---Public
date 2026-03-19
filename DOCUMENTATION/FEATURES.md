@@ -11,7 +11,7 @@ Open source. All features are free.
 - View job posting status on application detail
 - Manually update posting status: `"active" | "closed" | "filled" | "unknown"`
 - Track application status: `"saved" | "applied" | "interviewing" | "offered" | "rejected" | "withdrawn"`
-- Edit application details — job title, company, location, URL, salary range, date applied
+- Edit application details — job title, company, location, URL, salary range (yearly e.g. 150,000 or hourly e.g. $75.00), salary period, date applied
 - Delete an application
 - Paginated applications list
 - Filter by status

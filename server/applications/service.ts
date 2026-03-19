@@ -122,6 +122,7 @@ export async function createApplication(
       location: body.location ?? null,
       salaryMin: body.salaryMin ?? null,
       salaryMax: body.salaryMax ?? null,
+      salaryPeriod: body.salaryPeriod ?? "yearly",
       appliedAt: body.appliedAt ? new Date(body.appliedAt) : null,
       source: body.source ?? null,
       resumeId: body.resumeId ?? null,
@@ -147,6 +148,7 @@ export async function updateApplication(
   if (body.location !== undefined) update.location = body.location;
   if (body.salaryMin !== undefined) update.salaryMin = body.salaryMin;
   if (body.salaryMax !== undefined) update.salaryMax = body.salaryMax;
+  if (body.salaryPeriod !== undefined) update.salaryPeriod = body.salaryPeriod;
   if (body.appliedAt !== undefined)
     update.appliedAt = body.appliedAt ? new Date(body.appliedAt) : null;
   if (body.source !== undefined) update.source = body.source;

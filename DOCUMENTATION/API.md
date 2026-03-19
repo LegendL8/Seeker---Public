@@ -155,6 +155,7 @@ _Added 2026-03-09_
   "location": "string | null",
   "salaryMin": "integer | null",
   "salaryMax": "integer | null",
+  "salaryPeriod": "yearly | hourly",
   "status": "saved | applied | interviewing | offered | rejected",
   "appliedAt": "timestamptz | null",
   "source": "string | null",
@@ -177,9 +178,12 @@ All fields optional — only send what is changing:
   "postingStatus": "active | closed | filled | unknown",
   "status": "saved | applied | interviewing | offered | rejected",
   "salaryMin": "integer | null",
-  "salaryMax": "integer | null"
+  "salaryMax": "integer | null",
+  "salaryPeriod": "yearly | hourly | null"
 }
 ```
+
+**Salary:** Stored in cents. When `salaryPeriod` is `yearly`, values are cents per year; when `hourly`, cents per hour. Optional on create/update; default `yearly`. Display: yearly e.g. "$145,600 – $156,000", hourly e.g. "$75.00 – $85.00 /hr".
 
 **Implemented:** Same status union as POST. All fields optional — only send what is changing. Status union same as POST.
 _Amended 2026-03-09_

@@ -8,6 +8,13 @@
       "when": 1773023823370,
       "tag": "0000_premium_doctor_spectrum",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1773883728132,
+      "tag": "0001_clear_bastion",
+      "breakpoints": true
     }
   ]
 }

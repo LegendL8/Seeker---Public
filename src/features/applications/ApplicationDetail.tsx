@@ -37,12 +37,25 @@ function formatDateTime(iso: string | null): string {
   }
 }
 
-/** API stores salary in cents. */
-function formatSalary(min: number | null, max: number | null): string {
+/** API stores salary in cents (yearly cents or hourly cents per salaryPeriod). */
+function formatSalary(
+  min: number | null,
+  max: number | null,
+  period: "yearly" | "hourly" = "yearly",
+): string {
   if (min == null && max == null) return "—";
+  const dollars = (cents: number) => cents / 100;
+  if (period === "hourly") {
+    const fmt = (c: number) => `$${dollars(c).toFixed(2)}`;
+    const suffix = " /hr";
+    if (min != null && max != null)
+      return `${fmt(min)} – ${fmt(max)}${suffix}`;
+    if (min != null) return `${fmt(min)}${suffix}`;
+    return `${fmt(max!)}${suffix}`;
+  }
   const fmt = (cents: number) =>
     new Intl.NumberFormat("en-US", { style: "decimal" }).format(
-      Math.round(cents / 100),
+      Math.round(dollars(cents)),
     );
   if (min != null && max != null) return `$${fmt(min)} – $${fmt(max)}`;
   if (min != null) return `$${fmt(min)}`;
@@ -123,7 +136,11 @@ export function ApplicationDetail() {
 
           <dt className={styles.dt}>Salary</dt>
           <dd className={styles.dd}>
-            {formatSalary(application.salaryMin, application.salaryMax)}
+            {formatSalary(
+              application.salaryMin,
+              application.salaryMax,
+              application.salaryPeriod ?? "yearly",
+            )}
           </dd>
 
           <dt className={styles.dt}>Applied date</dt>

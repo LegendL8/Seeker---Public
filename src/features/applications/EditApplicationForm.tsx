@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import {
   updateApplicationFormSchema,
+  salaryStringToCents,
   type UpdateApplicationFormInput,
   type UpdateApplicationFormValues,
 } from "./schemas";
@@ -23,14 +24,28 @@ const STATUS_OPTIONS: {
   { value: "rejected", label: "Rejected" },
 ];
 
+function centsToDisplayString(
+  cents: number,
+  period: "yearly" | "hourly",
+): string {
+  const dollars = cents / 100;
+  return period === "hourly"
+    ? dollars.toFixed(2)
+    : dollars.toLocaleString("en-US", { maximumFractionDigits: 0 });
+}
+
 function applicationToFormInput(app: Application): UpdateApplicationFormInput {
+  const period = app.salaryPeriod ?? "yearly";
   return {
     jobTitle: app.jobTitle,
     status: app.status as UpdateApplicationFormValues["status"],
     jobPostingUrl: app.jobPostingUrl ?? "",
     location: app.location ?? "",
-    salaryMin: app.salaryMin != null ? String(app.salaryMin) : "",
-    salaryMax: app.salaryMax != null ? String(app.salaryMax) : "",
+    salaryPeriod: period,
+    salaryMin:
+      app.salaryMin != null ? centsToDisplayString(app.salaryMin, period) : "",
+    salaryMax:
+      app.salaryMax != null ? centsToDisplayString(app.salaryMax, period) : "",
     appliedAt: app.appliedAt ? app.appliedAt.slice(0, 10) : "",
     source: app.source ?? "",
     resumeId: app.resumeId ?? "",
@@ -69,7 +84,7 @@ export function EditApplicationForm({
     }
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  function handleSubmit(e: React.SyntheticEvent) {
     e.preventDefault();
     setFieldErrors({});
     const parsed = updateApplicationFormSchema.safeParse(values);
@@ -87,13 +102,21 @@ export function EditApplicationForm({
       return;
     }
     const body = parsed.data;
+    const period = body.salaryPeriod ?? "yearly";
     mutate({
       jobTitle: body.jobTitle,
       status: body.status,
       jobPostingUrl: body.jobPostingUrl ?? undefined,
       location: body.location ?? undefined,
-      salaryMin: body.salaryMin ?? undefined,
-      salaryMax: body.salaryMax ?? undefined,
+      salaryMin: salaryStringToCents(
+        body.salaryMin ?? undefined,
+        period,
+      ) ?? null,
+      salaryMax: salaryStringToCents(
+        body.salaryMax ?? undefined,
+        period,
+      ) ?? null,
+      salaryPeriod: period,
       appliedAt: body.appliedAt ?? undefined,
       source: body.source ?? undefined,
       resumeId: body.resumeId ?? undefined,
@@ -189,15 +212,30 @@ export function EditApplicationForm({
 
           <div className={styles.row}>
             <div className={styles.field}>
+              <label htmlFor="salaryPeriod" className={styles.label}>
+                Salary type
+              </label>
+              <select
+                id="salaryPeriod"
+                name="salaryPeriod"
+                value={values.salaryPeriod ?? "yearly"}
+                onChange={handleChange}
+                className={styles.select}
+                disabled={isPending}
+              >
+                <option value="yearly">Yearly</option>
+                <option value="hourly">Hourly</option>
+              </select>
+            </div>
+            <div className={styles.field}>
               <label htmlFor="salaryMin" className={styles.label}>
                 Salary min
               </label>
               <input
                 id="salaryMin"
                 name="salaryMin"
-                type="number"
-                min={0}
-                step={1}
+                type="text"
+                inputMode="decimal"
                 value={
                   values.salaryMin === undefined || values.salaryMin === null
                     ? ""
@@ -205,6 +243,11 @@ export function EditApplicationForm({
                 }
                 onChange={handleChange}
                 className={styles.input}
+                placeholder={
+                  (values.salaryPeriod ?? "yearly") === "hourly"
+                    ? "e.g. $75.00"
+                    : "e.g. 150,000"
+                }
                 disabled={isPending}
               />
               {fieldErrors.salaryMin && (
@@ -218,9 +261,8 @@ export function EditApplicationForm({
               <input
                 id="salaryMax"
                 name="salaryMax"
-                type="number"
-                min={0}
-                step={1}
+                type="text"
+                inputMode="decimal"
                 value={
                   values.salaryMax === undefined || values.salaryMax === null
                     ? ""
@@ -228,6 +270,11 @@ export function EditApplicationForm({
                 }
                 onChange={handleChange}
                 className={styles.input}
+                placeholder={
+                  (values.salaryPeriod ?? "yearly") === "hourly"
+                    ? "e.g. $85.00"
+                    : "e.g. 180,000"
+                }
                 disabled={isPending}
               />
               {fieldErrors.salaryMax && (

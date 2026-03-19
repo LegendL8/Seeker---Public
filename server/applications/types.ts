@@ -12,6 +12,10 @@ export type ApplicationStatus = (typeof APPLICATION_STATUSES)[number];
 
 export const applicationStatusSchema = z.enum(APPLICATION_STATUSES);
 
+export const SALARY_PERIODS = ["yearly", "hourly"] as const;
+export type SalaryPeriod = (typeof SALARY_PERIODS)[number];
+export const salaryPeriodSchema = z.enum(SALARY_PERIODS);
+
 const optionalString = (max: number) => z.string().max(max).optional();
 const optionalUuid = () => z.string().uuid().optional();
 
@@ -26,6 +30,7 @@ export const createApplicationBodySchema = z.object({
   location: optionalString(255),
   salaryMin: z.number().int().optional(),
   salaryMax: z.number().int().optional(),
+  salaryPeriod: salaryPeriodSchema.optional(),
   appliedAt: z.string().datetime().optional(),
   source: optionalString(255),
   resumeId: optionalUuid(),
@@ -43,6 +48,7 @@ export const updateApplicationBodySchema = z.object({
   location: optionalString(255).nullable(),
   salaryMin: z.number().int().optional().nullable(),
   salaryMax: z.number().int().optional().nullable(),
+  salaryPeriod: salaryPeriodSchema.optional().nullable(),
   appliedAt: z.string().datetime().optional().nullable(),
   source: optionalString(255).nullable(),
   resumeId: optionalUuid().nullable(),

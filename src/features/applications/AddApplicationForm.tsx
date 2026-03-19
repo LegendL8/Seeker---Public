@@ -7,6 +7,7 @@ import { useCreateApplication } from "./hooks/useCreateApplication";
 import { useResumesList } from "@/features/resumes/hooks/useResumesList";
 import {
   createApplicationFormSchema,
+  salaryStringToCents,
   type CreateApplicationFormInput,
   type CreateApplicationFormValues,
 } from "./schemas";
@@ -28,6 +29,7 @@ const initialValues: CreateApplicationFormInput = {
   status: "saved",
   jobPostingUrl: "",
   location: "",
+  salaryPeriod: "yearly",
   salaryMin: undefined,
   salaryMax: undefined,
   appliedAt: undefined,
@@ -86,7 +88,7 @@ export function AddApplicationForm() {
     }
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  function handleSubmit(e: React.SyntheticEvent) {
     e.preventDefault();
     setFieldErrors({});
     const parsed = createApplicationFormSchema.safeParse(values);
@@ -104,13 +106,15 @@ export function AddApplicationForm() {
       return;
     }
     const body = parsed.data;
+    const period = body.salaryPeriod ?? "yearly";
     mutate({
       jobTitle: body.jobTitle,
       status: body.status,
       jobPostingUrl: body.jobPostingUrl,
       location: body.location,
-      salaryMin: body.salaryMin,
-      salaryMax: body.salaryMax,
+      salaryMin: salaryStringToCents(body.salaryMin, period),
+      salaryMax: salaryStringToCents(body.salaryMax, period),
+      salaryPeriod: period,
       appliedAt: body.appliedAt,
       source: body.source,
       resumeId: body.resumeId,
@@ -238,20 +242,40 @@ export function AddApplicationForm() {
 
           <div className={styles.row}>
             <div className={styles.field}>
+              <label htmlFor="salaryPeriod" className={styles.label}>
+                Salary type
+              </label>
+              <select
+                id="salaryPeriod"
+                name="salaryPeriod"
+                value={values.salaryPeriod ?? "yearly"}
+                onChange={handleChange}
+                className={styles.select}
+                disabled={isPending}
+              >
+                <option value="yearly">Yearly</option>
+                <option value="hourly">Hourly</option>
+              </select>
+            </div>
+            <div className={styles.field}>
               <label htmlFor="salaryMin" className={styles.label}>
                 Salary min
               </label>
               <input
                 id="salaryMin"
                 name="salaryMin"
-                type="number"
-                min={0}
-                step={1}
+                type="text"
+                inputMode="decimal"
                 value={
                   values.salaryMin === undefined ? "" : String(values.salaryMin)
                 }
                 onChange={handleChange}
                 className={styles.input}
+                placeholder={
+                  (values.salaryPeriod ?? "yearly") === "hourly"
+                    ? "e.g. $75.00"
+                    : "e.g. 150,000"
+                }
                 disabled={isPending}
               />
               {fieldErrors.salaryMin && (
@@ -265,14 +289,18 @@ export function AddApplicationForm() {
               <input
                 id="salaryMax"
                 name="salaryMax"
-                type="number"
-                min={0}
-                step={1}
+                type="text"
+                inputMode="decimal"
                 value={
                   values.salaryMax === undefined ? "" : String(values.salaryMax)
                 }
                 onChange={handleChange}
                 className={styles.input}
+                placeholder={
+                  (values.salaryPeriod ?? "yearly") === "hourly"
+                    ? "e.g. $85.00"
+                    : "e.g. 180,000"
+                }
                 disabled={isPending}
               />
               {fieldErrors.salaryMax && (

@@ -94,9 +94,10 @@ Tracks job applications submitted by the user.
 | posting_status            | varchar(20)  | NOT NULL, DEFAULT 'unknown'                      | `"active"                        | "closed"  | "filled"       | "unknown"` |
 | posting_status_checked_at | timestamptz  |                                                  | Null until first automated check |
 | location                  | varchar(255) |                                                  |                                  |
-| salary_min                | integer      |                                                  | In cents                         |
-| salary_max                | integer      |                                                  | In cents                         |
-| status                    | varchar(20)  | NOT NULL, DEFAULT 'saved'                        | `"saved"                         | "applied" | "interviewing" | "offered"  | "rejected" | "withdrawn"` |
+| salary_min                | integer      |                                                  | Cents (per year or per hour)     |
+| salary_max                | integer      |                                                  | Cents (per year or per hour)     |
+| salary_period             | varchar(20)  | NOT NULL, DEFAULT 'yearly'                       | `"yearly"` \| `"hourly"`         |
+| status                    | varchar(20)  | NOT NULL, DEFAULT 'saved'                        | `"saved"` \| `"applied"` \| `"interviewing"` \| `"offer"` \| `"rejected"` |
 | applied_at                | timestamptz  |                                                  |                                  |
 | source                    | varchar(255) |                                                  |                                  |
 | resume_id                 | uuid         | REFERENCES resumes(id) ON DELETE SET NULL        |                                  |

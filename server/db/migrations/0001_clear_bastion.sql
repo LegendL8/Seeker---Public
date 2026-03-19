@@ -1,0 +1,1 @@
+ALTER TABLE "applications" ADD COLUMN "salary_period" varchar(20) DEFAULT 'yearly' NOT NULL;

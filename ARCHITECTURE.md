@@ -170,9 +170,9 @@ giving job seekers their own dashboard to track applications, interviews, notes,
 └── [root config files]
 ```
 
-Applications feature implemented: `server/applications/` (types.ts, service.ts, routes.ts). List/Get/Create/Update/Delete with offset pagination and Zod validation. Frontend: `src/features/applications/` (list, detail, add form, edit form, delete with confirm); routes `/applications`, `/applications/new`, `/applications/[id]`, `/applications/[id]/edit`.
+Applications feature implemented: `server/applications/` (types.ts, service.ts, routes.ts). List/Get/Create/Update/Delete with offset pagination and Zod validation. Salary: `salary_min`/`salary_max` stored in cents; `salary_period` (`yearly` | `hourly`) indicates unit. Frontend form accepts yearly (e.g. "150,000") or hourly (e.g. "$75.00"); list and detail display with period (e.g. "$145,600 – $156,000" or "$75.00 – $85.00 /hr"). Applications list uses wider content area (main max-width 1100px) so row fits. Frontend: `src/features/applications/` (list, detail, add form, edit form, delete with confirm); routes `/applications`, `/applications/new`, `/applications/[id]`, `/applications/[id]/edit`.
 _Updated 2026-03-09_
-_Added 2026-03-09_
+_Updated 2026-03-19_
 
 Interviews: `server/interviews/` (types.ts, service.ts, routes.ts). Nested under applications: GET/POST `/api/v1/applications/:applicationId/interviews`. Standalone: GET/PATCH/DELETE `/api/v1/interviews/:id`. PATCH no-op returns first-fetched row (one read). Frontend: `src/features/interviews/` (InterviewList, AddInterviewForm on application detail). Application detail page prefetches interviews in parallel (ApplicationDetail calls useInterviewsForApplication(id) at top level with route id).
 _Added 2026-03-10_
@@ -185,7 +185,7 @@ _Updated 2026-03-17_
 Dashboard: `server/dashboard/` (types.ts, cache.ts, service.ts, routes.ts). GET `/api/v1/dashboard/metrics` returns totalApplications, applicationsByStatus (saved, applied, interviewing, offer, rejected), interviewRate, activeApplications, offersReceived, rejectionsReceived. Redis cache per user (60s TTL); invalidated on application or interview create/update/delete. Frontend: `src/features/dashboard/` (Dashboard at `/` when authenticated, useDashboardMetrics, fetchDashboardMetrics).
 _Added 2026-03-10_
 
-Resumes list: GET `/api/v1/resumes` accepts `?page=1&limit=20` (limit max 100), returns `{ items, page, limit, total }`. GET `/api/v1/resumes/:id/preview` streams PDF for inline preview (PDF only; 400 for DOCX). Upload limit: RESUME*CAP per user (server/resumes/types.ts; frontend matches). Frontend: `useResumesList(page, limit)`, ResumesList with pagination UI; PDF preview in modal iframe, DOCX via signed URL in new tab. setActiveResume: one conditional update when setting active (SET is_active = (id = :id) WHERE user_id); one update when inactive; no separate read or bulk step.
+Resumes list: GET `/api/v1/resumes` accepts `?page=1&limit=20` (limit max 100), returns `{ items, page, limit, total }`. GET `/api/v1/resumes/:id/preview` streams PDF for inline preview (PDF only; 400 for DOCX). Upload limit: RESUME_CAP per user (server/resumes/types.ts; frontend matches). Frontend: `useResumesList(page, limit)`, ResumesList with pagination UI; PDF preview in modal iframe, DOCX via signed URL in new tab. setActiveResume: one conditional update when setting active (SET is_active = (id = :id) WHERE user_id); one update when inactive; no separate read or bulk step.
 \_Added 2026-03-13*
 _Updated 2026-03-19_
 

@@ -57,14 +57,26 @@ describe("createApplicationFormSchema", () => {
     ).toThrow();
   });
 
-  it("transforms salary string to number", () => {
+  it("accepts valid salary string and defaults salaryPeriod to yearly", () => {
     const result = createApplicationFormSchema.parse({
       jobTitle: "Engineer",
       salaryMin: "100000",
       salaryMax: "150000",
     });
-    expect(result.salaryMin).toBe(100000);
-    expect(result.salaryMax).toBe(150000);
+    expect(result.salaryPeriod).toBe("yearly");
+    expect(result.salaryMin).toBe("100000");
+    expect(result.salaryMax).toBe("150000");
+  });
+
+  it("accepts salary with commas and dollar sign", () => {
+    const result = createApplicationFormSchema.parse({
+      jobTitle: "Engineer",
+      salaryPeriod: "yearly",
+      salaryMin: "150,000",
+      salaryMax: "180,000",
+    });
+    expect(result.salaryMin).toBe("150,000");
+    expect(result.salaryMax).toBe("180,000");
   });
 
   it("transforms empty salary to undefined", () => {
@@ -109,6 +121,7 @@ describe("createApplicationFormSchema", () => {
       status: "interviewing",
       jobPostingUrl: "https://example.com/job",
       location: "Remote",
+      salaryPeriod: "yearly",
       salaryMin: "120000",
       salaryMax: "160000",
       appliedAt: "2025-02-01",
@@ -118,8 +131,9 @@ describe("createApplicationFormSchema", () => {
     expect(result.status).toBe("interviewing");
     expect(result.jobPostingUrl).toBe("https://example.com/job");
     expect(result.location).toBe("Remote");
-    expect(result.salaryMin).toBe(120000);
-    expect(result.salaryMax).toBe(160000);
+    expect(result.salaryPeriod).toBe("yearly");
+    expect(result.salaryMin).toBe("120000");
+    expect(result.salaryMax).toBe("160000");
     expect(result.appliedAt).toMatch(/^2025-02-01/);
     expect(result.source).toBe("LinkedIn");
   });

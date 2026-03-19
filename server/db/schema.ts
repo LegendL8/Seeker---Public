@@ -88,6 +88,9 @@ export const applications = pgTable(
     location: varchar("location", { length: 255 }),
     salaryMin: integer("salary_min"),
     salaryMax: integer("salary_max"),
+    salaryPeriod: varchar("salary_period", { length: 20 })
+      .notNull()
+      .default("yearly"),
     status: varchar("status", { length: 20 }).notNull().default("saved"),
     appliedAt: timestamp("applied_at", { withTimezone: true }),
     source: varchar("source", { length: 255 }),

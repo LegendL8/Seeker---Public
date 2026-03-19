@@ -25,6 +25,7 @@ export interface CreateApplicationInput {
   location?: string;
   salaryMin?: number;
   salaryMax?: number;
+  salaryPeriod?: "yearly" | "hourly";
   appliedAt?: string;
   source?: string;
   resumeId?: string;
@@ -71,6 +72,7 @@ export interface UpdateApplicationInput {
   location?: string | null;
   salaryMin?: number | null;
   salaryMax?: number | null;
+  salaryPeriod?: "yearly" | "hourly" | null;
   appliedAt?: string | null;
   source?: string | null;
   resumeId?: string | null;

@@ -8,6 +8,39 @@ const APPLICATION_STATUSES = [
   "rejected",
 ] as const;
 
+const SALARY_PERIODS = ["yearly", "hourly"] as const;
+
+function parseSalaryString(s: string): number | null {
+  const cleaned = s.replace(/[$,\s]/g, "");
+  if (!cleaned) return null;
+  const n = parseFloat(cleaned);
+  return Number.isNaN(n) || n < 0 ? null : n;
+}
+
+/** Parse form salary string (e.g. "150,000" or "$75.00") to cents for API. */
+export function salaryStringToCents(
+  s: string | undefined,
+  _period: "yearly" | "hourly",
+): number | undefined {
+  if (s === undefined || s === "") return undefined;
+  const dollars = parseSalaryString(s);
+  return dollars === null ? undefined : Math.round(dollars * 100);
+}
+
+const salaryStringSchema = z
+  .string()
+  .optional()
+  .transform((v) => (v === "" ? undefined : v))
+  .pipe(
+    z.union([
+      z.undefined(),
+      z.string().refine(
+        (s) => parseSalaryString(s ?? "") !== null,
+        "Enter a valid amount (e.g. 150,000 or $75.00)",
+      ),
+    ]),
+  );
+
 export const createApplicationFormSchema = z.object({
   jobTitle: z.string().min(1, "Job title is required").max(255),
   status: z.enum(APPLICATION_STATUSES).optional(),
@@ -16,32 +49,9 @@ export const createApplicationFormSchema = z.object({
     .optional()
     .transform((v) => (v === "" ? undefined : v)),
   location: z.string().max(255).optional(),
-  salaryMin: z
-    .string()
-    .optional()
-    .transform((v) => (v === "" ? undefined : v))
-    .pipe(
-      z.union([
-        z.undefined(),
-        z.coerce
-          .number()
-          .int()
-          .refine((n) => !Number.isNaN(n), "Enter a valid number"),
-      ]),
-    ),
-  salaryMax: z
-    .string()
-    .optional()
-    .transform((v) => (v === "" ? undefined : v))
-    .pipe(
-      z.union([
-        z.undefined(),
-        z.coerce
-          .number()
-          .int()
-          .refine((n) => !Number.isNaN(n), "Enter a valid number"),
-      ]),
-    ),
+  salaryPeriod: z.enum(SALARY_PERIODS).default("yearly"),
+  salaryMin: salaryStringSchema,
+  salaryMax: salaryStringSchema,
   appliedAt: z
     .string()
     .optional()
@@ -64,6 +74,21 @@ export type CreateApplicationFormInput = z.input<
   typeof createApplicationFormSchema
 >;
 
+const salaryStringOptionalSchema = z
+  .string()
+  .optional()
+  .transform((v) => (v === "" ? null : v))
+  .pipe(
+    z.union([
+      z.null(),
+      z.undefined(),
+      z.string().refine(
+        (s) => parseSalaryString(s ?? "") !== null,
+        "Enter a valid amount (e.g. 150,000 or $75.00)",
+      ),
+    ]),
+  );
+
 export const updateApplicationFormSchema = z.object({
   jobTitle: z.string().min(1, "Job title is required").max(255).optional(),
   status: z.enum(APPLICATION_STATUSES).optional(),
@@ -76,34 +101,9 @@ export const updateApplicationFormSchema = z.object({
     .max(255)
     .optional()
     .transform((v) => (v === "" ? null : v)),
-  salaryMin: z
-    .string()
-    .optional()
-    .transform((v) => (v === "" ? null : v))
-    .pipe(
-      z.union([
-        z.null(),
-        z.undefined(),
-        z.coerce
-          .number()
-          .int()
-          .refine((n) => !Number.isNaN(n), "Enter a valid number"),
-      ]),
-    ),
-  salaryMax: z
-    .string()
-    .optional()
-    .transform((v) => (v === "" ? null : v))
-    .pipe(
-      z.union([
-        z.null(),
-        z.undefined(),
-        z.coerce
-          .number()
-          .int()
-          .refine((n) => !Number.isNaN(n), "Enter a valid number"),
-      ]),
-    ),
+  salaryPeriod: z.enum(SALARY_PERIODS).optional(),
+  salaryMin: salaryStringOptionalSchema,
+  salaryMax: salaryStringOptionalSchema,
   appliedAt: z
     .string()
     .optional()

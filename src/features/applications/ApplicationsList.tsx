@@ -31,14 +31,27 @@ function formatDate(iso: string | null): string {
   }
 }
 
-/** API stores salary in cents (per schema). */
-function formatSalary(min: number | null, max: number | null): string {
+/** API stores salary in cents (yearly or hourly per salaryPeriod). */
+function formatSalary(
+  min: number | null,
+  max: number | null,
+  period: "yearly" | "hourly" = "yearly",
+): string {
   if (min == null && max == null) return "—";
+  const dollars = (cents: number) => cents / 100;
+  if (period === "hourly") {
+    const fmt = (c: number) => `$${dollars(c).toFixed(2)}`;
+    const suffix = " /hr";
+    if (min != null && max != null)
+      return `${fmt(min)} – ${fmt(max)}${suffix}`;
+    if (min != null) return `${fmt(min)}${suffix}`;
+    return `${fmt(max!)}${suffix}`;
+  }
   const fmt = (cents: number) =>
     new Intl.NumberFormat("en-US", { style: "decimal" }).format(
-      Math.round(cents / 100),
+      Math.round(dollars(cents)),
     );
-  if (min != null && max != null) return `$${fmt(min)}–$${fmt(max)}`;
+  if (min != null && max != null) return `$${fmt(min)} – $${fmt(max)}`;
   if (min != null) return `$${fmt(min)}`;
   return `$${fmt(max!)}`;
 }
@@ -248,8 +261,12 @@ export function ApplicationsList() {
                         {app.jobTitle}
                       </Link>
                       <span className={styles.companyLine}>
-                        {app.companyId ? "Company" : "—"}
-                        {app.location ? `, ${app.location}` : ""}
+                        {[
+                          app.companyId ? "Company" : null,
+                          app.location ?? null,
+                        ]
+                          .filter(Boolean)
+                          .join(", ") || "—"}
                       </span>
                     </div>
                   </div>
@@ -261,8 +278,19 @@ export function ApplicationsList() {
                   <span className={styles.dateCell}>
                     Applied {formatDate(app.appliedAt)}
                   </span>
-                  <span className={styles.salaryCell}>
-                    {formatSalary(app.salaryMin, app.salaryMax)}
+                  <span
+                    className={styles.salaryCell}
+                    title={formatSalary(
+                      app.salaryMin,
+                      app.salaryMax,
+                      app.salaryPeriod ?? "yearly",
+                    )}
+                  >
+                    {formatSalary(
+                      app.salaryMin,
+                      app.salaryMax,
+                      app.salaryPeriod ?? "yearly",
+                    )}
                   </span>
                   <Link
                     href={`/applications/${app.id}`}

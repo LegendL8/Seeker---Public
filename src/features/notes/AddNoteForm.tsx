@@ -31,7 +31,7 @@ export function AddNoteForm({
   const [applicationId, setApplicationId] = useState<string | null>(null);
   const createMutation = useCreateNote();
 
-  function handleSubmit(e: React.FormEvent) {
+  function handleSubmit(e: React.SyntheticEvent) {
     e.preventDefault();
     const trimmed = content.trim();
     if (!trimmed) return;
