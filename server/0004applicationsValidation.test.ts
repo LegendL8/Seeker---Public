@@ -2,6 +2,7 @@ import {
   applicationStatusSchema,
   createApplicationBodySchema,
   listApplicationsQuerySchema,
+  parsePostingBodySchema,
   updateApplicationBodySchema,
 } from "./applications/types";
 
@@ -148,5 +149,56 @@ describe("listApplicationsQuerySchema", () => {
     expect(withCursor.limit).toBe(20);
     const empty = listApplicationsQuerySchema.parse({});
     expect(empty.cursor).toBeUndefined();
+  });
+});
+
+describe("parsePostingBodySchema", () => {
+  it("accepts valid http URL", () => {
+    const result = parsePostingBodySchema.parse({
+      url: "http://example.com/job/1",
+    });
+    expect(result.url).toBe("http://example.com/job/1");
+  });
+
+  it("accepts valid https URL", () => {
+    const result = parsePostingBodySchema.parse({
+      url: "https://www.linkedin.com/jobs/view/123",
+    });
+    expect(result.url).toBe("https://www.linkedin.com/jobs/view/123");
+  });
+
+  it("trims whitespace", () => {
+    const result = parsePostingBodySchema.parse({
+      url: "  https://example.com/job  ",
+    });
+    expect(result.url).toBe("https://example.com/job");
+  });
+
+  it("accepts URL up to 2048 characters", () => {
+    const longPath = "a".repeat(2000);
+    const url = `https://example.com/${longPath}`;
+    expect(url.length).toBeGreaterThan(500);
+    const result = parsePostingBodySchema.parse({ url });
+    expect(result.url).toBe(url);
+  });
+
+  it("rejects URL over 2048 characters", () => {
+    const longPath = "a".repeat(2100);
+    const url = `https://example.com/${longPath}`;
+    expect(() => parsePostingBodySchema.parse({ url })).toThrow();
+  });
+
+  it("rejects invalid URL", () => {
+    expect(() =>
+      parsePostingBodySchema.parse({ url: "not-a-url" }),
+    ).toThrow();
+  });
+
+  it("rejects empty string", () => {
+    expect(() => parsePostingBodySchema.parse({ url: "" })).toThrow();
+  });
+
+  it("rejects missing url", () => {
+    expect(() => parsePostingBodySchema.parse({})).toThrow();
   });
 });

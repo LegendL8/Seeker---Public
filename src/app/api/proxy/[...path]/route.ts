@@ -10,8 +10,12 @@ async function proxy(
   pathSegments: string[],
 ): Promise<NextResponse> {
   const path = pathSegments.join("/");
-  const url = new URL(`/api/${path}`, EXPRESS_API_URL);
-  url.search = request.nextUrl.searchParams.toString();
+  const backendPath = `/api/${path}`;
+  const url = new URL(backendPath, EXPRESS_API_URL);
+  const search = request.nextUrl.search;
+  if (search) {
+    url.search = search;
+  }
 
   const tokenRes = new NextResponse();
   let token: string;

@@ -5,6 +5,7 @@ import {
   S3Client,
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import type { Readable } from "stream";
 
 import { env } from "../config";
 import { logger } from "../logger";
@@ -81,10 +82,34 @@ export async function getResumeSignedUrl(key: string): Promise<string> {
   const bucket = getResumesBucket();
   const url = await getSignedUrl(
     r2,
-    new GetObjectCommand({ Bucket: bucket, Key: key }),
+    new GetObjectCommand({
+      Bucket: bucket,
+      Key: key,
+      ResponseContentDisposition: "inline",
+    }),
     { expiresIn: SIGNED_URL_EXPIRY_SECONDS },
   );
   return url;
+}
+
+export interface ResumeStreamResult {
+  stream: Readable;
+  contentType: string;
+}
+
+export async function getResumeStream(
+  key: string,
+): Promise<ResumeStreamResult> {
+  const r2 = getR2Client();
+  const bucket = getResumesBucket();
+  const response = await r2.send(
+    new GetObjectCommand({ Bucket: bucket, Key: key }),
+  );
+  const body = response.Body;
+  if (!body) throw new Error("Empty body from R2");
+  const contentType =
+    response.ContentType ?? "application/octet-stream";
+  return { stream: body as Readable, contentType };
 }
 
 export async function deleteResumeFromR2(key: string): Promise<void> {

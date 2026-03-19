@@ -109,3 +109,27 @@ export async function deleteApplication(id: string): Promise<void> {
     throw new Error(message);
   }
 }
+
+export interface ParsePostingResult {
+  jobTitle: string | null;
+  companyName: string | null;
+  location: string | null;
+  jobPostingUrl: string;
+}
+
+export async function parseJobPosting(url: string): Promise<ParsePostingResult> {
+  const base = getApiBaseUrl();
+  const res = await fetch(`${base}/v1/applications/parse-posting`, {
+    method: "POST",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ url: url.trim() }),
+  });
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}));
+    const message =
+      typeof data?.message === "string" ? data.message : res.statusText;
+    throw new Error(message);
+  }
+  return res.json() as Promise<ParsePostingResult>;
+}

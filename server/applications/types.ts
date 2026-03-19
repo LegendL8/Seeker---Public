@@ -54,6 +54,16 @@ export const listApplicationsQuerySchema = z.object({
   cursor: z.string().optional(),
 });
 
+export const parsePostingBodySchema = z.object({
+  url: z
+    .string()
+    .min(1)
+    .max(2048)
+    .transform((s) => s.trim())
+    .pipe(z.string().url("Invalid URL")),
+});
+
 export type CreateApplicationBody = z.infer<typeof createApplicationBodySchema>;
 export type UpdateApplicationBody = z.infer<typeof updateApplicationBodySchema>;
 export type ListApplicationsQuery = z.infer<typeof listApplicationsQuerySchema>;
+export type ParsePostingBody = z.infer<typeof parsePostingBodySchema>;

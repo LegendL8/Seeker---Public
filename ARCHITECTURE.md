@@ -131,7 +131,7 @@ giving job seekers their own dashboard to track applications, interviews, notes,
 - X-Frame-Options: DENY (Express)
 - X-Content-Type-Options: nosniff (Express)
 - Referrer-Policy: no-referrer (Express)
-- Content Security Policy (CSP) — set in Next.js on document responses; allows 'self' and Auth0 (\*.auth0.com); script/style use 'unsafe-inline' for Next.js and Auth0 SDK; frame-ancestors 'none'. Source: next.config.ts headers.
+- Content Security Policy (CSP) — set in Next.js on document responses; allows 'self' and Auth0 (\*.auth0.com); script/style use 'unsafe-inline' for Next.js and Auth0 SDK; frame-ancestors 'none'. Exception: `/api/proxy/v1/resumes/:id/preview` gets `frame-ancestors 'self'` only so the PDF preview iframe can embed. Source: next.config.ts headers.
 - Permissions-Policy — set in Next.js; camera, microphone, geolocation, payment, usb, magnetometer, gyroscope, accelerometer disabled.
 
 ### CORS
@@ -185,16 +185,14 @@ _Updated 2026-03-17_
 Dashboard: `server/dashboard/` (types.ts, cache.ts, service.ts, routes.ts). GET `/api/v1/dashboard/metrics` returns totalApplications, applicationsByStatus (saved, applied, interviewing, offer, rejected), interviewRate, activeApplications, offersReceived, rejectionsReceived. Redis cache per user (60s TTL); invalidated on application or interview create/update/delete. Frontend: `src/features/dashboard/` (Dashboard at `/` when authenticated, useDashboardMetrics, fetchDashboardMetrics).
 _Added 2026-03-10_
 
-Resumes list: GET `/api/v1/resumes` accepts `?page=1&limit=20` (limit max 100), returns `{ items, page, limit, total }`. Frontend: `useResumesList(page, limit)`, ResumesList with pagination UI. List empty state is shown only after list data has loaded (`data != null && total === 0`) to avoid a flash on refresh. setActiveResume: one conditional update when setting active (SET is*active = (id = :id) WHERE user_id); one update when setting inactive; no separate read or bulk step.
-\_Added 2026-03-13*
-_Updated 2026-03-17_
+Resumes list: GET `/api/v1/resumes` accepts `?page=1&limit=20` (limit max 100), returns `{ items, page, limit, total }`. GET `/api/v1/resumes/:id/preview` streams PDF for inline preview (PDF only; 400 for DOCX). Upload limit: RESUME_CAP per user (server/resumes/types.ts; frontend matches). Frontend: `useResumesList(page, limit)`, ResumesList with pagination UI; PDF preview in modal iframe, DOCX via signed URL in new tab. setActiveResume: one conditional update when setting active (SET is_active = (id = :id) WHERE user_id); one update when inactive; no separate read or bulk step.
+_Added 2026-03-13_
+_Updated 2026-03-19_
 
 ### Implementation Notes
 
 - `[IMPL]` Resolve remaining documentation inconsistencies. (1) Application status — API.md POST/PATCH body examples and SCHEMA.md applications table show "offered" and "withdrawn"; implementation uses "offer" and has no "withdrawn". Align docs to current behavior or implement missing values. (2) SCHEMA.md Seed Files — seed.active.ts inserts 6 applications and 4 interviews; SCHEMA.md says "10 applications" and "5 interviews". Correct counts.
-- `[IMPL]` PDF preview iframe issue — related to X-Frame-Options and object-store header
-  configuration. Previous ATS had this bug. R2 (or custom proxy) must serve PDFs with headers
-  allowing embedding within own domain only. Do not repeat this mistake.
+- PDF preview (resolved): GET `/api/v1/resumes/:id/preview` streams PDF with Content-Disposition: inline, X-Frame-Options: SAMEORIGIN, and frame-ancestors 'self'. Frontend loads same-origin via proxy (`/api/proxy/v1/resumes/:id/preview`) in a modal iframe. Next.js CSP excludes that path from frame-ancestors 'none' so the iframe can embed. DOCX preview opens signed URL (inline disposition) in new tab.
 
 ---
 

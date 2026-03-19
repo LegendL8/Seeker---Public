@@ -4,7 +4,8 @@ import z from "zod";
 import { asyncHandler } from "../asyncHandler";
 import { requireAuth } from "../auth/middleware";
 import { ValidationError } from "../errors";
-import { applicationsRateLimiter } from "../rateLimit";
+import { applicationsRateLimiter, parsePostingRateLimiter } from "../rateLimit";
+import { logger } from "../logger";
 import {
   createInterview,
   listInterviewsByApplicationId,
@@ -18,9 +19,11 @@ import {
   listApplicationsByCursor,
   updateApplication,
 } from "./service";
+import { parseJobPostingUrl } from "./parsePosting";
 import {
   createApplicationBodySchema,
   listApplicationsQuerySchema,
+  parsePostingBodySchema,
   updateApplicationBodySchema,
 } from "./types";
 
@@ -30,6 +33,28 @@ const router = express.Router();
 
 router.use(asyncHandler(requireAuth));
 router.use(applicationsRateLimiter());
+
+router.post(
+  "/parse-posting",
+  parsePostingRateLimiter(),
+  asyncHandler(async (req: Request, res: Response) => {
+    const bodyResult = parsePostingBodySchema.safeParse(req.body);
+    if (!bodyResult.success) {
+      throw new ValidationError(
+        bodyResult.error.errors.map((e) => e.message).join("; "),
+      );
+    }
+    const url = bodyResult.data.url;
+    const result = await parseJobPostingUrl(url);
+    const host = new URL(url).hostname;
+    const success = !!(result.jobTitle || result.companyName);
+    logger.info(
+      { userId: req.user!.id, host, success },
+      "parse-posting",
+    );
+    res.json(result);
+  }),
+);
 
 router.get(
   "/",

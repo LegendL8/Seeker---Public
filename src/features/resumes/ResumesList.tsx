@@ -9,7 +9,7 @@ import { useDeleteResume } from "./hooks/useDeleteResume";
 import type { Resume } from "./types";
 import styles from "./ResumesList.module.css";
 
-const RESUME_CAP = 1;
+const RESUME_CAP = 5;
 const DEFAULT_PAGE = 1;
 const DEFAULT_LIMIT = 20;
 const ALLOWED_TYPES = ".pdf,.docx";
@@ -17,8 +17,8 @@ const MAX_SIZE_MB = 5;
 
 function formatBytes(n: number): string {
   if (n < 1024) return `${n} B`;
-  if (n < 1024 * 1024) return `${(n / 1024).toFixed(1)} KB`;
-  return `${(n / (1024 * 1024)).toFixed(1)} MB`;
+  if (n < 1024 * 1024) return `${(n / 1024).toFixed(5)} KB`;
+  return `${(n / (1024 * 1024)).toFixed(5)} MB`;
 }
 
 function filterBySearch(items: Resume[], search: string): Resume[] {
@@ -29,23 +29,34 @@ function filterBySearch(items: Resume[], search: string): Resume[] {
 
 function ResumeItem({ resume }: { resume: Resume }) {
   const [previewing, setPreviewing] = useState(false);
+  const [pdfPreviewOpen, setPdfPreviewOpen] = useState(false);
+  const needSignedUrl =
+    previewing && resume.fileType !== "pdf";
   const { data: withUrl, isPending: urlPending } = useResumeWithUrl(
-    previewing ? resume.id : null,
+    needSignedUrl ? resume.id : null,
   );
   const setActiveMutation = useSetActiveResume();
   const deleteMutation = useDeleteResume();
 
   function handlePreview() {
-    setPreviewing(true);
+    if (resume.fileType === "pdf") {
+      setPdfPreviewOpen(true);
+    } else {
+      setPreviewing(true);
+    }
   }
 
   useEffect(() => {
-    if (previewing && withUrl?.signedUrl) {
+    if (
+      resume.fileType !== "pdf" &&
+      previewing &&
+      withUrl?.signedUrl
+    ) {
       window.open(withUrl.signedUrl, "_blank", "noopener,noreferrer");
       const t = setTimeout(() => setPreviewing(false), 0);
       return () => clearTimeout(t);
     }
-  }, [previewing, withUrl?.signedUrl]);
+  }, [resume.fileType, previewing, withUrl?.signedUrl]);
 
   function handleSetActive() {
     setActiveMutation.mutate({ id: resume.id, isActive: true });
@@ -60,8 +71,40 @@ function ResumeItem({ resume }: { resume: Resume }) {
     }
   }
 
+  const previewButtonDisabled =
+    resume.fileType === "pdf"
+      ? false
+      : previewing && urlPending;
+
   return (
     <div className={styles.item}>
+      {resume.fileType === "pdf" && pdfPreviewOpen && (
+        <div
+          className={styles.previewOverlay}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Resume preview"
+        >
+          <div className={styles.previewBackdrop} onClick={() => setPdfPreviewOpen(false)} />
+          <div className={styles.previewContent}>
+            <button
+              type="button"
+              className={styles.previewClose}
+              onClick={() => setPdfPreviewOpen(false)}
+              aria-label="Close preview"
+            >
+              Close
+            </button>
+            <iframe
+              key={`preview-${resume.id}`}
+              title={`Preview: ${resume.fileName}`}
+              src={`/api/proxy/v1/resumes/${resume.id}/preview`}
+              className={styles.previewIframe}
+              referrerPolicy="no-referrer"
+            />
+          </div>
+        </div>
+      )}
       <div className={styles.itemInfo}>
         <p className={styles.itemName}>{resume.fileName}</p>
         <p className={styles.itemMeta}>
@@ -79,9 +122,11 @@ function ResumeItem({ resume }: { resume: Resume }) {
           type="button"
           className={styles.btn}
           onClick={handlePreview}
-          disabled={previewing && urlPending}
+          disabled={previewButtonDisabled}
         >
-          {previewing && urlPending ? "Loading…" : "Preview"}
+          {resume.fileType !== "pdf" && previewing && urlPending
+            ? "Loading…"
+            : "Preview"}
         </button>
         {!resume.isActive && (
           <button
@@ -213,7 +258,7 @@ export function ResumesList() {
           )}
           {atCap && !showEmptyState && (
             <p className={styles.capMessage}>
-              You can store {RESUME_CAP} resume. Delete one to upload another.
+              You can store {RESUME_CAP} resumes. Delete one to upload another.
             </p>
           )}
         </div>

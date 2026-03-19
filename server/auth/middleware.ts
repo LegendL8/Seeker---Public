@@ -136,7 +136,10 @@ export async function requireAuth(
       setCachedUser(sub, user);
     }
 
-    if (isPlaceholderIdentity(user)) {
+    if (
+      isPlaceholderIdentity(user) &&
+      !env.AUTH0_AUDIENCE
+    ) {
       const fresh = await fetchAuth0Userinfo(token, sub, issuerBase);
       if (
         fresh &&
@@ -178,36 +181,39 @@ async function ensureUserFromToken(
   auth0Id: string,
   issuerBase: string,
 ): Promise<User | undefined> {
-  const userinfoUrl = `${issuerBase}/userinfo`;
   let email: string;
   let displayName: string | null = null;
 
-  try {
-    const resp = await fetch(userinfoUrl, {
-      headers: { Authorization: `Bearer ${accessToken}` },
-    });
-    if (!resp.ok) {
-      logger.warn(
-        { status: resp.status, auth0Id },
-        "Auth0 userinfo failed; provisioning from token sub only",
-      );
-      email = `${auth0Id.replace(/\|/g, "-")}${PLACEHOLDER_EMAIL_SUFFIX}`;
-      displayName = null;
-    } else {
-      const body = (await resp.json()) as {
-        email?: string;
-        name?: string;
-        sub?: string;
-      };
-      email =
-        body.email ??
-        body.sub ??
-        `${auth0Id.replace(/\|/g, "-")}${PLACEHOLDER_EMAIL_SUFFIX}`;
-      displayName = body.name ?? null;
+  if (env.AUTH0_AUDIENCE) {
+    email = `${auth0Id.replace(/\|/g, "-")}${PLACEHOLDER_EMAIL_SUFFIX}`;
+  } else {
+    const userinfoUrl = `${issuerBase}/userinfo`;
+    try {
+      const resp = await fetch(userinfoUrl, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+      if (!resp.ok) {
+        logger.warn(
+          { status: resp.status, auth0Id },
+          "Auth0 userinfo failed; provisioning from token sub only",
+        );
+        email = `${auth0Id.replace(/\|/g, "-")}${PLACEHOLDER_EMAIL_SUFFIX}`;
+      } else {
+        const body = (await resp.json()) as {
+          email?: string;
+          name?: string;
+          sub?: string;
+        };
+        email =
+          body.email ??
+          body.sub ??
+          `${auth0Id.replace(/\|/g, "-")}${PLACEHOLDER_EMAIL_SUFFIX}`;
+        displayName = body.name ?? null;
+      }
+    } catch (err) {
+      logger.warn({ err }, "Auth0 userinfo request failed");
+      return undefined;
     }
-  } catch (err) {
-    logger.warn({ err }, "Auth0 userinfo request failed");
-    return undefined;
   }
 
   const [inserted] = await db

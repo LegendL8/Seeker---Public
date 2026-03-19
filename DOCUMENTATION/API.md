@@ -253,17 +253,18 @@ _Amended 2026-03-09_
 
 ## Resumes
 
-| Method | Route                 | Description                        |
-| ------ | --------------------- | ---------------------------------- |
-| GET    | `/api/v1/resumes`     | List resumes — paginated           |
-| POST   | `/api/v1/resumes`     | Upload resume — limit 1 per user   |
-| GET    | `/api/v1/resumes/:id` | Get resume metadata and signed URL |
-| PATCH  | `/api/v1/resumes/:id` | Set resume as active               |
-| DELETE | `/api/v1/resumes/:id` | Delete from S3 and database        |
+| Method | Route                      | Description                              |
+| ------ | -------------------------- | ---------------------------------------- |
+| GET    | `/api/v1/resumes`          | List resumes — paginated                 |
+| POST   | `/api/v1/resumes`         | Upload resume — limit 5 per user        |
+| GET    | `/api/v1/resumes/:id`      | Get resume metadata and signed URL       |
+| GET    | `/api/v1/resumes/:id/preview` | Stream PDF for inline preview (PDF only) |
+| PATCH  | `/api/v1/resumes/:id`      | Set resume as active                     |
+| DELETE | `/api/v1/resumes/:id`      | Delete from R2 and database              |
 
 **Query params (list):** `?page=1&limit=20` (limit max 100). Response: `{ items, page, limit, total }`.
 
-**Note:** S3 key never returned. Signed URLs expire in 15 minutes. DELETE removes from S3 first, then database.
+**Note:** R2/S3 key never returned. Signed URLs expire in 15 minutes; generated with ResponseContentDisposition: inline for preview. DELETE removes from R2 first, then database. GET /:id/preview returns 400 for non-PDF; response is streamed with Content-Disposition: inline, X-Frame-Options: SAMEORIGIN.
 
 ### POST Request
 

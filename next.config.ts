@@ -14,6 +14,8 @@ const csp = [
   "object-src 'none'",
 ].join("; ");
 
+const cspFrameSelf = "frame-ancestors 'self'";
+
 const permissionsPolicy = [
   "camera=()",
   "microphone=()",
@@ -38,6 +40,10 @@ const nextConfig: NextConfig = {
           { key: "Content-Security-Policy", value: csp },
           { key: "Permissions-Policy", value: permissionsPolicy },
         ],
+      },
+      {
+        source: "/api/proxy/v1/resumes/:id/preview",
+        headers: [{ key: "Content-Security-Policy", value: cspFrameSelf }],
       },
     ];
   },

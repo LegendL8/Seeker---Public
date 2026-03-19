@@ -44,4 +44,4 @@ export function mimeToFileType(mime: string): ResumeFileType | null {
 }
 
 /** Max resumes per user (product limit). Product is free and open source; no tiers. */
-export const RESUME_CAP = 1;
+export const RESUME_CAP = 5;

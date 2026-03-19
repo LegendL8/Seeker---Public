@@ -10,11 +10,12 @@ import { resumesUploadRateLimiter } from "../rateLimit";
 import {
   createResume,
   deleteResume,
+  getResumeById,
   getResumeWithSignedUrl,
   listResumes,
   setActiveResume,
 } from "./service";
-import { isR2Configured } from "./r2";
+import { isR2Configured, getResumeStream } from "./r2";
 import { listResumesQuerySchema, mimeToFileType } from "./types";
 import { setActiveBodySchema } from "./types";
 
@@ -101,6 +102,36 @@ router.post(
         createdAt: row.createdAt?.toISOString() ?? null,
       },
     });
+  }),
+);
+
+router.get(
+  "/:id/preview",
+  asyncHandler(async (req: Request, res: Response) => {
+    if (!isR2Configured()) {
+      return res.status(503).json({
+        error: "SERVICE_UNAVAILABLE",
+        message: "Resume storage is not configured",
+        statusCode: 503,
+      });
+    }
+    const user = req.user!;
+    const idResult = uuidParamSchema.safeParse(req.params.id);
+    if (!idResult.success) throw new ValidationError("Invalid resume id");
+    const row = await getResumeById(user.id, idResult.data);
+    if (row.fileType !== "pdf") {
+      return res.status(400).json({
+        error: "VALIDATION_ERROR",
+        message: "Preview is only available for PDF resumes",
+        statusCode: 400,
+      });
+    }
+    const { stream, contentType } = await getResumeStream(row.s3Key);
+    res.setHeader("Content-Type", contentType);
+    res.setHeader("Content-Disposition", "inline");
+    res.setHeader("X-Frame-Options", "SAMEORIGIN");
+    res.setHeader("Content-Security-Policy", "frame-ancestors 'self'");
+    stream.pipe(res);
   }),
 );
 

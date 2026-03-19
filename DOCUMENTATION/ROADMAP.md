@@ -102,6 +102,8 @@ Deliver a functional product as fast as possible. Every milestone builds toward 
 - ~~[ ] Seed file updated with sample applications~~
 - [x] Seed file updated with sample applications (seed.active.ts: user + 6 applications; npm run db:seed:active)
       _Updated 2026-03-09_
+- [x] Parse job posting URL: POST /api/v1/applications/parse-posting (LinkedIn guest API + page title fallback); Add Application form "Fill from job link"; URL normalized for DB (max 2048 input, origin+pathname max 500); SSRF protection (block private/metadata hosts, validate redirects), optional ALLOWED_JOB_POSTING_HOSTS, 15/min rate limit, audit log (userId, host, success)
+      _Added 2026-03-18_
 
 ---
 
@@ -207,7 +209,8 @@ When the above are done, update arch_assessment.md to reflect current state and 
 
 **Goal:** Publish the repository as open source; all features are free.
 
-- [ ] Clean up repo for public release — remove dev artifacts, add README, add LICENSE
+- [x] README and LICENSE in place (README.md: prerequisites, run locally, stack, doc links; LICENSE: MIT)
+- [ ] Clean up repo for public release — remove dev artifacts as needed before public announcement
 - [ ] Publish current repo as the public open source project
 - [ ] Community can clone, self-host, and run the full product
 - [ ] Milestone 5 and beyond developed in this repo
@@ -220,13 +223,13 @@ See ARCHITECTURE.md Layer 4 (Repository Strategy, Post-Milestone 4) for details.
 
 **Goal:** A user can upload a resume and attach it to their profile or an application.
 
-- [ ] Cloudflare R2 bucket configured
-- [ ] File upload endpoint — PDF and DOCX only
-- [ ] File size limit enforced
-- [ ] Resume stored in R2, reference in PostgreSQL
-- [ ] Resume attached to user profile
-- [ ] Resume preview with correct R2/object-store headers (see ARCHITECTURE.md impl note)
-- [ ] Delete resume — removes from R2 and database
+- [x] Cloudflare R2 bucket configured (server/resumes/r2.ts; env: R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_BUCKET_RESUMES)
+- [x] File upload endpoint — PDF and DOCX only (multer + mimeToFileType; server/resumes/routes.ts)
+- [x] File size limit enforced (MAX_RESUME_SIZE_BYTES, default 5MB; config + multer limits)
+- [x] Resume stored in R2, reference in PostgreSQL (createResume, PutObject; listResumes, getResumeWithSignedUrl)
+- [x] Resume attached to user profile (isActive, setActiveResume; application resumeId; ResumesList at /resumes)
+- [x] Resume preview with correct R2/object-store headers. _GET /api/v1/resumes/:id/preview streams PDF with Content-Disposition: inline, X-Frame-Options: SAMEORIGIN, frame-ancestors 'self'; frontend shows PDF in same-origin iframe modal via /api/proxy. Next.js CSP exception for that path (frame-ancestors 'self') so iframe can embed. DOCX opens signed URL (inline) in new tab._
+- [x] Delete resume — removes from R2 and database (deleteResume; DELETE /api/v1/resumes/:id)
 
 ---
 
@@ -235,12 +238,12 @@ See ARCHITECTURE.md Layer 4 (Repository Strategy, Post-Milestone 4) for details.
 **Goal:** App looks and feels professional and ready for use.
 
 - [ ] CSS polish across all views
-- [ ] Loading states on all data fetches
-- [ ] Error states on all failed requests
-- [ ] Empty states on all list views
-- [ ] Form validation error messages visible
+- [x] Loading states on all data fetches (isPending/isLoading in lists and forms; "Loading…" where relevant)
+- [x] Error states on all failed requests (submitError, mutation errors shown in forms and lists)
+- [x] Empty states on all list views (applications, notes, resumes, dashboard; shown when data loaded and total === 0)
+- [x] Form validation error messages visible (fieldErrors in AddApplicationForm, EditApplicationForm, etc.)
 - [ ] Responsive layout on common screen sizes
-- [ ] Seed file with realistic sample data
+- [x] Seed file with realistic sample data (seed.active.ts, seed.demo.ts; npm run db:seed:active, db:seed:demo)
 - [ ] Auth0 login flow smooth and professional
 - [ ] No console errors in browser dev tools
 - [ ] No broken UI states during typical flows

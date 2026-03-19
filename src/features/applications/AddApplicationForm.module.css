@@ -35,6 +35,17 @@
   padding: 24px;
 }
 
+.fillFromLink {
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.fillFromLink .row .input {
+  flex: 1;
+  min-width: 0;
+}
+
 .form {
   display: flex;
   flex-direction: column;

@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { parseJobPosting } from "./api";
+import { useCreateApplication } from "./hooks/useCreateApplication";
+import { useResumesList } from "@/features/resumes/hooks/useResumesList";
 import {
   createApplicationFormSchema,
   type CreateApplicationFormInput,
   type CreateApplicationFormValues,
 } from "./schemas";
-import { useCreateApplication } from "./hooks/useCreateApplication";
-import { useResumesList } from "@/features/resumes/hooks/useResumesList";
 import styles from "./AddApplicationForm.module.css";
 
 const STATUS_OPTIONS: {
@@ -40,9 +41,40 @@ export function AddApplicationForm() {
   const [fieldErrors, setFieldErrors] = useState<
     Partial<Record<keyof CreateApplicationFormValues, string>>
   >({});
+  const [parseUrl, setParseUrl] = useState("");
+  const [isParsing, setIsParsing] = useState(false);
+  const [parseError, setParseError] = useState<string | null>(null);
   const { mutate, isPending, error: submitError } = useCreateApplication();
   const { data: resumesData } = useResumesList();
   const resumes = resumesData?.items ?? [];
+
+  async function handleFillFromLink() {
+    const url = parseUrl.trim();
+    if (!url) {
+      setParseError("Enter a job posting URL");
+      return;
+    }
+    setParseError(null);
+    setIsParsing(true);
+    try {
+      const result = await parseJobPosting(url);
+      setValues((prev) => ({
+        ...prev,
+        jobTitle: result.jobTitle ?? prev.jobTitle,
+        jobPostingUrl: result.jobPostingUrl,
+        location: result.location ?? prev.location,
+        source:
+          result.companyName && !prev.source ? "LinkedIn" : prev.source,
+      }));
+      setParseUrl("");
+    } catch (err) {
+      setParseError(
+        err instanceof Error ? err.message : "Could not load job posting",
+      );
+    } finally {
+      setIsParsing(false);
+    }
+  }
 
   function handleChange(
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
@@ -98,6 +130,38 @@ export function AddApplicationForm() {
       </div>
 
       <div className={styles.formCard}>
+        <div className={styles.fillFromLink}>
+          <div className={styles.field}>
+            <label htmlFor="parseUrl" className={styles.label}>
+              Fill from job link
+            </label>
+            <div className={styles.row}>
+              <input
+                id="parseUrl"
+                type="url"
+                value={parseUrl}
+                onChange={(e) => setParseUrl(e.target.value)}
+                className={styles.input}
+                placeholder="Paste job posting URL (e.g. LinkedIn)"
+                disabled={isParsing || isPending}
+                aria-describedby={parseError ? "parseError" : undefined}
+              />
+              <button
+                type="button"
+                onClick={handleFillFromLink}
+                className={styles.submitBtn}
+                disabled={isParsing || isPending}
+              >
+                {isParsing ? "Loading…" : "Fill from link"}
+              </button>
+            </div>
+            {parseError && (
+              <span id="parseError" className={styles.error}>
+                {parseError}
+              </span>
+            )}
+          </div>
+        </div>
         <form onSubmit={handleSubmit} className={styles.form}>
           <div className={styles.field}>
             <label htmlFor="jobTitle" className={styles.label}>
