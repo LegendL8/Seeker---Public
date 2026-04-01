@@ -1,6 +1,7 @@
 import { and, count, desc, eq, lt, or } from "drizzle-orm";
 
 import { insertAuditLog } from "../audit/service";
+import { ensureCompanyOwnership } from "../companies/service";
 import { invalidateDashboardCache } from "../dashboard/cache";
 import { db } from "../db";
 import { applications } from "../db/schema";
@@ -112,6 +113,9 @@ export async function createApplication(
   userId: string,
   body: CreateApplicationBody,
 ): Promise<ApplicationRow> {
+  if (body.companyId) {
+    await ensureCompanyOwnership(userId, body.companyId);
+  }
   const [row] = await db
     .insert(applications)
     .values({
@@ -140,6 +144,9 @@ export async function updateApplication(
   body: UpdateApplicationBody,
 ): Promise<ApplicationRow> {
   const existing = await getApplicationById(userId, id);
+  if (body.companyId !== undefined && body.companyId !== null) {
+    await ensureCompanyOwnership(userId, body.companyId);
+  }
   const update: Record<string, unknown> = {};
   if (body.jobTitle !== undefined) update.jobTitle = body.jobTitle;
   if (body.status !== undefined) update.status = body.status;

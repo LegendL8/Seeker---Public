@@ -125,7 +125,7 @@ _Added 2026-03-19_
 ### Audit log (compliance-oriented)
 
 - **Table** `audit_logs` (Drizzle `auditLogs` in `server/db/schema.ts`): `actor_user_id` → `users.id` (**ON DELETE restrict**), `action`, `entity_type`, `entity_id`, `details` (jsonb, nullable), `created_at`. Indexes: `(actor_user_id, created_at)`, `(entity_type, entity_id)`. Append-only from application code; **no public read API** yet.
-- **Writes:** `server/audit/service.ts` (`insertAuditLog`); same **DB transaction** as the mutation. **Actions:** `application.deleted`, `application.status_changed`, `interview.deleted`, `note.deleted`, `resume.deleted`. **Resume delete:** DB row + audit committed before R2 object removal (R2 delete after transaction).
+- **Writes:** `server/audit/service.ts` (`insertAuditLog`); same **DB transaction** as the mutation. **Actions:** `application.deleted`, `application.status_changed`, `company.deleted`, `interview.deleted`, `note.deleted`, `resume.deleted`. **Resume delete:** DB row + audit committed before R2 object removal (R2 delete after transaction).
   _Added 2026-03-19_
 
 ### Rate Limiting

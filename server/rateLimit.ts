@@ -33,6 +33,20 @@ export function applicationsRateLimiter(): ReturnType<typeof rateLimit> {
   });
 }
 
+export function companiesRateLimiter(): ReturnType<typeof rateLimit> {
+  return rateLimit({
+    windowMs: RATE_LIMIT_WINDOW_MS,
+    max: 60,
+    keyGenerator: (req) => {
+      const r = req as Request & { user?: { id: string } };
+      return r.user?.id ?? r.ip ?? "unknown";
+    },
+    standardHeaders: true,
+    legacyHeaders: false,
+    handler: rateLimitHandler,
+  });
+}
+
 export function parsePostingRateLimiter(): ReturnType<typeof rateLimit> {
   return rateLimit({
     windowMs: RATE_LIMIT_WINDOW_MS,

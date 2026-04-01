@@ -1,9 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import { useMemo } from "react";
 import { useCurrentUser } from "@/features/layout/hooks/useCurrentUser";
 import { getWelcomeName } from "@/features/layout/utils";
 import { useApplicationsList } from "@/features/applications/hooks/useApplicationsList";
+import { useCompaniesList } from "@/features/companies/hooks/useCompaniesList";
+import { useCompanyNamesByIds } from "@/features/companies/hooks/useCompany";
+import { companyNameByIdMap } from "@/features/companies/utils";
 import { useResumesList } from "@/features/resumes/hooks/useResumesList";
 import { useDashboardMetrics } from "./hooks/useDashboardMetrics";
 import styles from "./Dashboard.module.css";
@@ -39,7 +43,27 @@ export function Dashboard() {
     error,
   } = useDashboardMetrics();
   const { data: applicationsData } = useApplicationsList(1, 5);
+  const { data: companiesData } = useCompaniesList(1, 100);
   const { data: resumesData } = useResumesList(1, 1);
+  const companyNamesFromPage = useMemo(
+    () => companyNameByIdMap(companiesData?.items ?? []),
+    [companiesData?.items],
+  );
+  const companyIds = useMemo(() => {
+    return (applicationsData?.items ?? [])
+      .map((app) => app.companyId)
+      .filter(
+        (companyId): companyId is string => typeof companyId === "string",
+      );
+  }, [applicationsData?.items]);
+  const fetchedCompanyNames = useCompanyNamesByIds(companyIds);
+  const companyNames = useMemo(() => {
+    const merged = new Map(companyNamesFromPage);
+    fetchedCompanyNames.forEach((name, id) => {
+      merged.set(id, name);
+    });
+    return merged;
+  }, [companyNamesFromPage, fetchedCompanyNames]);
 
   if (isPending && !metricsData) {
     return (
@@ -162,7 +186,9 @@ export function Dashboard() {
                       {app.jobTitle}
                     </span>
                     <span className={styles.recentMeta}>
-                      {app.companyId ? "Company" : "—"}
+                      {app.companyId
+                        ? (companyNames.get(app.companyId) ?? "Company")
+                        : "—"}
                     </span>
                     <span
                       className={`${styles.statusPill} ${getStatusPillClass(app.status)}`}

@@ -1,10 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { parseJobPosting } from "./api";
-import { useCreateApplication } from "./hooks/useCreateApplication";
+import { useCompaniesList } from "@/features/companies/hooks/useCompaniesList";
+import { useCompany } from "@/features/companies/hooks/useCompany";
 import { useResumesList } from "@/features/resumes/hooks/useResumesList";
+import { useCreateApplication } from "./hooks/useCreateApplication";
 import {
   createApplicationFormSchema,
   salaryStringToCents,
@@ -35,6 +37,7 @@ const initialValues: CreateApplicationFormInput = {
   appliedAt: undefined,
   source: "",
   resumeId: "",
+  companyId: "",
 };
 
 export function AddApplicationForm() {
@@ -48,7 +51,19 @@ export function AddApplicationForm() {
   const [parseError, setParseError] = useState<string | null>(null);
   const { mutate, isPending, error: submitError } = useCreateApplication();
   const { data: resumesData } = useResumesList();
+  const { data: companiesData } = useCompaniesList(1, 100);
+  const { data: selectedCompany } = useCompany(values.companyId || null);
   const resumes = resumesData?.items ?? [];
+  const companies = useMemo(() => {
+    const list = companiesData?.items ?? [];
+    if (
+      !selectedCompany ||
+      list.some((company) => company.id === selectedCompany.id)
+    ) {
+      return list;
+    }
+    return [selectedCompany, ...list];
+  }, [companiesData?.items, selectedCompany]);
 
   async function handleFillFromLink() {
     const url = parseUrl.trim();
@@ -118,6 +133,7 @@ export function AddApplicationForm() {
       appliedAt: body.appliedAt,
       source: body.source,
       resumeId: body.resumeId,
+      companyId: body.companyId,
     });
   }
 
@@ -203,6 +219,30 @@ export function AddApplicationForm() {
                 </option>
               ))}
             </select>
+          </div>
+
+          <div className={styles.field}>
+            <label htmlFor="companyId" className={styles.label}>
+              Company
+            </label>
+            <select
+              id="companyId"
+              name="companyId"
+              value={values.companyId ?? ""}
+              onChange={handleChange}
+              className={styles.select}
+              disabled={isPending}
+            >
+              <option value="">None</option>
+              {companies.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
+            {fieldErrors.companyId && (
+              <span className={styles.error}>{fieldErrors.companyId}</span>
+            )}
           </div>
 
           <div className={styles.field}>

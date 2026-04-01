@@ -1,7 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { useCompaniesList } from "@/features/companies/hooks/useCompaniesList";
+import { useCompanyNamesByIds } from "@/features/companies/hooks/useCompany";
+import { companyNameByIdMap } from "@/features/companies/utils";
 import { useApplicationsList } from "./hooks/useApplicationsList";
 import type { Application } from "./types";
 import styles from "./ApplicationsList.module.css";
@@ -98,6 +101,26 @@ export function ApplicationsList() {
     page,
     DEFAULT_LIMIT,
   );
+  const { data: companiesData } = useCompaniesList(1, 100);
+  const companyNamesFromPage = useMemo(
+    () => companyNameByIdMap(companiesData?.items ?? []),
+    [companiesData?.items],
+  );
+  const companyIdsOnPage = useMemo(() => {
+    return (data?.items ?? [])
+      .map((app) => app.companyId)
+      .filter(
+        (companyId): companyId is string => typeof companyId === "string",
+      );
+  }, [data?.items]);
+  const fetchedCompanyNames = useCompanyNamesByIds(companyIdsOnPage);
+  const companyNames = useMemo(() => {
+    const merged = new Map(companyNamesFromPage);
+    fetchedCompanyNames.forEach((name, id) => {
+      merged.set(id, name);
+    });
+    return merged;
+  }, [companyNamesFromPage, fetchedCompanyNames]);
 
   if (isPending && !data) {
     return (
@@ -261,7 +284,9 @@ export function ApplicationsList() {
                       </Link>
                       <span className={styles.companyLine}>
                         {[
-                          app.companyId ? "Company" : null,
+                          app.companyId
+                            ? (companyNames.get(app.companyId) ?? "Company")
+                            : null,
                           app.location ?? null,
                         ]
                           .filter(Boolean)

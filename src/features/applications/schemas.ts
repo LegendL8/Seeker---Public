@@ -67,6 +67,11 @@ export const createApplicationFormSchema = z.object({
     .string()
     .optional()
     .transform((v) => (v === "" ? undefined : v)),
+  companyId: z
+    .string()
+    .optional()
+    .transform((v) => (v === "" ? undefined : v))
+    .pipe(z.union([z.undefined(), z.string().uuid("Select a valid company")])),
 });
 
 export type CreateApplicationFormValues = z.infer<
@@ -125,6 +130,10 @@ export const updateApplicationFormSchema = z.object({
     .string()
     .optional()
     .transform((v) => (v === "" ? null : v)),
+  companyId: z
+    .string()
+    .transform((v) => (v === "" ? null : v))
+    .pipe(z.union([z.null(), z.string().uuid("Select a valid company")])),
 });
 
 export type UpdateApplicationFormValues = z.infer<

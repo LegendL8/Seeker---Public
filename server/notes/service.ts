@@ -1,26 +1,15 @@
 import { and, count, desc, eq } from "drizzle-orm";
 
 import { insertAuditLog } from "../audit/service";
-import { db } from "../db";
-import { companies, notes as notesTable } from "../db/schema";
-import { NotFoundError, ValidationError } from "../errors";
 import { getApplicationById } from "../applications/service";
+import { ensureCompanyOwnership } from "../companies/service";
+import { db } from "../db";
+import { notes as notesTable } from "../db/schema";
+import { NotFoundError, ValidationError } from "../errors";
 import { getInterviewById } from "../interviews/service";
 import type { CreateNoteBody, ListNotesQuery, UpdateNoteBody } from "./types";
 
 export type NoteRow = typeof notesTable.$inferSelect;
-
-async function ensureCompanyOwnership(
-  userId: string,
-  companyId: string,
-): Promise<void> {
-  const [row] = await db
-    .select({ id: companies.id })
-    .from(companies)
-    .where(and(eq(companies.id, companyId), eq(companies.userId, userId)))
-    .limit(1);
-  if (!row) throw new ValidationError("Company not found or access denied");
-}
 
 export async function listNotes(
   userId: string,

@@ -199,7 +199,9 @@ export function SettingsPage() {
 
       <section className={styles.card}>
         <h2 className={styles.cardTitle}>Notification preferences</h2>
-        <p className={styles.helpText}>Coming soon. Channel controls are planned.</p>
+        <p className={styles.helpText}>
+          Coming soon. Channel controls are planned.
+        </p>
         <button type="button" className={styles.disabledButton} disabled>
           Coming soon
         </button>

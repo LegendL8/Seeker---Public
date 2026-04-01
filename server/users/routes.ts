@@ -44,7 +44,10 @@ router.patch(
     }
     const user = req.user!;
     const nextDisplayName = bodyResult.data.displayName;
-    const updated = await updateCurrentUserDisplayName(user.id, nextDisplayName);
+    const updated = await updateCurrentUserDisplayName(
+      user.id,
+      nextDisplayName,
+    );
     res.json({
       id: updated.id,
       email: updated.email,

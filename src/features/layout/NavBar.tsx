@@ -64,6 +64,16 @@ export function NavBar() {
               Applications
             </Link>
             <Link
+              href="/companies"
+              className={
+                pathname?.startsWith("/companies")
+                  ? `${styles.link} ${styles.linkActive}`
+                  : styles.link
+              }
+            >
+              Companies
+            </Link>
+            <Link
               href="/notes"
               className={
                 pathname?.startsWith("/notes")

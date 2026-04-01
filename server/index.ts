@@ -5,6 +5,7 @@ import { sql } from "drizzle-orm";
 import pinoHttp from "pino-http";
 
 import applicationsRouter from "./applications/routes";
+import companiesRouter from "./companies/routes";
 import dashboardRouter from "./dashboard/routes";
 import interviewsRouter from "./interviews/routes";
 import notesRouter from "./notes/routes";
@@ -65,6 +66,7 @@ app.get(
 );
 
 app.use("/api/v1/applications", applicationsRouter);
+app.use("/api/v1/companies", companiesRouter);
 app.use("/api/v1/dashboard", dashboardRouter);
 app.use("/api/v1/interviews", interviewsRouter);
 app.use("/api/v1/notes", notesRouter);

@@ -1,15 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
   updateApplicationFormSchema,
   salaryStringToCents,
   type UpdateApplicationFormInput,
   type UpdateApplicationFormValues,
 } from "./schemas";
-import { useUpdateApplication } from "./hooks/useUpdateApplication";
+import { useCompaniesList } from "@/features/companies/hooks/useCompaniesList";
+import { useCompany } from "@/features/companies/hooks/useCompany";
 import { useResumesList } from "@/features/resumes/hooks/useResumesList";
+import { useUpdateApplication } from "./hooks/useUpdateApplication";
 import type { Application } from "./types";
 import styles from "./AddApplicationForm.module.css";
 
@@ -49,6 +51,7 @@ function applicationToFormInput(app: Application): UpdateApplicationFormInput {
     appliedAt: app.appliedAt ? app.appliedAt.slice(0, 10) : "",
     source: app.source ?? "",
     resumeId: app.resumeId ?? "",
+    companyId: app.companyId ?? "",
   };
 }
 
@@ -67,7 +70,19 @@ export function EditApplicationForm({
   >({});
   const { mutate, isPending, error: submitError } = useUpdateApplication(id);
   const { data: resumesData } = useResumesList();
+  const { data: companiesData } = useCompaniesList(1, 100);
+  const { data: selectedCompany } = useCompany(values.companyId || null);
   const resumes = resumesData?.items ?? [];
+  const companies = useMemo(() => {
+    const list = companiesData?.items ?? [];
+    if (
+      !selectedCompany ||
+      list.some((company) => company.id === selectedCompany.id)
+    ) {
+      return list;
+    }
+    return [selectedCompany, ...list];
+  }, [companiesData?.items, selectedCompany]);
 
   useEffect(() => {
     setValues(applicationToFormInput(application));
@@ -116,6 +131,7 @@ export function EditApplicationForm({
       appliedAt: body.appliedAt ?? undefined,
       source: body.source ?? undefined,
       resumeId: body.resumeId ?? undefined,
+      companyId: body.companyId,
     });
   }
 
@@ -169,6 +185,30 @@ export function EditApplicationForm({
                 </option>
               ))}
             </select>
+          </div>
+
+          <div className={styles.field}>
+            <label htmlFor="companyId" className={styles.label}>
+              Company
+            </label>
+            <select
+              id="companyId"
+              name="companyId"
+              value={values.companyId ?? ""}
+              onChange={handleChange}
+              className={styles.select}
+              disabled={isPending}
+            >
+              <option value="">None</option>
+              {companies.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
+            {fieldErrors.companyId && (
+              <span className={styles.error}>{fieldErrors.companyId}</span>
+            )}
           </div>
 
           <div className={styles.field}>

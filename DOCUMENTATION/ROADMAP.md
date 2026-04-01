@@ -256,6 +256,32 @@ See ARCHITECTURE.md Layer 4 (Repository Strategy, Post-Milestone 4) for details.
 
 ---
 
+## Decisions pending — User onboarding & access control
+
+_Status: owner to decide before implementation. Update ARCHITECTURE.md and DOCUMENTATION/AUTH0.md when direction is locked._
+
+**Password / credential UX (deferred)**
+
+- [ ] True Auth0 password reset for signed-in users (e.g. server-triggered reset email or hosted reset flow). Current `/settings` uses Auth0 login handoff only, not reset email.
+
+**Who may create accounts**
+
+- [ ] Open self-serve signup vs invite-only vs admin-provisioned users; align with Auth0 Application settings (disable sign-ups, invitations, Organizations, Actions).
+
+**Email verification**
+
+- [ ] Treat Auth0 `email_verified` (and/or tenant rules) as gate for full app access vs onboarding-only routes; document in AUTH0 + proxy/API rules.
+
+**Profile completion**
+
+- [ ] Required fields before “active” user; store completion state in PostgreSQL (e.g. flag + server enforcement) vs Auth0 metadata only.
+
+**Cryptographic / identity model**
+
+- [ ] Prefer JWT signature + issuer/audience verification and standard claims; avoid a parallel “custom hash” identity path unless a specific threat model requires it (invite tokens are separate, short-lived concerns).
+
+---
+
 ## Later Milestones
 
 - **Milestone 7** — Swagger API docs live at `/docs`

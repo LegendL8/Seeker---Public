@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";
+import { useCompany } from "@/features/companies/hooks/useCompany";
 import { InterviewList } from "@/features/interviews/InterviewList";
 import { useInterviewsForApplication } from "@/features/interviews/hooks/useInterviewsForApplication";
 import { useApplication } from "./hooks/useApplication";
@@ -59,6 +60,26 @@ function formatSalary(
   if (min != null && max != null) return `$${fmt(min)} – $${fmt(max)}`;
   if (min != null) return `$${fmt(min)}`;
   return `$${fmt(max!)}`;
+}
+
+function CompanyDetailRow({ companyId }: { companyId: string | null }) {
+  const { data, isPending } = useCompany(companyId);
+  if (!companyId) {
+    return <dd className={styles.dd}>—</dd>;
+  }
+  if (isPending) {
+    return <dd className={styles.dd}>Loading…</dd>;
+  }
+  if (!data) {
+    return <dd className={styles.dd}>—</dd>;
+  }
+  return (
+    <dd className={styles.dd}>
+      <Link href={`/companies/${data.id}`} className={styles.externalLink}>
+        {data.name}
+      </Link>
+    </dd>
+  );
 }
 
 export function ApplicationDetail() {
@@ -147,6 +168,9 @@ export function ApplicationDetail() {
 
           <dt className={styles.dt}>Source</dt>
           <dd className={styles.dd}>{application.source ?? "—"}</dd>
+
+          <dt className={styles.dt}>Company</dt>
+          <CompanyDetailRow companyId={application.companyId} />
 
           <dt className={styles.dt}>Created</dt>
           <dd className={styles.dd}>{formatDateTime(application.createdAt)}</dd>
