@@ -41,15 +41,11 @@ function ProfileDisplayNameFields({ user }: { user: CurrentUser }) {
         onChange={(e) => setDisplayNameInput(e.target.value)}
         placeholder="Add your name"
       />
-      <p className={styles.helpText}>
-        Leave blank to clear your display name.
-      </p>
+      <p className={styles.helpText}>Leave blank to clear your display name.</p>
       <button
         type="button"
         className={styles.primaryButton}
-        disabled={
-          !displayNameHasChanged || updateDisplayNameMutation.isPending
-        }
+        disabled={!displayNameHasChanged || updateDisplayNameMutation.isPending}
         onClick={saveDisplayName}
       >
         {updateDisplayNameMutation.isPending
@@ -88,9 +84,7 @@ function PostingFrequencyFields({
         id="frequency"
         className={styles.select}
         value={frequency}
-        onChange={(e) =>
-          setFrequency(e.target.value as PostingCheckFrequency)
-        }
+        onChange={(e) => setFrequency(e.target.value as PostingCheckFrequency)}
       >
         <option value="hourly">Hourly</option>
         <option value="daily">Daily</option>
