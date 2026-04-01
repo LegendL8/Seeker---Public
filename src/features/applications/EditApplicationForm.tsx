@@ -123,10 +123,8 @@ export function EditApplicationForm({
       status: body.status,
       jobPostingUrl: body.jobPostingUrl ?? undefined,
       location: body.location ?? undefined,
-      salaryMin:
-        salaryStringToCents(body.salaryMin ?? undefined, period) ?? null,
-      salaryMax:
-        salaryStringToCents(body.salaryMax ?? undefined, period) ?? null,
+      salaryMin: salaryStringToCents(body.salaryMin ?? undefined) ?? null,
+      salaryMax: salaryStringToCents(body.salaryMax ?? undefined) ?? null,
       salaryPeriod: period,
       appliedAt: body.appliedAt ?? undefined,
       source: body.source ?? undefined,

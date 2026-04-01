@@ -18,10 +18,7 @@ function parseSalaryString(s: string): number | null {
 }
 
 /** Parse form salary string (e.g. "150,000" or "$75.00") to cents for API. */
-export function salaryStringToCents(
-  s: string | undefined,
-  _period: "yearly" | "hourly",
-): number | undefined {
+export function salaryStringToCents(s: string | undefined): number | undefined {
   if (s === undefined || s === "") return undefined;
   const dollars = parseSalaryString(s);
   return dollars === null ? undefined : Math.round(dollars * 100);

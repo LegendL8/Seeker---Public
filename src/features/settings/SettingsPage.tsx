@@ -1,15 +1,119 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useDeleteAccount } from "./hooks/useDeleteAccount";
 import { usePreferences } from "./hooks/usePreferences";
 import { useSettingsUser } from "./hooks/useSettingsUser";
 import { useUpdateDisplayName } from "./hooks/useUpdateDisplayName";
 import { useUpdatePreferences } from "./hooks/useUpdatePreferences";
-import type { PostingCheckFrequency } from "./types";
+import type { CurrentUser, PostingCheckFrequency } from "./types";
 import styles from "./SettingsPage.module.css";
 
 const DELETE_CONFIRMATION_TEXT = "DELETE";
+
+function ProfileDisplayNameFields({ user }: { user: CurrentUser }) {
+  const [displayNameInput, setDisplayNameInput] = useState(
+    user.displayName ?? "",
+  );
+  const updateDisplayNameMutation = useUpdateDisplayName();
+
+  const displayNameHasChanged = useMemo(() => {
+    const current = user.displayName ?? "";
+    return displayNameInput.trim() !== current.trim();
+  }, [displayNameInput, user.displayName]);
+
+  function saveDisplayName() {
+    const trimmed = displayNameInput.trim();
+    updateDisplayNameMutation.mutate(trimmed.length === 0 ? null : trimmed);
+  }
+
+  return (
+    <>
+      <label className={styles.label} htmlFor="displayName">
+        Display name
+      </label>
+      <input
+        id="displayName"
+        className={styles.input}
+        type="text"
+        maxLength={255}
+        value={displayNameInput}
+        onChange={(e) => setDisplayNameInput(e.target.value)}
+        placeholder="Add your name"
+      />
+      <p className={styles.helpText}>
+        Leave blank to clear your display name.
+      </p>
+      <button
+        type="button"
+        className={styles.primaryButton}
+        disabled={
+          !displayNameHasChanged || updateDisplayNameMutation.isPending
+        }
+        onClick={saveDisplayName}
+      >
+        {updateDisplayNameMutation.isPending
+          ? "Saving..."
+          : "Save display name"}
+      </button>
+      {updateDisplayNameMutation.isError && (
+        <p className={styles.error}>
+          {updateDisplayNameMutation.error instanceof Error
+            ? updateDisplayNameMutation.error.message
+            : "Failed to save display name"}
+        </p>
+      )}
+    </>
+  );
+}
+
+function PostingFrequencyFields({
+  initialFrequency,
+}: {
+  initialFrequency: PostingCheckFrequency;
+}) {
+  const [frequency, setFrequency] = useState(initialFrequency);
+  const updatePreferencesMutation = useUpdatePreferences();
+
+  function saveFrequency() {
+    updatePreferencesMutation.mutate(frequency);
+  }
+
+  return (
+    <>
+      <label className={styles.label} htmlFor="frequency">
+        Check cadence
+      </label>
+      <select
+        id="frequency"
+        className={styles.select}
+        value={frequency}
+        onChange={(e) =>
+          setFrequency(e.target.value as PostingCheckFrequency)
+        }
+      >
+        <option value="hourly">Hourly</option>
+        <option value="daily">Daily</option>
+        <option value="weekly">Weekly</option>
+      </select>
+      <button
+        type="button"
+        className={styles.primaryButton}
+        disabled={updatePreferencesMutation.isPending}
+        onClick={saveFrequency}
+      >
+        {updatePreferencesMutation.isPending ? "Saving..." : "Save frequency"}
+      </button>
+      {updatePreferencesMutation.isError && (
+        <p className={styles.error}>
+          {updatePreferencesMutation.error instanceof Error
+            ? updatePreferencesMutation.error.message
+            : "Failed to save preferences"}
+        </p>
+      )}
+    </>
+  );
+}
 
 export function SettingsPage() {
   const {
@@ -25,25 +129,9 @@ export function SettingsPage() {
     error: preferencesError,
   } = usePreferences();
 
-  const updateDisplayNameMutation = useUpdateDisplayName();
-  const updatePreferencesMutation = useUpdatePreferences();
   const deleteAccountMutation = useDeleteAccount();
 
-  const [displayNameInput, setDisplayNameInput] = useState("");
-  const [frequency, setFrequency] = useState<PostingCheckFrequency>("daily");
   const [deleteText, setDeleteText] = useState("");
-
-  useEffect(() => {
-    if (user) {
-      setDisplayNameInput(user.displayName ?? "");
-    }
-  }, [user]);
-
-  useEffect(() => {
-    if (preferences) {
-      setFrequency(preferences.data.postingCheckFrequency);
-    }
-  }, [preferences]);
 
   const canDelete = deleteText.trim() === DELETE_CONFIRMATION_TEXT;
   const userLoadErrorMessage =
@@ -52,20 +140,6 @@ export function SettingsPage() {
     preferencesError instanceof Error
       ? preferencesError.message
       : "Failed to load preferences";
-
-  const displayNameHasChanged = useMemo(() => {
-    const current = user?.displayName ?? "";
-    return displayNameInput.trim() !== current.trim();
-  }, [displayNameInput, user?.displayName]);
-
-  function saveDisplayName() {
-    const trimmed = displayNameInput.trim();
-    updateDisplayNameMutation.mutate(trimmed.length === 0 ? null : trimmed);
-  }
-
-  function saveFrequency() {
-    updatePreferencesMutation.mutate(frequency);
-  }
 
   return (
     <div className={styles.wrapper}>
@@ -77,44 +151,12 @@ export function SettingsPage() {
           <p className={styles.status}>Loading profile...</p>
         ) : isUserError ? (
           <p className={styles.error}>{userLoadErrorMessage}</p>
-        ) : (
-          <>
-            <label className={styles.label} htmlFor="displayName">
-              Display name
-            </label>
-            <input
-              id="displayName"
-              className={styles.input}
-              type="text"
-              maxLength={255}
-              value={displayNameInput}
-              onChange={(e) => setDisplayNameInput(e.target.value)}
-              placeholder="Add your name"
-            />
-            <p className={styles.helpText}>
-              Leave blank to clear your display name.
-            </p>
-            <button
-              type="button"
-              className={styles.primaryButton}
-              disabled={
-                !displayNameHasChanged || updateDisplayNameMutation.isPending
-              }
-              onClick={saveDisplayName}
-            >
-              {updateDisplayNameMutation.isPending
-                ? "Saving..."
-                : "Save display name"}
-            </button>
-            {updateDisplayNameMutation.isError && (
-              <p className={styles.error}>
-                {updateDisplayNameMutation.error instanceof Error
-                  ? updateDisplayNameMutation.error.message
-                  : "Failed to save display name"}
-              </p>
-            )}
-          </>
-        )}
+        ) : user ? (
+          <ProfileDisplayNameFields
+            key={`${user.id}-${user.displayName ?? ""}`}
+            user={user}
+          />
+        ) : null}
       </section>
 
       <section className={styles.card}>
@@ -149,42 +191,12 @@ export function SettingsPage() {
           <p className={styles.status}>Loading preferences...</p>
         ) : isPreferencesError ? (
           <p className={styles.error}>{preferencesLoadErrorMessage}</p>
-        ) : (
-          <>
-            <label className={styles.label} htmlFor="frequency">
-              Check cadence
-            </label>
-            <select
-              id="frequency"
-              className={styles.select}
-              value={frequency}
-              onChange={(e) =>
-                setFrequency(e.target.value as PostingCheckFrequency)
-              }
-            >
-              <option value="hourly">Hourly</option>
-              <option value="daily">Daily</option>
-              <option value="weekly">Weekly</option>
-            </select>
-            <button
-              type="button"
-              className={styles.primaryButton}
-              disabled={updatePreferencesMutation.isPending}
-              onClick={saveFrequency}
-            >
-              {updatePreferencesMutation.isPending
-                ? "Saving..."
-                : "Save frequency"}
-            </button>
-            {updatePreferencesMutation.isError && (
-              <p className={styles.error}>
-                {updatePreferencesMutation.error instanceof Error
-                  ? updatePreferencesMutation.error.message
-                  : "Failed to save preferences"}
-              </p>
-            )}
-          </>
-        )}
+        ) : preferences ? (
+          <PostingFrequencyFields
+            key={preferences.data.postingCheckFrequency}
+            initialFrequency={preferences.data.postingCheckFrequency}
+          />
+        ) : null}
       </section>
 
       <section className={styles.card}>
